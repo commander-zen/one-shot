@@ -1,2 +1,1375 @@
 <!DOCTYPE html>
-<html><body><h1>one-shot</h1></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One-Shot — Solo D&D 5e</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d0a07;
+  --bg2: #1a1108;
+  --bg3: #221a0e;
+  --gold: #c9a84c;
+  --gold2: #e6c97a;
+  --amber: #f0a830;
+  --parch: #f5e6c8;
+  --parch-bg: #2a1f0e;
+  --red: #c0392b;
+  --green: #27ae60;
+  --purple: #8e44ad;
+  --text: #d4c5a9;
+  --dim: #8a7a5e;
+  --border: #3d2e16;
+  --border-g: #6b4f1f;
+  --r: 6px;
+}
+
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1,h2,h3,h4 { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: .05em; }
+.hidden { display: none !important; }
+
+/* ── LAYOUT ── */
+#app { max-width: 680px; margin: 0 auto; padding: 0 16px 120px; }
+
+.ph-header { text-align:center; padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.ph-header h1 { font-size: 1.8rem; }
+.ph-header p { color: var(--dim); margin-top: 6px; font-style: italic; }
+
+/* step dots */
+.step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:28px; }
+.dot { width:10px; height:10px; border-radius:50%; background:var(--border); transition:background .3s; }
+.dot.active { background:var(--gold); }
+.dot.done { background:var(--gold2); opacity:.6; }
+
+/* step boxes */
+.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; margin-bottom:20px; }
+.sbox h3 { font-size:1.05rem; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+
+/* forms */
+input[type=text], textarea, select {
+  width:100%; background:var(--bg3); border:1px solid var(--border-g); border-radius:var(--r);
+  color:var(--text); font-family:'EB Garamond',serif; font-size:16px; padding:10px 14px; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus, textarea:focus, select:focus { border-color:var(--gold); }
+textarea { resize:vertical; min-height:80px; }
+label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size:.8rem; letter-spacing:.05em; margin-bottom:6px; }
+.field { margin-bottom:16px; }
+
+/* buttons */
+.btn {
+  display:inline-block; padding:10px 24px; border:1px solid var(--gold); border-radius:var(--r);
+  background:transparent; color:var(--gold); font-family:'Cinzel',serif; font-size:.85rem;
+  letter-spacing:.08em; cursor:pointer; transition:all .2s;
+}
+.btn:hover { background:var(--gold); color:var(--bg); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn:disabled:hover { background:transparent; color:var(--gold); }
+.btn-pri { background:var(--gold); color:var(--bg); }
+.btn-pri:hover { background:var(--gold2); border-color:var(--gold2); }
+.btn-full { width:100%; text-align:center; display:block; }
+.btn-sm { padding:6px 16px; font-size:.75rem; }
+
+.step-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:10px; }
+
+/* card grids */
+.card-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+.card-grid.three { grid-template-columns:repeat(3,1fr); }
+
+.opt-card {
+  border:1px solid var(--border-g); border-radius:var(--r); padding:12px;
+  cursor:pointer; transition:all .2s; background:var(--bg3); text-align:center;
+}
+.opt-card:hover { border-color:var(--gold); background:#2a1f0e; }
+.opt-card.sel { border-color:var(--gold); background:#2a1f0e; box-shadow:0 0 10px rgba(201,168,76,.2); }
+.opt-card h4 { font-size:.88rem; color:var(--gold2); margin-bottom:4px; }
+.opt-card p { font-size:.76rem; color:var(--dim); line-height:1.4; }
+
+/* method toggle */
+.method-toggle { display:flex; gap:10px; margin-bottom:20px; }
+.meth-btn {
+  flex:1; padding:10px; border:1px solid var(--border-g); border-radius:var(--r);
+  background:var(--bg3); color:var(--dim); font-family:'Cinzel',serif; font-size:.8rem;
+  cursor:pointer; text-align:center; transition:all .2s;
+}
+.meth-btn.active { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); }
+
+/* stat grid */
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.stat-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:10px; text-align:center; }
+.stat-box label { font-size:.7rem; margin-bottom:4px; }
+.stat-box select { padding:6px; text-align:center; }
+.stat-box .smod { font-size:1rem; color:var(--gold); margin-top:4px; font-family:'Cinzel',serif; min-height:1.4em; }
+
+.roll-result { background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:16px; font-size:.88rem; line-height:1.8; }
+.roll-result strong { color:var(--gold); }
+
+/* spells */
+.spell-sec { margin-bottom:20px; }
+.spell-sec h4 { color:var(--gold2); font-size:.9rem; margin-bottom:8px; }
+.spell-count { color:var(--dim); font-size:.8rem; margin-bottom:8px; font-style:italic; }
+.spell-list { display:flex; flex-wrap:wrap; gap:8px; }
+.spell-chip {
+  border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
+  font-size:.82rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.spell-chip:hover { border-color:var(--gold); }
+.spell-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
+
+/* skill chips */
+.skill-picks { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.skill-chip {
+  border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
+  font-size:.8rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.skill-chip:hover { border-color:var(--gold); }
+.skill-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
+
+/* review */
+.sheet-sec { margin-bottom:18px; }
+.sheet-sec h4 { color:var(--gold2); font-size:.82rem; font-family:'Cinzel',serif; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:5px; }
+.stat-row { display:flex; flex-wrap:wrap; gap:6px; }
+.stat-pill {
+  background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  padding:5px 10px; font-size:.83rem; display:flex; gap:5px; align-items:center;
+}
+.stat-pill span:first-child { color:var(--dim); font-size:.72rem; }
+.stat-pill span:last-child { color:var(--gold2); font-family:'Cinzel',serif; }
+
+/* module select */
+.mod-card {
+  background:var(--bg2); border:2px solid var(--border); border-radius:var(--r);
+  padding:20px; cursor:pointer; margin-bottom:14px; transition:all .2s;
+}
+.mod-card:hover { border-color:var(--border-g); }
+.mod-card.sel { border-color:var(--gold); background:#1e1509; }
+.mod-card.featured { border-color:var(--border-g); }
+.mod-card h3 { font-size:1rem; margin-bottom:6px; }
+.mod-card p { font-size:.85rem; color:var(--dim); }
+.badge { display:inline-block; background:var(--gold); color:var(--bg); font-size:.62rem; font-family:'Cinzel',serif; padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+
+/* ── PHASE 3: PLAY (full screen) ── */
+#phase3 {
+  position:fixed; inset:0; flex-direction:column;
+  background:var(--bg); display:none;
+}
+#phase3.active { display:flex; }
+
+#play-header {
+  background:var(--bg2); border-bottom:1px solid var(--border-g);
+  padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+#play-char-name { font-size:.85rem; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.hp-pill {
+  display:flex; align-items:center; gap:5px; background:var(--bg3);
+  border:1px solid var(--red); border-radius:20px; padding:4px 12px;
+  font-family:'Cinzel',serif; font-size:.78rem; flex-shrink:0;
+}
+.hp-icon { color:var(--red); }
+#hp-cur { color:#e74c3c; }
+#hp-max-disp { color:var(--dim); }
+
+.slots-row { display:flex; gap:4px; align-items:center; flex-shrink:0; }
+.slot-pip { width:10px; height:10px; border-radius:50%; border:1px solid var(--purple); background:var(--purple); transition:background .2s; }
+.slot-pip.empty { background:transparent; }
+
+#chat-log { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
+
+.dm-msg {
+  background:var(--parch-bg); border:1px solid var(--border-g); border-radius:var(--r);
+  padding:14px 16px 12px; position:relative; margin-top:8px;
+}
+.dm-msg::before {
+  content:'⚔ DM'; position:absolute; top:-10px; left:12px;
+  background:var(--parch-bg); border:1px solid var(--border-g);
+  padding:1px 8px; border-radius:10px; font-family:'Cinzel',serif;
+  font-size:.62rem; color:var(--gold); letter-spacing:.05em;
+}
+.dm-text { color:var(--parch); font-style:italic; line-height:1.75; }
+
+.player-msg { text-align:right; }
+.player-bubble {
+  display:inline-block; background:var(--bg3); border:1px solid var(--border-g);
+  border-radius:var(--r); padding:9px 14px; color:var(--gold2); font-size:.88rem;
+  max-width:85%; text-align:left;
+}
+
+.mech-events { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
+.mev { font-size:.72rem; padding:3px 10px; border-radius:20px; font-family:'Cinzel',serif; letter-spacing:.03em; }
+.mev.hp-loss { background:rgba(192,57,43,.2); border:1px solid var(--red); color:#e74c3c; }
+.mev.hp-gain { background:rgba(39,174,96,.2); border:1px solid var(--green); color:#2ecc71; }
+.mev.slot-used { background:rgba(142,68,173,.2); border:1px solid var(--purple); color:#9b59b6; }
+.mev.status { background:rgba(240,168,48,.12); border:1px solid var(--gold); color:var(--gold); }
+
+.typing-ind { display:flex; gap:8px; align-items:center; padding:10px 14px; color:var(--dim); font-style:italic; font-size:.85rem; }
+.dot-pulse { display:flex; gap:4px; }
+.dot-pulse span { width:6px; height:6px; background:var(--gold); border-radius:50%; animation:pulse 1.2s infinite; }
+.dot-pulse span:nth-child(2) { animation-delay:.2s; }
+.dot-pulse span:nth-child(3) { animation-delay:.4s; }
+@keyframes pulse { 0%,60%,100%{opacity:.3;transform:scale(.8)} 30%{opacity:1;transform:scale(1)} }
+
+/* action bar */
+#action-bar { background:var(--bg2); border-top:1px solid var(--border-g); padding:10px 14px; flex-shrink:0; }
+.act-btns { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-bottom:8px; }
+.act-btn {
+  background:var(--bg3); border:1px solid var(--border-g); border-radius:var(--r);
+  color:var(--gold2); font-family:'Cinzel',serif; font-size:.72rem;
+  padding:8px 13px; cursor:pointer; transition:all .2s; letter-spacing:.03em;
+}
+.act-btn:hover { border-color:var(--gold); background:var(--parch-bg); }
+.act-btn:disabled { opacity:.3; cursor:not-allowed; }
+.act-btn:disabled:hover { border-color:var(--border-g); background:var(--bg3); }
+
+.custom-row { display:flex; gap:8px; }
+.custom-row input { flex:1; padding:8px 12px; font-size:.9rem; }
+.custom-row button { flex-shrink:0; }
+
+/* overlays */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.88);
+  display:flex; align-items:center; justify-content:center; z-index:200; padding:20px;
+}
+.ovl-box {
+  background:var(--bg2); border:1px solid var(--border-g); border-radius:var(--r);
+  padding:24px; max-width:400px; width:100%; max-height:72vh; overflow-y:auto;
+}
+.ovl-box h3 { margin-bottom:16px; }
+
+.spell-pick-grid { display:flex; flex-direction:column; gap:6px; }
+.spi {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 12px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); cursor:pointer; transition:border-color .2s;
+}
+.spi:hover { border-color:var(--gold); }
+.spi .sn { color:var(--text); font-size:.88rem; }
+.spi .sl { color:var(--dim); font-size:.73rem; font-family:'Cinzel',serif; }
+.spi.disabled { cursor:not-allowed; opacity:.4; }
+
+.target-list { display:flex; flex-direction:column; gap:8px; }
+.tgt {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); cursor:pointer; transition:border-color .2s;
+}
+.tgt:hover { border-color:var(--red); }
+.tgt-name { color:var(--text); }
+.tgt-hp { color:#e74c3c; font-family:'Cinzel',serif; font-size:.78rem; }
+
+/* game over */
+#game-over {
+  position:fixed; inset:0; background:rgba(0,0,0,.96); z-index:300;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px;
+}
+#game-over h1 { font-size:2.4rem; color:var(--red); margin-bottom:14px; }
+#game-over p { color:var(--dim); margin-bottom:32px; font-style:italic; font-size:1.1rem; }
+
+/* toast */
+#toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(60px);
+  background:var(--bg2); border:1px solid var(--border-g); padding:9px 20px;
+  border-radius:20px; font-size:.84rem; transition:transform .3s; z-index:400; pointer-events:none;
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+
+@media(max-width:400px) {
+  .card-grid { grid-template-columns:1fr; }
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
+  .act-btn { padding:7px 10px; font-size:.68rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ═══════════════════════════════════════
+     PHASE 1: CHARACTER BUILDER
+═══════════════════════════════════════ -->
+<div id="phase1">
+  <div class="ph-header">
+    <h1>Create Your Character</h1>
+    <p>Forge a hero for the ages</p>
+  </div>
+  <div class="step-dots" id="step-dots"></div>
+
+  <!-- Step 1: Name -->
+  <div id="step1" class="sbox">
+    <h3>Who are you?</h3>
+    <div class="field">
+      <label>Character Name</label>
+      <input type="text" id="char-name" placeholder="Enter your name…" maxlength="50">
+    </div>
+    <div class="field">
+      <label>Backstory / Description <span style="color:var(--dim);font-size:.75rem">(optional — feeds DM context)</span></label>
+      <textarea id="char-backstory" placeholder="A grizzled veteran haunted by loss… a young thief seeking redemption…"></textarea>
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-pri" onclick="step1Next()">Choose Race →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Race -->
+  <div id="step2" class="sbox hidden">
+    <h3>Choose Your Race</h3>
+    <div class="card-grid" id="race-grid"></div>
+    <div id="race-note" style="color:var(--dim);font-size:.83rem;font-style:italic;margin-top:2px;"></div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-pri" id="race-next" onclick="step2Next()" disabled>Choose Class →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Class + Skills -->
+  <div id="step3" class="sbox hidden">
+    <h3>Choose Your Class</h3>
+    <div class="card-grid" id="class-grid"></div>
+    <div id="class-detail" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+      <div id="class-info-text" style="font-size:.83rem;color:var(--dim);margin-bottom:14px;"></div>
+      <label id="skill-label"></label>
+      <div class="skill-picks" id="skill-list"></div>
+    </div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-pri" id="class-next" onclick="step3Next()" disabled>Ability Scores →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Ability Scores -->
+  <div id="step4" class="sbox hidden">
+    <h3>Ability Scores</h3>
+    <div class="method-toggle">
+      <div class="meth-btn active" id="meth-std" onclick="setMethod('std')">Standard Array</div>
+      <div class="meth-btn" id="meth-roll" onclick="setMethod('roll')">Roll 4d6</div>
+    </div>
+    <div id="roll-area" style="display:none">
+      <button class="btn" onclick="rollStats()" style="margin-bottom:12px">🎲 Roll Stats</button>
+      <div id="roll-results" class="roll-result hidden"></div>
+    </div>
+    <div id="assign-area">
+      <p style="font-size:.84rem;color:var(--dim);margin-bottom:12px;">Assign each value to an ability (each value once):</p>
+      <div class="stat-grid" id="stat-assign-grid"></div>
+      <div id="racial-note" style="font-size:.8rem;color:var(--dim);font-style:italic;margin-top:6px;"></div>
+    </div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(3)">← Back</button>
+      <button class="btn btn-pri" onclick="step4Next()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 5: Spells -->
+  <div id="step5" class="sbox hidden">
+    <h3>Choose Your Spells</h3>
+    <div id="cantrip-section" class="spell-sec"></div>
+    <div id="lvl1-section" class="spell-sec"></div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(4)">← Back</button>
+      <button class="btn btn-pri" id="spells-next" onclick="step5Next()" disabled>Review Character →</button>
+    </div>
+  </div>
+
+  <!-- Step 6: Review -->
+  <div id="step6" class="sbox hidden">
+    <h3>Character Summary</h3>
+    <div id="review-content"></div>
+    <div class="step-nav" style="flex-direction:column;gap:12px;margin-top:24px">
+      <button class="btn" id="review-back" onclick="reviewBack()">← Back</button>
+      <button class="btn btn-pri btn-full" onclick="beginAdventure()">Begin Adventure ⚔</button>
+    </div>
+  </div>
+</div><!-- /phase1 -->
+
+<!-- ═══════════════════════════════════════
+     PHASE 2: MODULE SELECT
+═══════════════════════════════════════ -->
+<div id="phase2" class="hidden">
+  <div class="ph-header">
+    <h1>Choose Your Adventure</h1>
+    <p>Select a module to begin</p>
+  </div>
+
+  <div id="mod-lmop" class="mod-card featured" onclick="selectMod('lmop')">
+    <h3>Lost Mines of Phandelver <span class="badge">Recommended</span></h3>
+    <p>The classic starter adventure. Goblins, dungeons, a missing friend. You begin on the Triboar Trail, ambushed near Cragmaw Hideout.</p>
+  </div>
+
+  <div id="mod-paste" class="mod-card" onclick="selectMod('paste')">
+    <h3>Paste Your Adventure</h3>
+    <p>Drop in your own module text, a homebrew premise, or a published adventure synopsis.</p>
+    <textarea id="paste-text" style="margin-top:12px;display:none" rows="6"
+      placeholder="Paste your adventure text here…" onclick="event.stopPropagation()"></textarea>
+  </div>
+
+  <div id="mod-upload" class="mod-card" onclick="selectMod('upload')">
+    <h3>Upload a File</h3>
+    <p>Upload a .txt or .pdf file. Text content will be used as the adventure context.</p>
+    <div id="upload-area" style="margin-top:12px;display:none" onclick="event.stopPropagation()">
+      <input type="file" id="file-upload" accept=".txt,.pdf" style="color:var(--text);width:100%">
+      <div id="upload-status" style="margin-top:8px;font-size:.82rem;color:var(--dim)"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-pri btn-full" style="margin-top:20px" onclick="enterDungeon()">Enter the Dungeon ⚔</button>
+</div><!-- /phase2 -->
+
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════════════
+     PHASE 3: PLAY  (full-screen fixed)
+═══════════════════════════════════════ -->
+<div id="phase3">
+  <div id="play-header">
+    <h2 id="play-char-name">—</h2>
+    <div class="hp-pill">
+      <span class="hp-icon">♥</span>
+      <span id="hp-cur">—</span>
+      <span id="hp-max-disp">—</span>
+    </div>
+    <div class="slots-row" id="slots-row" style="display:none"></div>
+  </div>
+
+  <div id="chat-log"></div>
+
+  <div id="action-bar">
+    <div class="act-btns" id="act-btns"></div>
+    <div class="custom-row" id="custom-row" style="display:none">
+      <input type="text" id="custom-input" placeholder="Describe your action…" maxlength="200">
+      <button class="btn btn-sm btn-pri" onclick="sendCustom()">Go</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAYS -->
+<div id="spell-overlay" class="overlay hidden">
+  <div class="ovl-box">
+    <h3>Cast a Spell</h3>
+    <div id="cantrip-ovl" style="margin-bottom:16px">
+      <div style="color:var(--dim);font-size:.78rem;font-family:'Cinzel',serif;margin-bottom:8px">CANTRIPS — no slot cost</div>
+      <div class="spell-pick-grid" id="cantrip-pick"></div>
+    </div>
+    <div id="leveled-ovl">
+      <div style="color:var(--dim);font-size:.78rem;font-family:'Cinzel',serif;margin-bottom:8px" id="slot-label">1ST LEVEL SPELLS</div>
+      <div class="spell-pick-grid" id="leveled-pick"></div>
+    </div>
+    <button class="btn btn-full" style="margin-top:16px" onclick="closeOvl('spell-overlay')">Cancel</button>
+  </div>
+</div>
+
+<div id="target-overlay" class="overlay hidden">
+  <div class="ovl-box">
+    <h3>Choose Target</h3>
+    <div class="target-list" id="target-list"></div>
+    <button class="btn btn-full" style="margin-top:16px" onclick="closeOvl('target-overlay')">Cancel</button>
+  </div>
+</div>
+
+<div id="game-over" class="hidden">
+  <h1>You Have Fallen</h1>
+  <p>Your story ends here… but another may begin.</p>
+  <button class="btn btn-pri" onclick="restartGame()">Begin Again</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+
+const STATS = ['STR','DEX','CON','INT','WIS','CHA'];
+const STD_ARR = [15,14,13,12,10,8];
+
+const RACES = {
+  Human:      {bonuses:{STR:1,DEX:1,CON:1,INT:1,WIS:1,CHA:1}, speed:30, desc:'+1 to all ability scores'},
+  Elf:        {bonuses:{DEX:2,INT:1}, speed:30, desc:'+2 DEX, +1 INT · Darkvision'},
+  Dwarf:      {bonuses:{CON:2,WIS:1}, speed:25, desc:'+2 CON, +1 WIS · Darkvision'},
+  Halfling:   {bonuses:{DEX:2,CHA:1}, speed:25, desc:'+2 DEX, +1 CHA · Lucky'},
+  'Half-Orc': {bonuses:{STR:2,CON:1}, speed:30, desc:'+2 STR, +1 CON · Relentless Endurance'},
+  Tiefling:   {bonuses:{CHA:2,INT:1}, speed:30, desc:'+2 CHA, +1 INT · Hellish Resistance'},
+  Dragonborn: {bonuses:{STR:2,CHA:1}, speed:30, desc:'+2 STR, +1 CHA · Breath Weapon'},
+  Gnome:      {bonuses:{INT:2,DEX:1}, speed:25, desc:'+2 INT, +1 DEX · Gnome Cunning'},
+};
+
+const CLASSES = {
+  Barbarian:{hitDie:12,saves:['STR','CON'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'barb',equip:'Greataxe, 2 handaxes, explorer\'s pack',
+    skills:['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'],sc:2},
+  Bard:{hitDie:8,saves:['DEX','CHA'],sp:true,cantrips:2,slots:2,pick:4,
+    ac:'leather',equip:'Rapier, diplomat\'s pack, lute, leather armor',
+    skills:['Acrobatics','Animal Handling','Arcana','Athletics','Deception','History','Insight','Intimidation','Investigation','Medicine','Nature','Perception','Performance','Persuasion','Religion','Sleight of Hand','Stealth','Survival'],sc:3},
+  Cleric:{hitDie:8,saves:['WIS','CHA'],sp:true,cantrips:3,slots:2,pick:2,
+    ac:'scale',equip:'Mace, scale mail, shield, holy symbol',
+    skills:['History','Insight','Medicine','Persuasion','Religion'],sc:2},
+  Druid:{hitDie:8,saves:['INT','WIS'],sp:true,cantrips:2,slots:2,pick:2,
+    ac:'leather',equip:'Wooden shield, scimitar, leather armor, druidic focus',
+    skills:['Arcana','Animal Handling','Insight','Medicine','Nature','Perception','Religion','Survival'],sc:2},
+  Fighter:{hitDie:10,saves:['STR','CON'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'chain',equip:'Longsword, shield, chain mail, light crossbow & 20 bolts',
+    skills:['Acrobatics','Animal Handling','Athletics','History','Insight','Intimidation','Perception','Survival'],sc:2},
+  Monk:{hitDie:8,saves:['STR','DEX'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'monk',equip:'Shortsword, 10 darts, explorer\'s pack',
+    skills:['Acrobatics','Athletics','History','Insight','Religion','Stealth'],sc:2},
+  Paladin:{hitDie:10,saves:['WIS','CHA'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'chain',equip:'Longsword, shield, chain mail, holy symbol',
+    skills:['Athletics','Insight','Intimidation','Medicine','Persuasion','Religion'],sc:2},
+  Ranger:{hitDie:10,saves:['STR','DEX'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'leather',equip:'Two shortswords, scale mail, explorer\'s pack, longbow & 20 arrows',
+    skills:['Animal Handling','Athletics','Insight','Investigation','Nature','Perception','Stealth','Survival'],sc:3},
+  Rogue:{hitDie:8,saves:['DEX','INT'],sp:false,cantrips:0,slots:0,pick:0,
+    ac:'leather',equip:'Rapier, shortbow & 20 arrows, burglar\'s pack, leather armor, thieves\' tools',
+    skills:['Acrobatics','Athletics','Deception','Insight','Intimidation','Investigation','Perception','Performance','Persuasion','Sleight of Hand','Stealth'],sc:4},
+  Sorcerer:{hitDie:6,saves:['CON','CHA'],sp:true,cantrips:4,slots:2,pick:2,
+    ac:'none',equip:'Light crossbow & 20 bolts, component pouch, arcane focus, explorer\'s pack',
+    skills:['Arcana','Deception','Insight','Intimidation','Persuasion','Religion'],sc:2},
+  Warlock:{hitDie:8,saves:['WIS','CHA'],sp:true,cantrips:2,slots:1,pick:2,
+    ac:'leather',equip:'Light crossbow & 20 bolts, component pouch, leather armor, arcane focus',
+    skills:['Arcana','Deception','History','Intimidation','Investigation','Nature','Religion'],sc:2},
+  Wizard:{hitDie:6,saves:['INT','WIS'],sp:true,cantrips:3,slots:2,pick:6,
+    ac:'none',equip:'Quarterstaff, spellbook, component pouch, scholar\'s pack',
+    skills:['Arcana','History','Insight','Investigation','Medicine','Religion'],sc:2},
+};
+
+const SPELLS = {
+  Bard:{
+    cantrips:['Vicious Mockery','Prestidigitation','Mage Hand','Minor Illusion','Light','Blade Ward','True Strike','Thunderclap'],
+    lvl1:['Healing Word','Charm Person','Sleep','Thunderwave','Tasha\'s Hideous Laughter','Dissonant Whispers','Faerie Fire','Detect Magic','Identify','Cure Wounds','Longstrider','Silent Image','Heroism','Bane','Disguise Self'],
+  },
+  Cleric:{
+    cantrips:['Guidance','Sacred Flame','Thaumaturgy','Light','Spare the Dying','Toll the Dead','Mending','Resistance','Word of Radiance'],
+    lvl1:['Cure Wounds','Healing Word','Bless','Sanctuary','Guiding Bolt','Command','Detect Magic','Inflict Wounds','Shield of Faith','Thunderwave','Divine Favor','Heroism','Bane','Protection from Evil and Good','Absorb Elements'],
+  },
+  Druid:{
+    cantrips:['Druidcraft','Shillelagh','Thorn Whip','Guidance','Poison Spray','Resistance','Produce Flame','Mending'],
+    lvl1:['Cure Wounds','Healing Word','Entangle','Goodberry','Speak with Animals','Thunderwave','Fog Cloud','Faerie Fire','Animal Friendship','Charm Person','Detect Magic','Longstrider','Absorb Elements','Ice Knife','Snare'],
+  },
+  Sorcerer:{
+    cantrips:['Fire Bolt','Ray of Frost','Shocking Grasp','Mage Hand','Minor Illusion','Light','Prestidigitation','Acid Splash','Chill Touch','True Strike'],
+    lvl1:['Magic Missile','Burning Hands','Sleep','Charm Person','Shield','Mage Armor','Thunderwave','Detect Magic','Fog Cloud','Expeditious Retreat','Chromatic Orb','Disguise Self','Feather Fall','Jump','Absorb Elements'],
+  },
+  Warlock:{
+    cantrips:['Eldritch Blast','Mage Hand','Minor Illusion','Prestidigitation','Chill Touch','Blade Ward','True Strike','Poison Spray'],
+    lvl1:['Hex','Charm Person','Sleep','Detect Magic','Hellish Rebuke','Burning Hands','Disguise Self','Arms of Hadar','Expeditious Retreat','Witch Bolt','Armor of Agathys','Unseen Servant','Protection from Evil and Good'],
+  },
+  Wizard:{
+    cantrips:['Fire Bolt','Mage Hand','Prestidigitation','Ray of Frost','Shocking Grasp','Light','Minor Illusion','Acid Splash','Blade Ward','True Strike'],
+    lvl1:['Magic Missile','Sleep','Charm Person','Detect Magic','Identify','Mage Armor','Shield','Thunderwave','Burning Hands','Fog Cloud','Grease','Longstrider','Disguise Self','Feather Fall','Jump'],
+  },
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+
+const G = {
+  char:{
+    name:'',backstory:'',race:'',cls:'',
+    base:{STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
+    final:{STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
+    hp:0,maxHp:0,ac:0,speed:30,profBonus:2,saves:[],skills:[],
+    sp:false,cantrips:[],spells:[],slots:0,maxSlots:0,equip:'',hitDie:8,
+  },
+  mod:{type:'lmop',content:''},
+  conv:[],
+  combat:false,
+  enemies:[],
+};
+
+let curStep = 1;
+let scoreMethod = 'std';
+let rolledVals = [];
+let assignedScores = {};
+let selCantrips = [];
+let selSpells = [];
+let selSkills = [];
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+
+const mod   = s => Math.floor((s-10)/2);
+const modStr= s => { const m=mod(s); return (m>=0?'+':'')+m; };
+const d     = n => Math.floor(Math.random()*n)+1;
+
+function roll4d6(){
+  const r=[d(6),d(6),d(6),d(6)];
+  r.sort((a,b)=>b-a);
+  return {total:r[0]+r[1]+r[2], rolls:r};
+}
+
+function calcAC(cls,scores){
+  const dex=mod(scores.DEX);
+  if(cls==='Barbarian') return 10+dex+mod(scores.CON);
+  if(cls==='Monk')      return 10+dex+mod(scores.WIS);
+  if(cls==='Sorcerer'||cls==='Wizard') return 10+dex;
+  if(cls==='Cleric'||cls==='Paladin'||cls==='Fighter') return 16;
+  return 11+dex; // leather
+}
+
+function applyRacialBonuses(base,race){
+  const b=RACES[race]?.bonuses||{};
+  const f={...base};
+  STATS.forEach(s=>{ f[s]=(base[s]||10)+(b[s]||0); });
+  return f;
+}
+
+function toast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+function closeOvl(id){ document.getElementById(id).classList.add('hidden'); }
+
+// ═══════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════
+
+function goStep(n){
+  document.getElementById('step'+curStep).classList.add('hidden');
+  document.getElementById('step'+n).classList.remove('hidden');
+  curStep=n;
+  renderDots();
+}
+
+function renderDots(){
+  const c=document.getElementById('step-dots');
+  c.innerHTML='';
+  for(let i=1;i<=6;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===curStep?' active':i<curStep?' done':'');
+    c.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════════════
+// STEP 1: NAME
+// ═══════════════════════════════════════
+
+function step1Next(){
+  const name=document.getElementById('char-name').value.trim();
+  if(!name){toast('Enter your character\'s name.');return;}
+  G.char.name=name;
+  G.char.backstory=document.getElementById('char-backstory').value.trim();
+  goStep(2);
+  buildRaceGrid();
+}
+
+// ═══════════════════════════════════════
+// STEP 2: RACE
+// ═══════════════════════════════════════
+
+function buildRaceGrid(){
+  const g=document.getElementById('race-grid');
+  g.innerHTML='';
+  Object.entries(RACES).forEach(([name,data])=>{
+    const c=document.createElement('div');
+    c.className='opt-card';
+    c.innerHTML=`<h4>${name}</h4><p>${data.desc}</p>`;
+    c.onclick=()=>selectRace(name,c);
+    g.appendChild(c);
+  });
+}
+
+function selectRace(name,el){
+  document.querySelectorAll('#race-grid .opt-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  G.char.race=name;
+  G.char.speed=RACES[name].speed;
+  document.getElementById('race-note').textContent=`${name}: ${RACES[name].desc} · Speed ${RACES[name].speed}ft`;
+  document.getElementById('race-next').disabled=false;
+}
+
+function step2Next(){
+  if(!G.char.race){toast('Select a race.');return;}
+  goStep(3);
+  buildClassGrid();
+}
+
+// ═══════════════════════════════════════
+// STEP 3: CLASS + SKILLS
+// ═══════════════════════════════════════
+
+function buildClassGrid(){
+  const g=document.getElementById('class-grid');
+  g.innerHTML='';
+  Object.entries(CLASSES).forEach(([name,cls])=>{
+    const c=document.createElement('div');
+    c.className='opt-card';
+    c.innerHTML=`<h4>${name}</h4><p>d${cls.hitDie} · ${cls.sp?'Spellcaster':'Martial'}</p>`;
+    c.onclick=()=>selectClass(name,c);
+    g.appendChild(c);
+  });
+}
+
+function selectClass(name,el){
+  document.querySelectorAll('#class-grid .opt-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  G.char.cls=name;
+  selSkills=[];
+
+  const cls=CLASSES[name];
+  document.getElementById('class-detail').style.display='block';
+  document.getElementById('class-info-text').textContent=
+    `Hit Die: d${cls.hitDie} · Saving throws: ${cls.saves.join(', ')} · Equipment: ${cls.equip}`;
+
+  document.getElementById('skill-label').textContent=`Choose ${cls.sc} skill proficiencie${cls.sc>1?'s':'y'}:`;
+
+  const list=document.getElementById('skill-list');
+  list.innerHTML='';
+  cls.skills.forEach(sk=>{
+    const chip=document.createElement('div');
+    chip.className='skill-chip';
+    chip.textContent=sk;
+    chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
+    list.appendChild(chip);
+  });
+
+  document.getElementById('class-next').disabled=true;
+}
+
+function toggleSkill(sk,el,max){
+  if(selSkills.includes(sk)){
+    selSkills=selSkills.filter(s=>s!==sk);
+    el.classList.remove('sel');
+  } else {
+    if(selSkills.length>=max){toast(`Choose only ${max} skills.`);return;}
+    selSkills.push(sk);
+    el.classList.add('sel');
+  }
+  document.getElementById('class-next').disabled=selSkills.length<CLASSES[G.char.cls].sc;
+}
+
+function step3Next(){
+  const cls=CLASSES[G.char.cls];
+  if(!G.char.cls){toast('Select a class.');return;}
+  if(selSkills.length<cls.sc){toast(`Select ${cls.sc} skills.`);return;}
+  G.char.skills=[...selSkills];
+  goStep(4);
+  buildStatAssign();
+}
+
+// ═══════════════════════════════════════
+// STEP 4: ABILITY SCORES
+// ═══════════════════════════════════════
+
+function setMethod(m){
+  scoreMethod=m;
+  document.getElementById('meth-std').classList.toggle('active',m==='std');
+  document.getElementById('meth-roll').classList.toggle('active',m==='roll');
+  document.getElementById('roll-area').style.display=m==='roll'?'block':'none';
+  rolledVals=[];
+  document.getElementById('roll-results').classList.add('hidden');
+  buildStatAssign();
+}
+
+function rollStats(){
+  rolledVals=[];
+  let html='';
+  for(let i=0;i<6;i++){
+    const r=roll4d6();
+    rolledVals.push(r.total);
+    html+=`<div><strong>${r.total}</strong> — rolled ${r.rolls.join(', ')}</div>`;
+  }
+  const el=document.getElementById('roll-results');
+  el.innerHTML=html;
+  el.classList.remove('hidden');
+  buildStatAssign();
+}
+
+function buildStatAssign(){
+  const vals=(scoreMethod==='roll'&&rolledVals.length===6)
+    ? [...rolledVals].sort((a,b)=>b-a)
+    : [...STD_ARR];
+
+  const g=document.getElementById('stat-assign-grid');
+  g.innerHTML='';
+  assignedScores={};
+
+  STATS.forEach(stat=>{
+    const box=document.createElement('div');
+    box.className='stat-box';
+
+    const lbl=document.createElement('label');
+    lbl.textContent=stat;
+
+    const sel=document.createElement('select');
+    sel.id='asgn-'+stat;
+    const ph=document.createElement('option');
+    ph.value=''; ph.textContent='—';
+    sel.appendChild(ph);
+    vals.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+
+    const modDiv=document.createElement('div');
+    modDiv.className='smod';
+    modDiv.id='smod-'+stat;
+    modDiv.textContent='—';
+
+    sel.onchange=()=>refreshMods();
+
+    box.appendChild(lbl);
+    box.appendChild(sel);
+    box.appendChild(modDiv);
+    g.appendChild(box);
+  });
+
+  const b=RACES[G.char.race]?.bonuses||{};
+  const bText=Object.entries(b).map(([s,v])=>`+${v} ${s}`).join(', ');
+  document.getElementById('racial-note').textContent=`Racial bonuses applied after assignment: ${bText}`;
+}
+
+function refreshMods(){
+  const b=RACES[G.char.race]?.bonuses||{};
+  STATS.forEach(stat=>{
+    const sel=document.getElementById('asgn-'+stat);
+    const modDiv=document.getElementById('smod-'+stat);
+    if(!sel||!sel.value){modDiv.textContent='—';return;}
+    const base=parseInt(sel.value);
+    const bonus=b[stat]||0;
+    const final=base+bonus;
+    modDiv.textContent=modStr(final)+(bonus?` (${base}+${bonus})`:'');
+  });
+}
+
+function step4Next(){
+  const used={};
+  assignedScores={};
+  for(const stat of STATS){
+    const sel=document.getElementById('asgn-'+stat);
+    if(!sel||!sel.value){toast(`Assign a value to ${stat}.`);return;}
+    const v=parseInt(sel.value);
+    if(used[v]!==undefined){toast(`${v} is already assigned to ${used[v]}.`);return;}
+    used[v]=stat;
+    assignedScores[stat]=v;
+  }
+
+  G.char.base={...assignedScores};
+  G.char.final=applyRacialBonuses(assignedScores,G.char.race);
+
+  const cls=CLASSES[G.char.cls];
+  const conM=mod(G.char.final.CON);
+  G.char.maxHp=Math.max(1, cls.hitDie+conM);
+  G.char.hp=G.char.maxHp;
+  G.char.ac=calcAC(G.char.cls,G.char.final);
+  G.char.saves=cls.saves;
+  G.char.sp=cls.sp;
+  G.char.maxSlots=cls.slots;
+  G.char.slots=cls.slots;
+  G.char.equip=cls.equip;
+  G.char.hitDie=cls.hitDie;
+
+  if(cls.sp){
+    goStep(5);
+    buildSpellPicker();
+  } else {
+    G.char.cantrips=[];
+    G.char.spells=[];
+    goStep(6);
+    buildReview();
+  }
+}
+
+// ═══════════════════════════════════════
+// STEP 5: SPELLS
+// ═══════════════════════════════════════
+
+function buildSpellPicker(){
+  const cls=CLASSES[G.char.cls];
+  const data=SPELLS[G.char.cls];
+  selCantrips=[]; selSpells=[];
+
+  // Cantrips
+  const cs=document.getElementById('cantrip-section');
+  cs.innerHTML=`<h4>Cantrips — choose ${cls.cantrips}</h4>
+    <div class="spell-count" id="cnt-count">0 of ${cls.cantrips} selected</div>
+    <div class="spell-list" id="cantrip-list"></div>`;
+  data.cantrips.forEach(sp=>{
+    const chip=document.createElement('div');
+    chip.className='spell-chip';
+    chip.textContent=sp;
+    chip.onclick=()=>toggleCantrip(sp,chip,cls.cantrips);
+    cs.querySelector('#cantrip-list').appendChild(chip);
+  });
+
+  // Level 1 spells
+  const ls=document.getElementById('lvl1-section');
+  ls.innerHTML=`<h4>1st-Level Spells — choose ${cls.pick}</h4>
+    <div class="spell-count" id="sp-count">0 of ${cls.pick} selected</div>
+    <div class="spell-list" id="spell-list"></div>`;
+  data.lvl1.forEach(sp=>{
+    const chip=document.createElement('div');
+    chip.className='spell-chip';
+    chip.textContent=sp;
+    chip.onclick=()=>toggleSpell(sp,chip,cls.pick);
+    ls.querySelector('#spell-list').appendChild(chip);
+  });
+
+  checkSpellBtn();
+}
+
+function toggleCantrip(sp,el,max){
+  if(selCantrips.includes(sp)){selCantrips=selCantrips.filter(s=>s!==sp);el.classList.remove('sel');}
+  else{if(selCantrips.length>=max){toast(`Choose only ${max} cantrips.`);return;}selCantrips.push(sp);el.classList.add('sel');}
+  document.getElementById('cnt-count').textContent=`${selCantrips.length} of ${max} selected`;
+  checkSpellBtn();
+}
+
+function toggleSpell(sp,el,max){
+  if(selSpells.includes(sp)){selSpells=selSpells.filter(s=>s!==sp);el.classList.remove('sel');}
+  else{if(selSpells.length>=max){toast(`Choose only ${max} spells.`);return;}selSpells.push(sp);el.classList.add('sel');}
+  document.getElementById('sp-count').textContent=`${selSpells.length} of ${max} selected`;
+  checkSpellBtn();
+}
+
+function checkSpellBtn(){
+  const cls=CLASSES[G.char.cls];
+  document.getElementById('spells-next').disabled=
+    selCantrips.length!==cls.cantrips||selSpells.length!==cls.pick;
+}
+
+function step5Next(){
+  G.char.cantrips=[...selCantrips];
+  G.char.spells=[...selSpells];
+  goStep(6);
+  buildReview();
+}
+
+// ═══════════════════════════════════════
+// STEP 6: REVIEW
+// ═══════════════════════════════════════
+
+function buildReview(){
+  const c=G.char;
+  const s=c.final;
+  const cls=CLASSES[c.cls];
+
+  let h='';
+
+  h+=`<div class="sheet-sec">
+    <h4>Identity</h4>
+    <div style="font-size:1.15rem;color:var(--gold2);font-family:'Cinzel',serif;margin-bottom:3px">${c.name}</div>
+    <div style="color:var(--dim);font-size:.85rem">${c.race} ${c.cls} · Level 1</div>
+    ${c.backstory?`<div style="margin-top:8px;font-size:.84rem;font-style:italic;color:var(--dim)">${c.backstory}</div>`:''}
+  </div>`;
+
+  h+=`<div class="sheet-sec"><h4>Combat Stats</h4><div class="stat-row">
+    <div class="stat-pill"><span>HP</span><span>${c.maxHp}</span></div>
+    <div class="stat-pill"><span>AC</span><span>${c.ac}</span></div>
+    <div class="stat-pill"><span>Speed</span><span>${c.speed}ft</span></div>
+    <div class="stat-pill"><span>Prof</span><span>+${c.profBonus}</span></div>
+    <div class="stat-pill"><span>Hit Die</span><span>d${cls.hitDie}</span></div>
+    ${c.sp?`<div class="stat-pill"><span>Spell Slots</span><span>${c.maxSlots}</span></div>`:''}
+  </div></div>`;
+
+  h+=`<div class="sheet-sec"><h4>Ability Scores</h4><div class="stat-row">`;
+  STATS.forEach(stat=>{
+    const v=s[stat]; const base=c.base[stat]; const bonus=v-base;
+    h+=`<div class="stat-pill"><span>${stat}</span><span>${v} (${modStr(v)})${bonus?` <small style="color:var(--gold);opacity:.7">+${bonus}racial</small>`:''}</span></div>`;
+  });
+  h+=`</div></div>`;
+
+  h+=`<div class="sheet-sec"><h4>Saving Throws</h4>
+    <div style="font-size:.84rem;color:var(--dim)">${c.saves.join(', ')} (proficient) · Others at base modifier</div></div>`;
+
+  h+=`<div class="sheet-sec"><h4>Skill Proficiencies</h4>
+    <div style="font-size:.84rem;color:var(--dim)">${c.skills.join(', ')}</div></div>`;
+
+  h+=`<div class="sheet-sec"><h4>Starting Equipment</h4>
+    <div style="font-size:.84rem;color:var(--dim)">${c.equip}</div></div>`;
+
+  if(c.sp){
+    h+=`<div class="sheet-sec"><h4>Spells</h4>
+      <div style="margin-bottom:8px"><div style="color:var(--dim);font-size:.76rem;font-family:'Cinzel',serif">CANTRIPS (no slot cost)</div>
+        <div style="font-size:.84rem;margin-top:3px">${c.cantrips.join(', ')}</div></div>
+      <div><div style="color:var(--dim);font-size:.76rem;font-family:'Cinzel',serif">1ST LEVEL (${c.maxSlots} slot${c.maxSlots>1?'s':''})</div>
+        <div style="font-size:.84rem;margin-top:3px">${c.spells.join(', ')}</div></div>
+    </div>`;
+  }
+
+  document.getElementById('review-content').innerHTML=h;
+}
+
+function reviewBack(){
+  goStep(G.char.sp?5:4);
+}
+
+function beginAdventure(){
+  localStorage.setItem('oneshot_character',JSON.stringify(G.char));
+  document.getElementById('phase1').classList.add('hidden');
+  document.getElementById('phase2').classList.remove('hidden');
+  selectMod('lmop');
+}
+
+// ═══════════════════════════════════════
+// PHASE 2: MODULE SELECT
+// ═══════════════════════════════════════
+
+let uploadedContent='';
+
+function selectMod(type){
+  G.mod.type=type;
+  ['lmop','paste','upload'].forEach(t=>{
+    document.getElementById('mod-'+t).classList.toggle('sel',t===type);
+  });
+  document.getElementById('paste-text').style.display=type==='paste'?'block':'none';
+  document.getElementById('upload-area').style.display=type==='upload'?'block':'none';
+  if(type==='upload') document.getElementById('file-upload').onchange=handleUpload;
+}
+
+function handleUpload(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const status=document.getElementById('upload-status');
+  status.textContent='Reading file…';
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    uploadedContent=ev.target.result.substring(0,8000);
+    G.mod.content=uploadedContent;
+    status.textContent=`✓ Loaded: ${file.name} (${Math.round(ev.target.result.length/1000)}k chars)`;
+  };
+  reader.onerror=()=>{status.textContent='Error reading file.';};
+  reader.readAsText(file);
+}
+
+function enterDungeon(){
+  if(G.mod.type==='paste'){
+    const txt=document.getElementById('paste-text').value.trim();
+    if(!txt){toast('Paste your adventure text first.');return;}
+    G.mod.content=txt;
+  }
+  if(G.mod.type==='upload'&&!G.mod.content){toast('Upload a file first.');return;}
+
+  document.getElementById('phase2').classList.add('hidden');
+  const p3=document.getElementById('phase3');
+  p3.classList.add('active');
+  initPlay();
+}
+
+// ═══════════════════════════════════════
+// PHASE 3: PLAY
+// ═══════════════════════════════════════
+
+function buildSystemPrompt(){
+  const c=G.char;
+  const s=c.final;
+
+  let modCtx='';
+  if(G.mod.type==='lmop'){
+    modCtx=`RUN LOST MINES OF PHANDELVER from start to finish using your training knowledge of the adventure.
+OPENING SCENE: The player character has been hired by dwarf merchant Gundren Rockseeker to escort a wagon of supplies to Phandalin. Gundren and his escort Sildar Hallwinter have ridden ahead on horseback. As the player travels the Triboar Trail, they discover two dead horses blocking the road — goblin arrows in the bodies. Goblins ambush from the treeline. This is the start of the Cragmaw Hideout chapter.
+Continue through: Phandalin (town), Tresendar Manor (Redbrands), Cragmaw Castle, Wave Echo Cave, and the Black Spider as the final villain.`;
+  } else {
+    modCtx=G.mod.content||'Run a classic D&D 5e adventure in a generic fantasy setting. Create interesting encounters, NPCs, and locations.';
+  }
+
+  const spellLine=c.sp
+    ? `\nSPELLS — Cantrips (never cost a slot): ${c.cantrips.join(', ')}. 1st-level spells (cost one slot each): ${c.spells.join(', ')}. Current spell slots: ${c.slots} of ${c.maxSlots}.`
+    :'';
+
+  return `You are the Dungeon Master for a solo D&D 5e adventure. One player, no others.
+
+PLAYER CHARACTER:
+Name: ${c.name}  |  Race: ${c.race}  |  Class: ${c.cls}  |  Level 1
+HP: ${c.hp}/${c.maxHp}  |  AC: ${c.ac}  |  Speed: ${c.speed}ft  |  Proficiency: +${c.profBonus}
+STR ${s.STR}(${modStr(s.STR)})  DEX ${s.DEX}(${modStr(s.DEX)})  CON ${s.CON}(${modStr(s.CON)})  INT ${s.INT}(${modStr(s.INT)})  WIS ${s.WIS}(${modStr(s.WIS)})  CHA ${s.CHA}(${modStr(s.CHA)})
+Saving throw proficiencies: ${c.saves.join(', ')}
+Skill proficiencies: ${c.skills.join(', ')}
+Equipment: ${c.equip}${spellLine}
+${c.backstory?`Character backstory: ${c.backstory}`:''}
+
+ADVENTURE:
+${modCtx}
+
+DM RULES — OBEY EXACTLY:
+1. Write 2-3 sentences of vivid narration only. Describe the world, enemies, and events. Never write the player character's dialogue, thoughts, or actions.
+2. Address the player character by name (${c.name}) to make them feel heroic.
+3. Handle ALL dice rolls yourself — announce results in narration. Never say "roll for X."
+4. CANTRIPS NEVER COST SPELL SLOTS. Only leveled spells consume slots.
+5. After EVERY response output a JSON block — no exceptions:
+\`\`\`json
+{"combatActive":false,"enemies":[],"mechanicalEvents":[]}
+\`\`\`
+- combatActive: true if in an active fight
+- enemies: array of {name, hp, maxHp} for all living enemies in the current fight
+- mechanicalEvents: array of {type, amount, description} where type is "hp_change" (amount negative for damage, positive for healing), "slot_used" (decrement one spell slot), or "status" (conditions, info). Always include HP changes from enemy attacks or healing.
+6. If ${c.name} reaches 0 HP, set hp_change to bring HP to 0 and note it in narration.`;
+}
+
+function initPlay(){
+  const c=G.char;
+  document.getElementById('play-char-name').textContent=`${c.name} — ${c.race} ${c.cls}`;
+  document.getElementById('hp-cur').textContent=c.hp;
+  document.getElementById('hp-max-disp').textContent=`/ ${c.maxHp}`;
+
+  if(c.sp&&c.maxSlots>0){
+    updateSlots();
+    document.getElementById('slots-row').style.display='flex';
+  }
+
+  renderActions();
+  callDM('Begin the adventure. Set the scene vividly and start the opening encounter.',true);
+}
+
+function updateSlots(){
+  const c=G.char;
+  const row=document.getElementById('slots-row');
+  row.innerHTML='';
+  for(let i=0;i<c.maxSlots;i++){
+    const pip=document.createElement('div');
+    pip.className='slot-pip'+(i<c.slots?'':' empty');
+    row.appendChild(pip);
+  }
+}
+
+function renderActions(){
+  const bar=document.getElementById('act-btns');
+  const cr=document.getElementById('custom-row');
+  bar.innerHTML='';
+  cr.style.display='none';
+
+  const mkBtn=(label,fn)=>{
+    const b=document.createElement('button');
+    b.className='act-btn'; b.textContent=label;
+    b.onclick=fn;
+    bar.appendChild(b);
+  };
+
+  if(G.combat){
+    mkBtn('Attack',startAttack);
+    if(G.char.sp) mkBtn('Cast Spell',openSpellPicker);
+    mkBtn('Dodge',()=>sendAction('I take the Dodge action, focusing entirely on avoiding attacks.'));
+    mkBtn('Dash',()=>sendAction('I use the Dash action to reposition.'));
+    mkBtn('Hide',()=>sendAction('I attempt to hide from my enemies.'));
+    mkBtn('Help',()=>sendAction('I use the Help action.'));
+    mkBtn('End Turn',()=>sendAction('I end my turn.'));
+  } else {
+    mkBtn('Explore',()=>sendAction('I explore my surroundings carefully.'));
+    mkBtn('Talk',()=>sendAction('I attempt to speak with whoever is nearby.'));
+    if(G.char.sp) mkBtn('Cast Spell',openSpellPicker);
+    mkBtn('Rest',()=>sendAction('I take a short rest to recover.'));
+    mkBtn('Use Item',()=>sendAction('I check my pack and use an item.'));
+    mkBtn('Custom',showCustom);
+  }
+}
+
+function showCustom(){
+  document.getElementById('custom-row').style.display='flex';
+  document.getElementById('custom-input').focus();
+}
+
+function sendCustom(){
+  const inp=document.getElementById('custom-input');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  inp.value='';
+  document.getElementById('custom-row').style.display='none';
+  sendAction(txt);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('custom-row').style.display!=='none') sendCustom();
+});
+
+function startAttack(){
+  if(!G.enemies.length){sendAction('I attack the nearest enemy.');return;}
+  const list=document.getElementById('target-list');
+  list.innerHTML='';
+  G.enemies.forEach(en=>{
+    const item=document.createElement('div');
+    item.className='tgt';
+    item.innerHTML=`<span class="tgt-name">${en.name}</span><span class="tgt-hp">♥ ${en.hp}</span>`;
+    item.onclick=()=>{closeOvl('target-overlay');sendAction(`I attack the ${en.name}.`);};
+    list.appendChild(item);
+  });
+  document.getElementById('target-overlay').classList.remove('hidden');
+}
+
+function openSpellPicker(){
+  const c=G.char;
+
+  const cList=document.getElementById('cantrip-pick');
+  cList.innerHTML='';
+  c.cantrips.forEach(sp=>{
+    const item=document.createElement('div');
+    item.className='spi';
+    item.innerHTML=`<span class="sn">${sp}</span><span class="sl">Cantrip</span>`;
+    item.onclick=()=>{closeOvl('spell-overlay');sendAction(`I cast ${sp} (cantrip — no slot cost).`);};
+    cList.appendChild(item);
+  });
+
+  const lList=document.getElementById('leveled-pick');
+  lList.innerHTML='';
+  const lSection=document.getElementById('leveled-ovl');
+  lSection.style.display=c.spells.length?'block':'none';
+
+  document.getElementById('slot-label').textContent=
+    `1ST LEVEL SPELLS — ${c.slots} slot${c.slots!==1?'s':''} remaining`;
+
+  c.spells.forEach(sp=>{
+    const item=document.createElement('div');
+    const noSlot=c.slots<=0;
+    item.className='spi'+(noSlot?' disabled':'');
+    item.innerHTML=`<span class="sn" style="${noSlot?'opacity:.4':''}">${sp}</span><span class="sl">${noSlot?'No slots left':'1st Level'}</span>`;
+    if(!noSlot) item.onclick=()=>{closeOvl('spell-overlay');sendAction(`I cast ${sp} using a 1st-level spell slot.`);};
+    lList.appendChild(item);
+  });
+
+  document.getElementById('spell-overlay').classList.remove('hidden');
+}
+
+function sendAction(text){
+  addPlayerMsg(text);
+  G.conv.push({role:'user',content:text});
+  callDM(null,false);
+}
+
+async function callDM(openingPrompt,isOpening){
+  setActionsDisabled(true);
+
+  const messages=isOpening
+    ?[{role:'user',content:openingPrompt}]
+    :G.conv;
+
+  const typingEl=addTyping();
+
+  try{
+    const res=await fetch('/api/dm',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages,systemPrompt:buildSystemPrompt()}),
+    });
+    if(!res.ok) throw new Error('API error');
+    const data=await res.json();
+    const reply=data.reply||'';
+
+    removeTyping(typingEl);
+
+    // Parse JSON block
+    const jMatch=reply.match(/```json\s*([\s\S]*?)```/);
+    let gd={combatActive:false,enemies:[],mechanicalEvents:[]};
+    if(jMatch){try{gd=JSON.parse(jMatch[1].trim());}catch(e){}}
+
+    // Clean narration
+    const narration=reply.replace(/```json[\s\S]*?```/g,'').trim();
+
+    addDMMsg(narration,gd.mechanicalEvents||[]);
+
+    if(isOpening){
+      G.conv=[{role:'user',content:openingPrompt},{role:'assistant',content:reply}];
+    } else {
+      G.conv.push({role:'assistant',content:reply});
+    }
+
+    processMechEvents(gd.mechanicalEvents||[]);
+    G.combat=!!gd.combatActive;
+    G.enemies=gd.enemies||[];
+    renderActions();
+
+    if(G.char.hp<=0) setTimeout(showGameOver,1500);
+
+  } catch(err){
+    removeTyping(typingEl);
+    addDMMsg('The DM is unreachable. Check your connection and try again.',[]);
+  }
+
+  setActionsDisabled(false);
+}
+
+function processMechEvents(events){
+  events.forEach(ev=>{
+    if(ev.type==='hp_change'){
+      G.char.hp=Math.max(0,Math.min(G.char.maxHp,G.char.hp+(ev.amount||0)));
+      document.getElementById('hp-cur').textContent=G.char.hp;
+    } else if(ev.type==='slot_used'){
+      G.char.slots=Math.max(0,G.char.slots-1);
+      if(G.char.sp) updateSlots();
+    }
+  });
+}
+
+function setActionsDisabled(dis){
+  document.querySelectorAll('.act-btn').forEach(b=>b.disabled=dis);
+}
+
+// ═══════════════════════════════════════
+// CHAT LOG
+// ═══════════════════════════════════════
+
+function addDMMsg(narration,events){
+  const log=document.getElementById('chat-log');
+  const evHtml=events.map(ev=>{
+    let cls='status', txt=ev.description||'';
+    if(ev.type==='hp_change'){
+      cls=ev.amount<0?'hp-loss':'hp-gain';
+      if(!txt) txt=ev.amount<0?`${Math.abs(ev.amount)} damage`:`+${ev.amount} HP restored`;
+    } else if(ev.type==='slot_used'){
+      cls='slot-used';
+      if(!txt) txt='Spell slot used';
+    }
+    return `<div class="mev ${cls}">${txt}</div>`;
+  }).join('');
+
+  const el=document.createElement('div');
+  el.className='dm-msg';
+  el.innerHTML=`<div class="dm-text">${narration.replace(/\n/g,'<br>')}</div>`
+    +(evHtml?`<div class="mech-events">${evHtml}</div>`:'');
+  log.appendChild(el);
+  log.scrollTop=log.scrollHeight;
+}
+
+function addPlayerMsg(text){
+  const log=document.getElementById('chat-log');
+  const el=document.createElement('div');
+  el.className='player-msg';
+  el.innerHTML=`<div class="player-bubble">${text}</div>`;
+  log.appendChild(el);
+  log.scrollTop=log.scrollHeight;
+}
+
+function addTyping(){
+  const log=document.getElementById('chat-log');
+  const el=document.createElement('div');
+  el.className='typing-ind';
+  el.innerHTML=`<span>The DM ponders…</span><div class="dot-pulse"><span></span><span></span><span></span></div>`;
+  log.appendChild(el);
+  log.scrollTop=log.scrollHeight;
+  return el;
+}
+
+function removeTyping(el){ if(el?.parentNode) el.parentNode.removeChild(el); }
+
+// ═══════════════════════════════════════
+// GAME OVER
+// ═══════════════════════════════════════
+
+function showGameOver(){ document.getElementById('game-over').classList.remove('hidden'); }
+
+function restartGame(){
+  localStorage.removeItem('oneshot_character');
+  location.reload();
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+
+renderDots();
+selectMod('lmop');
+</script>
+</body>
+</html>

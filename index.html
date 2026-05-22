@@ -289,6 +289,29 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
   .stat-grid { grid-template-columns:repeat(2,1fr); }
   .act-btn { padding:7px 10px; font-size:.68rem; }
 }
+
+/* ── PHASE 0: RULESET ── */
+#phase0 { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center; }
+.ruleset-wrap { display:flex; gap:24px; margin-top:36px; }
+.rs-btn {
+  width:148px; height:108px; border:2px solid var(--border-g); border-radius:var(--r);
+  background:var(--bg2); color:var(--dim); font-family:'Cinzel',serif; font-size:1.7rem;
+  cursor:pointer; transition:all .2s; letter-spacing:.04em; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px; line-height:1;
+}
+.rs-btn:hover { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); }
+.rs-btn.active { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); box-shadow:0 0 18px rgba(201,168,76,.22); }
+.rs-edition { font-size:.62rem; color:var(--dim); font-family:'Cinzel',serif; letter-spacing:.12em; }
+.rs-btn.active .rs-edition { color:var(--gold2); }
+
+/* ── LOADING ── */
+#phase-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; }
+.loading-box { text-align:center; width:280px; }
+.loading-title { font-family:'Cinzel',serif; color:var(--gold); font-size:1rem; margin-bottom:22px; letter-spacing:.06em; }
+.loading-track { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:14px; }
+.loading-fill { height:100%; width:40%; background:var(--gold); border-radius:2px; animation:loadbar 1.6s ease-in-out infinite; }
+@keyframes loadbar { 0%{margin-left:0;width:30%} 50%{margin-left:40%;width:50%} 100%{margin-left:100%;width:0} }
+#loading-status { color:var(--dim); font-size:.8rem; font-style:italic; }
 </style>
 </head>
 <body>
@@ -296,9 +319,38 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
 <div id="app">
 
 <!-- ═══════════════════════════════════════
+     PHASE 0: RULESET SELECT
+═══════════════════════════════════════ -->
+<div id="phase0">
+  <div class="ph-header">
+    <h1>One-Shot</h1>
+    <p>Solo D&amp;D — choose your ruleset to begin</p>
+  </div>
+  <div class="ruleset-wrap">
+    <button class="rs-btn" id="rs-5e" onclick="chooseRuleset('5e')">
+      5e
+      <div class="rs-edition">2014 RULES</div>
+    </button>
+    <button class="rs-btn" id="rs-5-5e" onclick="chooseRuleset('5.5e')">
+      5.5e
+      <div class="rs-edition">2024 RULES</div>
+    </button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="phase-loading" class="hidden">
+  <div class="loading-box">
+    <div class="loading-title" id="loading-title">Loading rulebook…</div>
+    <div class="loading-track"><div class="loading-fill"></div></div>
+    <div id="loading-status">Fetching races, classes, and spells…</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
      PHASE 1: CHARACTER BUILDER
 ═══════════════════════════════════════ -->
-<div id="phase1">
+<div id="phase1" class="hidden">
   <div class="ph-header">
     <h1>Create Your Character</h1>
     <p>Forge a hero for the ages</p>
@@ -1365,11 +1417,83 @@ function restartGame(){
 }
 
 // ═══════════════════════════════════════
+// DATA CACHE & FETCH
+// ═══════════════════════════════════════
+
+const BASE_URLS = {
+  '5e':   'https://raw.githubusercontent.com/5etools-mirror-3/5etools-2014-src/master/data/',
+  '5.5e': 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/master/data/',
+};
+
+const DATA_CACHE = {};
+let activeRuleset = '5e';
+
+const CLASS_FILES = ['barbarian','bard','cleric','druid','fighter','monk','paladin','ranger','rogue','sorcerer','warlock','wizard'];
+
+async function safeFetch(url, optional=false){
+  try{
+    const res = await fetch(url);
+    if(!res.ok){ if(!optional) console.warn('Failed to fetch:', url); return null; }
+    return await res.json();
+  }catch(e){
+    console.warn('Fetch error:', url, e);
+    return null;
+  }
+}
+
+async function fetchGameData(edition){
+  if(DATA_CACHE[edition]) return;
+  const base = BASE_URLS[edition];
+  const results = await Promise.all([
+    safeFetch(base + 'races.json'),
+    safeFetch(base + 'spells/spells-phb.json'),
+    safeFetch(base + 'spells/spells-xge.json', true),
+    safeFetch(base + 'spells/spells-tce.json', true),
+    ...CLASS_FILES.map(n => safeFetch(base + `class/class-${n}.json`)),
+  ]);
+  const [races, spellsPhb, spellsXge, spellsTce, ...classResults] = results;
+  const cache = {
+    races,
+    spells: [spellsPhb, spellsXge, spellsTce].filter(Boolean),
+    classes: {},
+  };
+  CLASS_FILES.forEach((n,i) => { cache.classes[n] = classResults[i]; });
+  DATA_CACHE[edition] = cache;
+}
+
+async function chooseRuleset(edition){
+  const prev = localStorage.getItem('oneshot_ruleset');
+  if(prev && prev !== edition) localStorage.removeItem('oneshot_character');
+  localStorage.setItem('oneshot_ruleset', edition);
+  activeRuleset = edition;
+
+  document.getElementById('rs-5e').classList.toggle('active', edition==='5e');
+  document.getElementById('rs-5-5e').classList.toggle('active', edition==='5.5e');
+
+  document.getElementById('phase0').classList.add('hidden');
+  document.getElementById('phase-loading').classList.remove('hidden');
+  document.getElementById('loading-title').textContent = `Loading ${edition} rulebook…`;
+
+  await fetchGameData(edition);
+
+  document.getElementById('phase-loading').classList.add('hidden');
+  document.getElementById('phase1').classList.remove('hidden');
+}
+
+function initRuleset(){
+  const stored = localStorage.getItem('oneshot_ruleset') || '5e';
+  activeRuleset = stored;
+  document.getElementById('rs-5e').classList.toggle('active', stored==='5e');
+  document.getElementById('rs-5-5e').classList.toggle('active', stored==='5.5e');
+}
+
+// ═══════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════
 
 renderDots();
 selectMod('lmop');
+initRuleset();
 </script>
 </body>
 </html>

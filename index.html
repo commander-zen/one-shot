@@ -126,6 +126,18 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
 .spell-chip:hover { border-color:var(--gold); }
 .spell-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
 
+/* live spell entries */
+.spell-list.col { flex-direction:column; flex-wrap:nowrap; }
+.spell-entry {
+  border:1px solid var(--border-g); border-radius:var(--r); padding:9px 12px;
+  cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.spell-entry:hover { border-color:var(--gold); }
+.spell-entry.sel { border-color:var(--gold); background:var(--parch-bg); }
+.se-name { font-size:.88rem; color:var(--gold2); }
+.se-meta { font-size:.72rem; color:var(--dim); margin-top:2px; }
+.se-desc { font-size:.76rem; color:var(--dim); margin-top:4px; font-style:italic; line-height:1.4; }
+
 /* skill chips */
 .skill-picks { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .skill-chip {
@@ -940,36 +952,89 @@ function step4Next(){
 // STEP 5: SPELLS
 // ═══════════════════════════════════════
 
+const SCHOOL_NAMES={A:'Abjuration',C:'Conjuration',D:'Divination',E:'Enchantment',I:'Illusion',N:'Necromancy',T:'Transmutation',V:'Evocation'};
+
+function spellMeta(sp){
+  const school=SCHOOL_NAMES[sp.school]||sp.school||'';
+  let time='';
+  if(sp.time?.length){const t=sp.time[0];time=`${t.number} ${t.unit}`;}
+  let range='';
+  const r=sp.range;
+  if(r){
+    if(r.type==='point'){
+      const d=r.distance;
+      if(d?.type==='feet') range=`${d.amount} ft.`;
+      else if(d?.type) range=d.type.charAt(0).toUpperCase()+d.type.slice(1);
+    } else {
+      range=r.type.charAt(0).toUpperCase()+r.type.slice(1);
+    }
+  }
+  return [school,time,range].filter(Boolean).join(' · ');
+}
+
+function spellDesc(sp){
+  const entries=sp.entries||[];
+  const first=entries.find(e=>typeof e==='string')||'';
+  const clean=first.replace(/\{@\w+\s+([^}]+)\}/g,'$1').replace(/\{@\w+\}/g,'');
+  const dot=clean.indexOf('.');
+  return dot>-1?clean.slice(0,dot+1):clean.slice(0,120);
+}
+
+function buildSpellList(containerId,spells,max,toggleFn){
+  const container=document.getElementById(containerId);
+  if(spells.length&&!spells[0]._fb) container.classList.add('col');
+  spells.forEach(sp=>{
+    const name=sp.name||sp;
+    const el=document.createElement('div');
+    if(sp._fb){
+      el.className='spell-chip';
+      el.textContent=name;
+    } else {
+      el.className='spell-entry';
+      el.innerHTML=`<div class="se-name">${name}</div>
+        <div class="se-meta">${spellMeta(sp)}</div>
+        <div class="se-desc">${spellDesc(sp)}</div>`;
+    }
+    el.onclick=()=>toggleFn(name,el,max);
+    container.appendChild(el);
+  });
+}
+
 function buildSpellPicker(){
   const cls=CLASSES[G.char.cls];
-  const data=SPELLS[G.char.cls];
   selCantrips=[]; selSpells=[];
+  let cantrips=[],lvl1=[];
+  const cached=DATA_CACHE[activeRuleset];
 
-  // Cantrips
+  if(cached?.spells?.length){
+    const allSpells=cached.spells.flatMap(s=>s.spell||[]);
+    const clsName=G.char.cls;
+    const seenC=new Set(),seenL=new Set();
+    allSpells.forEach(sp=>{
+      const inCls=(sp.classes?.fromClassList||[]).some(c=>c.name===clsName);
+      if(!inCls) return;
+      if(sp.level===0&&!seenC.has(sp.name)){seenC.add(sp.name);cantrips.push(sp);}
+      if(sp.level===1&&!seenL.has(sp.name)){seenL.add(sp.name);lvl1.push(sp);}
+    });
+    cantrips.sort((a,b)=>a.name.localeCompare(b.name));
+    lvl1.sort((a,b)=>a.name.localeCompare(b.name));
+  }
+
+  const fb=SPELLS[G.char.cls];
+  if(!cantrips.length&&fb) cantrips=fb.cantrips.map(n=>({name:n,_fb:true}));
+  if(!lvl1.length&&fb)     lvl1=fb.lvl1.map(n=>({name:n,_fb:true}));
+
   const cs=document.getElementById('cantrip-section');
   cs.innerHTML=`<h4>Cantrips — choose ${cls.cantrips}</h4>
     <div class="spell-count" id="cnt-count">0 of ${cls.cantrips} selected</div>
     <div class="spell-list" id="cantrip-list"></div>`;
-  data.cantrips.forEach(sp=>{
-    const chip=document.createElement('div');
-    chip.className='spell-chip';
-    chip.textContent=sp;
-    chip.onclick=()=>toggleCantrip(sp,chip,cls.cantrips);
-    cs.querySelector('#cantrip-list').appendChild(chip);
-  });
+  buildSpellList('cantrip-list',cantrips,cls.cantrips,toggleCantrip);
 
-  // Level 1 spells
   const ls=document.getElementById('lvl1-section');
   ls.innerHTML=`<h4>1st-Level Spells — choose ${cls.pick}</h4>
     <div class="spell-count" id="sp-count">0 of ${cls.pick} selected</div>
     <div class="spell-list" id="spell-list"></div>`;
-  data.lvl1.forEach(sp=>{
-    const chip=document.createElement('div');
-    chip.className='spell-chip';
-    chip.textContent=sp;
-    chip.onclick=()=>toggleSpell(sp,chip,cls.pick);
-    ls.querySelector('#spell-list').appendChild(chip);
-  });
+  buildSpellList('spell-list',lvl1,cls.pick,toggleSpell);
 
   checkSpellBtn();
 }

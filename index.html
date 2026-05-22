@@ -809,9 +809,9 @@ function buildStatAssign(){
     const ph=document.createElement('option');
     ph.value=''; ph.textContent='—';
     sel.appendChild(ph);
-    vals.forEach(v=>{
+    vals.forEach((v,i)=>{
       const o=document.createElement('option');
-      o.value=v; o.textContent=v;
+      o.value='idx-'+i; o.textContent=v;
       sel.appendChild(o);
     });
 
@@ -839,7 +839,7 @@ function refreshMods(){
     const sel=document.getElementById('asgn-'+stat);
     const modDiv=document.getElementById('smod-'+stat);
     if(!sel||!sel.value){modDiv.textContent='—';return;}
-    const base=parseInt(sel.value);
+    const base=parseInt(sel.options[sel.selectedIndex].textContent);
     const bonus=b[stat]||0;
     const final=base+bonus;
     modDiv.textContent=modStr(final)+(bonus?` (${base}+${bonus})`:'');
@@ -847,15 +847,15 @@ function refreshMods(){
 }
 
 function step4Next(){
-  const used={};
+  const usedIdx={};
   assignedScores={};
   for(const stat of STATS){
     const sel=document.getElementById('asgn-'+stat);
     if(!sel||!sel.value){toast(`Assign a value to ${stat}.`);return;}
-    const v=parseInt(sel.value);
-    if(used[v]!==undefined){toast(`${v} is already assigned to ${used[v]}.`);return;}
-    used[v]=stat;
-    assignedScores[stat]=v;
+    const idx=sel.value; // "idx-N"
+    if(usedIdx[idx]!==undefined){toast(`That roll is already assigned to ${usedIdx[idx]}.`);return;}
+    usedIdx[idx]=stat;
+    assignedScores[stat]=parseInt(sel.options[sel.selectedIndex].textContent);
   }
 
   G.char.base={...assignedScores};

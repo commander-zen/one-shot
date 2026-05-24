@@ -1,0 +1,97 @@
+/* method toggle */
+.method-toggle { display:flex; gap:10px; margin-bottom:20px; }
+.meth-btn {
+  flex:1; padding:10px; border:1px solid var(--border-g); border-radius:var(--r);
+  background:var(--bg3); color:var(--dim); font-family:'Cinzel',serif; font-size:.8rem;
+  cursor:pointer; text-align:center; transition:all .2s;
+}
+.meth-btn.active { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); }
+
+/* stat grid */
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.stat-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:10px; text-align:center; }
+.stat-box label { font-size:.7rem; margin-bottom:4px; }
+.stat-box select { padding:6px; text-align:center; }
+.stat-box .smod { font-size:1rem; color:var(--gold); margin-top:4px; font-family:'Cinzel',serif; min-height:1.4em; }
+
+.roll-result { background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:16px; font-size:.88rem; line-height:1.8; }
+.roll-result strong { color:var(--gold); }
+
+/* spells */
+.spell-sec { margin-bottom:20px; }
+.spell-sec h4 { color:var(--gold2); font-size:.9rem; margin-bottom:8px; }
+.spell-count { color:var(--dim); font-size:.8rem; margin-bottom:8px; font-style:italic; }
+.spell-list { display:flex; flex-wrap:wrap; gap:8px; }
+.spell-chip {
+  border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
+  font-size:.82rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.spell-chip:hover { border-color:var(--gold); }
+.spell-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
+
+/* live spell entries */
+.spell-list.col { flex-direction:column; flex-wrap:nowrap; }
+.spell-entry {
+  border:1px solid var(--border-g); border-radius:var(--r); padding:9px 12px;
+  cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.spell-entry:hover { border-color:var(--gold); }
+.spell-entry.sel { border-color:var(--gold); background:var(--parch-bg); }
+.se-name { font-size:.88rem; color:var(--gold2); }
+.se-meta { font-size:.72rem; color:var(--dim); margin-top:2px; }
+.se-desc { font-size:.76rem; color:var(--dim); margin-top:4px; font-style:italic; line-height:1.4; }
+
+/* skill chips */
+.skill-picks { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.skill-chip {
+  border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
+  font-size:.8rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+}
+.skill-chip:hover { border-color:var(--gold); }
+.skill-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
+
+/* review */
+.sheet-sec { margin-bottom:18px; }
+.sheet-sec h4 { color:var(--gold2); font-size:.82rem; font-family:'Cinzel',serif; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:5px; }
+.stat-row { display:flex; flex-wrap:wrap; gap:6px; }
+.stat-pill {
+  background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  padding:5px 10px; font-size:.83rem; display:flex; gap:5px; align-items:center;
+}
+.stat-pill span:first-child { color:var(--dim); font-size:.72rem; }
+.stat-pill span:last-child { color:var(--gold2); font-family:'Cinzel',serif; }
+
+/* module select */
+.mod-card {
+  background:var(--bg2); border:2px solid var(--border); border-radius:var(--r);
+  padding:20px; cursor:pointer; margin-bottom:14px; transition:all .2s;
+}
+.mod-card:hover { border-color:var(--border-g); }
+.mod-card.sel { border-color:var(--gold); background:#1e1509; }
+.mod-card.featured { border-color:var(--border-g); }
+.mod-card h3 { font-size:1rem; margin-bottom:6px; }
+.mod-card p { font-size:.85rem; color:var(--dim); }
+.badge { display:inline-block; background:var(--gold); color:var(--bg); font-size:.62rem; font-family:'Cinzel',serif; padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+
+/* ── PHASE 0: RULESET ── */
+#phase0 { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center; }
+.ruleset-wrap { display:flex; gap:24px; margin-top:36px; }
+.rs-btn {
+  width:148px; height:108px; border:2px solid var(--border-g); border-radius:var(--r);
+  background:var(--bg2); color:var(--dim); font-family:'Cinzel',serif; font-size:1.7rem;
+  cursor:pointer; transition:all .2s; letter-spacing:.04em; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px; line-height:1;
+}
+.rs-btn:hover { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); }
+.rs-btn.active { border-color:var(--gold); color:var(--gold); background:var(--parch-bg); box-shadow:0 0 18px rgba(201,168,76,.22); }
+.rs-edition { font-size:.62rem; color:var(--dim); font-family:'Cinzel',serif; letter-spacing:.12em; }
+.rs-btn.active .rs-edition { color:var(--gold2); }
+
+/* ── LOADING ── */
+#phase-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; }
+.loading-box { text-align:center; width:280px; }
+.loading-title { font-family:'Cinzel',serif; color:var(--gold); font-size:1rem; margin-bottom:22px; letter-spacing:.06em; }
+.loading-track { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:14px; }
+.loading-fill { height:100%; width:40%; background:var(--gold); border-radius:2px; animation:loadbar 1.6s ease-in-out infinite; }
+@keyframes loadbar { 0%{margin-left:0;width:30%} 50%{margin-left:40%;width:50%} 100%{margin-left:100%;width:0} }
+#loading-status { color:var(--dim); font-size:.8rem; font-style:italic; }

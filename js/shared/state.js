@@ -13,6 +13,9 @@ export const RACES = {
 };
 
 export const CLASSES = {
+  Artificer:{hitDie:8,saves:['CON','INT'],sp:true,cantrips:2,slots:2,pick:2,
+    ac:'scale',equip:'Studded leather armor, two simple weapons, light crossbow & 20 bolts, thieves\' tools',
+    skills:['Arcana','History','Investigation','Medicine','Nature','Perception','Sleight of Hand'],sc:2},
   Barbarian:{hitDie:12,saves:['STR','CON'],sp:false,cantrips:0,slots:0,pick:0,
     ac:'barb',equip:'Greataxe, 2 handaxes, explorer\'s pack',
     skills:['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'],sc:2},

@@ -23,5 +23,7 @@
 
 - ✅ 2026-05-24: Implemented background step (step 3) fully. Fetches backgrounds.json from 5etools, filters to 16 XPHB_BACKGROUNDS by name allowlist (exported from loader.js). getActiveBackgrounds() in schema.js extracts skills (from skillProficiencies[0]) and origin feat (from feats[0] key, strips source suffix and title-cases). Cards show name, 2 skills, feat name. Power Gamer badges use getRating(cls,'backgrounds',name). Selection saves to oneshot_background via storage.js saveBackground(). G.char gains background/bgSkills/bgFeat fields at selection time.
 
+- ✅ 2026-05-24: Added Artificer to CLASSES in state.js. sp:true, d8, CON+INT saves, 2 cantrips, 2 spell slots, pick:2, scale armor, studded leather equip. hitDie/saves/skills/sc will be overridden by getActiveClasses() from 5etools JSON; CLASSES entry provides the fallback + sp/cantrips/slots/pick/ac/equip which the JSON doesn't supply.
+
 ## Cold Start Prompt
-Next unresolved: Add Artificer equip/sp/slots/cantrips/pick to CLASSES in state.js so its class card and review display correctly. Then: show background in the review step (step-review.js).
+Next unresolved: Show background in the review step (step-review.js) — add a Background section displaying name, skills, and feat.

@@ -1,0 +1,91 @@
+/* forms */
+input[type=text], textarea, select {
+  width:100%; background:var(--bg3); border:1px solid var(--border-g); border-radius:var(--r);
+  color:var(--text); font-family:'EB Garamond',serif; font-size:16px; padding:10px 14px; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus, textarea:focus, select:focus { border-color:var(--gold); }
+textarea { resize:vertical; min-height:80px; }
+label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size:.8rem; letter-spacing:.05em; margin-bottom:6px; }
+.field { margin-bottom:16px; }
+
+/* buttons */
+.btn {
+  display:inline-block; padding:10px 24px; border:1px solid var(--gold); border-radius:var(--r);
+  background:transparent; color:var(--gold); font-family:'Cinzel',serif; font-size:.85rem;
+  letter-spacing:.08em; cursor:pointer; transition:all .2s;
+}
+.btn:hover { background:var(--gold); color:var(--bg); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn:disabled:hover { background:transparent; color:var(--gold); }
+.btn-pri { background:var(--gold); color:var(--bg); }
+.btn-pri:hover { background:var(--gold2); border-color:var(--gold2); }
+.btn-full { width:100%; text-align:center; display:block; }
+.btn-sm { padding:6px 16px; font-size:.75rem; }
+
+/* card grids */
+.card-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+.card-grid.three { grid-template-columns:repeat(3,1fr); }
+
+.opt-card {
+  border:1px solid var(--border-g); border-radius:var(--r); padding:12px;
+  cursor:pointer; transition:all .2s; background:var(--bg3); text-align:center;
+}
+.opt-card:hover { border-color:var(--gold); background:#2a1f0e; }
+.opt-card.sel { border-color:var(--gold); background:#2a1f0e; box-shadow:0 0 10px rgba(201,168,76,.2); }
+.opt-card h4 { font-size:.88rem; color:var(--gold2); margin-bottom:4px; }
+.opt-card p { font-size:.76rem; color:var(--dim); line-height:1.4; }
+
+/* overlays */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.88);
+  display:flex; align-items:center; justify-content:center; z-index:200; padding:20px;
+}
+.ovl-box {
+  background:var(--bg2); border:1px solid var(--border-g); border-radius:var(--r);
+  padding:24px; max-width:400px; width:100%; max-height:72vh; overflow-y:auto;
+}
+.ovl-box h3 { margin-bottom:16px; }
+
+.spell-pick-grid { display:flex; flex-direction:column; gap:6px; }
+.spi {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 12px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); cursor:pointer; transition:border-color .2s;
+}
+.spi:hover { border-color:var(--gold); }
+.spi .sn { color:var(--text); font-size:.88rem; }
+.spi .sl { color:var(--dim); font-size:.73rem; font-family:'Cinzel',serif; }
+.spi.disabled { cursor:not-allowed; opacity:.4; }
+
+.target-list { display:flex; flex-direction:column; gap:8px; }
+.tgt {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); cursor:pointer; transition:border-color .2s;
+}
+.tgt:hover { border-color:var(--red); }
+.tgt-name { color:var(--text); }
+.tgt-hp { color:#e74c3c; font-family:'Cinzel',serif; font-size:.78rem; }
+
+/* game over */
+#game-over {
+  position:fixed; inset:0; background:rgba(0,0,0,.96); z-index:300;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px;
+}
+#game-over h1 { font-size:2.4rem; color:var(--red); margin-bottom:14px; }
+#game-over p { color:var(--dim); margin-bottom:32px; font-style:italic; font-size:1.1rem; }
+
+/* toast */
+#toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(60px);
+  background:var(--bg2); border:1px solid var(--border-g); padding:9px 20px;
+  border-radius:20px; font-size:.84rem; transition:transform .3s; z-index:400; pointer-events:none;
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+
+@media(max-width:400px) {
+  .card-grid { grid-template-columns:1fr; }
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
+  .act-btn { padding:7px 10px; font-size:.68rem; }
+}

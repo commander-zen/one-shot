@@ -1,0 +1,18 @@
+/* ── LAYOUT ── */
+#app { max-width: 680px; margin: 0 auto; padding: 0 16px 120px; }
+
+.ph-header { text-align:center; padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.ph-header h1 { font-size: 1.8rem; }
+.ph-header p { color: var(--dim); margin-top: 6px; font-style: italic; }
+
+/* step dots */
+.step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:28px; }
+.dot { width:10px; height:10px; border-radius:50%; background:var(--border); transition:background .3s; }
+.dot.active { background:var(--gold); }
+.dot.done { background:var(--gold2); opacity:.6; }
+
+/* step boxes */
+.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; margin-bottom:20px; }
+.sbox h3 { font-size:1.05rem; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+
+.step-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:10px; }

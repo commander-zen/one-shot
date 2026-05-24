@@ -85,9 +85,9 @@ export function checkSpellBtn(){
     selCantrips.length!==cls.cantrips||selSpells.length!==cls.pick;
 }
 
-export function step5Next(){
+export function step7Next(){
   G.char.cantrips=[...selCantrips];
   G.char.spells=[...selSpells];
-  goStep(6);
+  goStep(8);
   buildReview();
 }

@@ -50,6 +50,7 @@
 }
 .skill-chip:hover { border-color:var(--gold); }
 .skill-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
+.skill-chip.locked { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); opacity:.6; cursor:default; }
 
 /* review */
 .sheet-sec { margin-bottom:18px; }

@@ -16,5 +16,7 @@
 - 5.5e races use flexible ASI (no fixed bonuses) — racial bonuses are empty for 5.5e races; `applyRacialBonuses` correctly applies nothing.
 - Class spellcasting fields (cantrips count, slots, pick, ac type, equip) remain hardcoded in CLASSES — only hitDie, saves, and skill list/count are pulled live.
 
+- ✅ 2026-05-24: Reordered builder steps to match 2024 PHB order: 1-Name, 2-Class, 3-Background, 4-Species, 5-Scores, 6-Languages, 7-Spells, 8-Review. Progress dots updated to 8. Import chain re-threaded: each step imports the next step's build function. step-languages.js created new — shows locked Common chip + 9 selectable standard languages, requires 2 selections, saves to oneshot_languages in localStorage. step-background.js updated from stub to pass-through (full implementation deferred). All stepXNext functions renamed and goStep targets updated throughout.
+
 ## Cold Start Prompt
-Next unresolved: Populate ratings.js with remaining 10 class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). Then: add background step.
+Next unresolved: Populate ratings.js with remaining 10 class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). Then: implement background step.

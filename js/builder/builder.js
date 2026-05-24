@@ -13,7 +13,7 @@ export function goStep(n){
 export function renderDots(){
   const c=document.getElementById('step-dots');
   c.innerHTML='';
-  for(let i=1;i<=6;i++){
+  for(let i=1;i<=8;i++){
     const d=document.createElement('div');
     d.className='dot'+(i===curStep?' active':i<curStep?' done':'');
     c.appendChild(d);

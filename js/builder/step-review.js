@@ -57,7 +57,7 @@ export function buildReview(){
 }
 
 export function reviewBack(){
-  goStep(G.char.sp?5:4);
+  goStep(G.char.sp?7:6);
 }
 
 export function beginAdventure(){

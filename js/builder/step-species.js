@@ -3,7 +3,7 @@ import { goStep, pgBadge } from './builder.js';
 import { toast } from '../shared/overlay.js';
 import { getActiveRaces } from '../data/schema.js';
 import { getRating } from '../data/ratings.js';
-import { buildClassGrid } from './step-class.js';
+import { buildStatAssign } from './step-scores.js';
 
 export function buildRaceGrid(){
   const g=document.getElementById('race-grid');
@@ -28,8 +28,8 @@ export function selectRace(name,el){
   document.getElementById('race-next').disabled=false;
 }
 
-export function step2Next(){
+export function step4Next(){
   if(!G.char.race){toast('Select a race.');return;}
-  goStep(3);
-  buildClassGrid();
+  goStep(5);
+  buildStatAssign();
 }

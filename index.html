@@ -47,23 +47,12 @@
       <textarea id="char-backstory" placeholder="A grizzled veteran haunted by loss… a young thief seeking redemption…"></textarea>
     </div>
     <div class="step-nav">
-      <button class="btn btn-pri" onclick="step1Next()">Choose Race →</button>
+      <button class="btn btn-pri" onclick="step1Next()">Choose Class →</button>
     </div>
   </div>
 
-  <!-- Step 2: Race -->
+  <!-- Step 2: Class + Skills -->
   <div id="step2" class="sbox hidden">
-    <h3>Choose Your Race</h3>
-    <div class="card-grid" id="race-grid"></div>
-    <div id="race-note" style="color:var(--dim);font-size:.83rem;font-style:italic;margin-top:2px;"></div>
-    <div class="step-nav">
-      <button class="btn" onclick="goStep(1)">← Back</button>
-      <button class="btn btn-pri" id="race-next" onclick="step2Next()" disabled>Choose Class →</button>
-    </div>
-  </div>
-
-  <!-- Step 3: Class + Skills -->
-  <div id="step3" class="sbox hidden">
     <h3>Choose Your Class</h3>
     <div class="card-grid" id="class-grid"></div>
     <div id="class-detail" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
@@ -72,13 +61,34 @@
       <div class="skill-picks" id="skill-list"></div>
     </div>
     <div class="step-nav">
-      <button class="btn" onclick="goStep(2)">← Back</button>
-      <button class="btn btn-pri" id="class-next" onclick="step3Next()" disabled>Ability Scores →</button>
+      <button class="btn" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-pri" id="class-next" onclick="step2Next()" disabled>Choose Background →</button>
     </div>
   </div>
 
-  <!-- Step 4: Ability Scores -->
+  <!-- Step 3: Background -->
+  <div id="step3" class="sbox hidden">
+    <h3>Choose Your Background</h3>
+    <p style="font-size:.85rem;color:var(--dim);margin-bottom:20px;">Background selection is coming in a future update. Your character will begin with no background feat.</p>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-pri" id="background-next" onclick="step3Next()">Choose Species →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Species -->
   <div id="step4" class="sbox hidden">
+    <h3>Choose Your Species</h3>
+    <div class="card-grid" id="race-grid"></div>
+    <div id="race-note" style="color:var(--dim);font-size:.83rem;font-style:italic;margin-top:2px;"></div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(3)">← Back</button>
+      <button class="btn btn-pri" id="race-next" onclick="step4Next()" disabled>Ability Scores →</button>
+    </div>
+  </div>
+
+  <!-- Step 5: Ability Scores -->
+  <div id="step5" class="sbox hidden">
     <h3>Ability Scores</h3>
     <div class="method-toggle">
       <div class="meth-btn active" id="meth-std" onclick="setMethod('std')">Standard Array</div>
@@ -94,24 +104,36 @@
       <div id="racial-note" style="font-size:.8rem;color:var(--dim);font-style:italic;margin-top:6px;"></div>
     </div>
     <div class="step-nav">
-      <button class="btn" onclick="goStep(3)">← Back</button>
-      <button class="btn btn-pri" onclick="step4Next()">Continue →</button>
+      <button class="btn" onclick="goStep(4)">← Back</button>
+      <button class="btn btn-pri" onclick="step5Next()">Choose Languages →</button>
     </div>
   </div>
 
-  <!-- Step 5: Spells -->
-  <div id="step5" class="sbox hidden">
+  <!-- Step 6: Languages -->
+  <div id="step6" class="sbox hidden">
+    <h3>Choose Your Languages</h3>
+    <p style="font-size:.84rem;color:var(--dim);margin-bottom:14px;">You know Common. Choose 2 additional languages.</p>
+    <div class="skill-picks" id="lang-list"></div>
+    <div id="lang-count" style="font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px;">0 of 2 selected</div>
+    <div class="step-nav">
+      <button class="btn" onclick="goStep(5)">← Back</button>
+      <button class="btn btn-pri" id="lang-next" onclick="step6Next()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 7: Spells (spellcasters only) -->
+  <div id="step7" class="sbox hidden">
     <h3>Choose Your Spells</h3>
     <div id="cantrip-section" class="spell-sec"></div>
     <div id="lvl1-section" class="spell-sec"></div>
     <div class="step-nav">
-      <button class="btn" onclick="goStep(4)">← Back</button>
-      <button class="btn btn-pri" id="spells-next" onclick="step5Next()" disabled>Review Character →</button>
+      <button class="btn" onclick="goStep(6)">← Back</button>
+      <button class="btn btn-pri" id="spells-next" onclick="step7Next()" disabled>Review Character →</button>
     </div>
   </div>
 
-  <!-- Step 6: Review -->
-  <div id="step6" class="sbox hidden">
+  <!-- Step 8: Review -->
+  <div id="step8" class="sbox hidden">
     <h3>Character Summary</h3>
     <div id="review-content"></div>
     <div class="step-nav" style="flex-direction:column;gap:12px;margin-top:24px">

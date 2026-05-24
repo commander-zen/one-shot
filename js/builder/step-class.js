@@ -3,7 +3,7 @@ import { goStep, pgBadge } from './builder.js';
 import { toast } from '../shared/overlay.js';
 import { getActiveClasses } from '../data/schema.js';
 import { getRating } from '../data/ratings.js';
-import { buildStatAssign } from './step-scores.js';
+import { buildBackground } from './step-background.js';
 
 let selSkills = [];
 export { selSkills };
@@ -59,11 +59,11 @@ export function toggleSkill(sk,el,max){
   document.getElementById('class-next').disabled=selSkills.length<getActiveClasses()[G.char.cls].sc;
 }
 
-export function step3Next(){
+export function step2Next(){
   const cls=getActiveClasses()[G.char.cls];
   if(!G.char.cls){toast('Select a class.');return;}
   if(selSkills.length<cls.sc){toast(`Select ${cls.sc} skills.`);return;}
   G.char.skills=[...selSkills];
-  goStep(4);
-  buildStatAssign();
+  goStep(3);
+  buildBackground();
 }

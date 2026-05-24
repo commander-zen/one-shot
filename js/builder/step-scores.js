@@ -4,8 +4,7 @@ import { toast } from '../shared/overlay.js';
 import { getRating } from '../data/ratings.js';
 import { mod, modStr, roll4d6, calcAC } from '../shared/dice.js';
 import { getActiveRaces, applyRacialBonuses, getActiveClasses } from '../data/schema.js';
-import { buildSpellPicker } from './step-spells.js';
-import { buildReview } from './step-review.js';
+import { buildLanguages } from './step-languages.js';
 
 let scoreMethod = 'std';
 let rolledVals = [];
@@ -93,7 +92,7 @@ export function refreshMods(){
   });
 }
 
-export function step4Next(){
+export function step5Next(){
   const usedIdx={};
   assignedScores={};
   for(const stat of STATS){
@@ -120,13 +119,6 @@ export function step4Next(){
   G.char.equip=cls.equip;
   G.char.hitDie=cls.hitDie;
 
-  if(cls.sp){
-    goStep(5);
-    buildSpellPicker();
-  } else {
-    G.char.cantrips=[];
-    G.char.spells=[];
-    goStep(6);
-    buildReview();
-  }
+  goStep(6);
+  buildLanguages();
 }

@@ -5,9 +5,14 @@ export function getActiveRaces(){
   const cached=DATA_CACHE['5.5e'];
   if(!cached?.races?.race) return RACES;
   const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
+  const xphb=cached.races.race.filter(r=>r.source==='XPHB');
+  if(xphb.length<5){
+    const found=[...new Set(cached.races.race.map(r=>r.source).filter(Boolean))];
+    console.warn('getActiveRaces: expected XPHB entries, found sources:', found);
+    return RACES;
+  }
   const result={};
-  cached.races.race.forEach(r=>{
-    if(r._copy||r.raceName) return;
+  xphb.forEach(r=>{
     const bonuses={};
     const speed=typeof r.speed==='number'?r.speed:(r.speed?.walk||30);
     if(r.ability?.length){
@@ -18,7 +23,7 @@ export function getActiveRaces(){
     const bonusStr=Object.entries(bonuses).map(([s,v])=>`+${v} ${s}`).join(', ')||'Flexible ASI';
     result[r.name]={bonuses,speed,desc:bonusStr};
   });
-  return Object.keys(result).length?result:RACES;
+  return result;
 }
 
 export function getActiveClasses(){

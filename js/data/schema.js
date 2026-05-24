@@ -1,8 +1,8 @@
-import { DATA_CACHE, rulesetRef } from './loader.js';
+import { DATA_CACHE } from './loader.js';
 import { RACES, CLASSES } from '../shared/state.js';
 
 export function getActiveRaces(){
-  const cached=DATA_CACHE[rulesetRef.value];
+  const cached=DATA_CACHE['5.5e'];
   if(!cached?.races?.race) return RACES;
   const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
   const result={};
@@ -22,7 +22,7 @@ export function getActiveRaces(){
 }
 
 export function getActiveClasses(){
-  const cached=DATA_CACHE[rulesetRef.value];
+  const cached=DATA_CACHE['5.5e'];
   if(!cached?.classes) return CLASSES;
   const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
   const result={};

@@ -1,4 +1,4 @@
-import { chooseRuleset, initRuleset } from './data/loader.js';
+import { initApp } from './data/loader.js';
 import { renderDots, goStep } from './builder/builder.js';
 import { step1Next } from './builder/step-name.js';
 import { step2Next } from './builder/step-species.js';
@@ -10,7 +10,6 @@ import { selectMod, handleUpload, enterDungeon, sendCustom, restartGame } from '
 import { closeOvl } from './shared/overlay.js';
 
 // Expose functions needed by inline onclick handlers
-window.chooseRuleset = chooseRuleset;
 window.goStep        = goStep;
 window.step1Next     = step1Next;
 window.step2Next     = step2Next;
@@ -35,7 +34,7 @@ document.addEventListener('keydown', e => {
 function init(){
   renderDots();
   selectMod('lmop');
-  initRuleset();
+  initApp();
 }
 
 init();

@@ -7,7 +7,7 @@
 - ✅ 2026-05-24: Wired race and class builder steps to DATA_CACHE via `getActiveRaces()` / `getActiveClasses()` helpers. Falls back to hardcoded RACES/CLASSES on cache miss. Hit die, saves, and skill list/count pulled live from class JSON; race bonuses and speed pulled live from races.json.
 - ✅ 2026-05-24: Fixed spell class filter — extracted `inClass(spell, className)` that merges `fromClassList` and `fromClassListVariant` before checking, so subclass-origin spells now appear correctly.
 - ✅ 2026-05-24: Refactored index.html into modular file structure. index.html is now a shell only. CSS split into css/{base,layout,components,builder,play}.css. JS split into 17 ES modules across js/shared/, js/data/, js/builder/, js/play/, and js/main.js. All localStorage centralized in storage.js, all fetch in loader.js, all overlays in overlay.js. Window globals wired in main.js for onclick compatibility.
-- ✅ 2026-05-24: Tightened race source filter in `getActiveRaces()` to `source === 'XPHB'` only. Returns exactly the 10 PHB 2024 species. Falls back to hardcoded RACES (with console.warn listing actual sources) if fewer than 5 XPHB entries are found.
+- ✅ 2026-05-24: Fixed species list to show exactly 10 entries. Replaced source-based filter (was silently failing) with `XPHB_SPECIES` name allowlist in `getActiveRaces()`. Exported `XPHB_SPECIES` constant from schema.js as single source of truth.
 - ✅ 2026-05-24: Removed ruleset toggle entirely. App is hardcoded to 5.5e (2024 rules). Phase 0 picker screen deleted from index.html and CSS. loader.js now exports `initApp()` instead of `chooseRuleset`/`initRuleset`. BASE_URL hardcoded to 5etools-src/main. storage.js no longer stores ruleset key. schema.js reads `DATA_CACHE['5.5e']` directly.
 
 ## Known Issues

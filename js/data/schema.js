@@ -1,18 +1,19 @@
 import { DATA_CACHE } from './loader.js';
 import { RACES, CLASSES } from '../shared/state.js';
 
+export const XPHB_SPECIES = ['Aasimar','Dragonborn','Dwarf','Elf','Gnome','Goliath','Halfling','Human','Orc','Tiefling'];
+
 export function getActiveRaces(){
   const cached=DATA_CACHE['5.5e'];
   if(!cached?.races?.race) return RACES;
   const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
-  const xphb=cached.races.race.filter(r=>r.source==='XPHB');
-  if(xphb.length<5){
-    const found=[...new Set(cached.races.race.map(r=>r.source).filter(Boolean))];
-    console.warn('getActiveRaces: expected XPHB entries, found sources:', found);
+  const entries=cached.races.race.filter(r=>XPHB_SPECIES.includes(r.name));
+  if(entries.length<5){
+    console.warn('getActiveRaces: expected 10 XPHB species, got', entries.length);
     return RACES;
   }
   const result={};
-  xphb.forEach(r=>{
+  entries.forEach(r=>{
     const bonuses={};
     const speed=typeof r.speed==='number'?r.speed:(r.speed?.walk||30);
     if(r.ability?.length){

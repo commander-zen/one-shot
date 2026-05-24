@@ -682,7 +682,7 @@ function calcAC(cls,scores){
 }
 
 function applyRacialBonuses(base,race){
-  const b=RACES[race]?.bonuses||{};
+  const b=getActiveRaces()[race]?.bonuses||{};
   const f={...base};
   STATS.forEach(s=>{ f[s]=(base[s]||10)+(b[s]||0); });
   return f;
@@ -731,13 +731,58 @@ function step1Next(){
 }
 
 // ═══════════════════════════════════════
+// LIVE DATA HELPERS
+// ═══════════════════════════════════════
+
+function getActiveRaces(){
+  const cached=DATA_CACHE[activeRuleset];
+  if(!cached?.races?.race) return RACES;
+  const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
+  const result={};
+  cached.races.race.forEach(r=>{
+    if(r._copy||r.raceName) return;
+    const bonuses={};
+    const speed=typeof r.speed==='number'?r.speed:(r.speed?.walk||30);
+    if(r.ability?.length){
+      Object.entries(r.ability[0]).forEach(([k,v])=>{
+        if(STAT_MAP[k]&&typeof v==='number') bonuses[STAT_MAP[k]]=v;
+      });
+    }
+    const bonusStr=Object.entries(bonuses).map(([s,v])=>`+${v} ${s}`).join(', ')||'Flexible ASI';
+    result[r.name]={bonuses,speed,desc:bonusStr};
+  });
+  return Object.keys(result).length?result:RACES;
+}
+
+function getActiveClasses(){
+  const cached=DATA_CACHE[activeRuleset];
+  if(!cached?.classes) return CLASSES;
+  const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
+  const result={};
+  Object.entries(CLASSES).forEach(([name,fb])=>{
+    const clsData=cached.classes[name.toLowerCase()]?.class?.[0];
+    if(!clsData){result[name]=fb;return;}
+    const hitDie=clsData.hd?.faces||fb.hitDie;
+    const saves=(clsData.proficiency||[]).map(s=>STAT_MAP[s]||s.toUpperCase()).filter(s=>s);
+    let skills=fb.skills,sc=fb.sc;
+    const pick=clsData.startingProficiencies?.skills?.[0];
+    if(pick?.choose){
+      sc=pick.choose.count||sc;
+      skills=(pick.choose.from||[]).map(s=>s.charAt(0).toUpperCase()+s.slice(1).replace(/_/g,' '));
+    }
+    result[name]={...fb,hitDie,saves:saves.length?saves:fb.saves,skills,sc};
+  });
+  return Object.keys(result).length?result:CLASSES;
+}
+
+// ═══════════════════════════════════════
 // STEP 2: RACE
 // ═══════════════════════════════════════
 
 function buildRaceGrid(){
   const g=document.getElementById('race-grid');
   g.innerHTML='';
-  Object.entries(RACES).forEach(([name,data])=>{
+  Object.entries(getActiveRaces()).forEach(([name,data])=>{
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p>${data.desc}</p>`;
@@ -750,8 +795,9 @@ function selectRace(name,el){
   document.querySelectorAll('#race-grid .opt-card').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
   G.char.race=name;
-  G.char.speed=RACES[name].speed;
-  document.getElementById('race-note').textContent=`${name}: ${RACES[name].desc} · Speed ${RACES[name].speed}ft`;
+  const raceData=getActiveRaces()[name];
+  G.char.speed=raceData.speed;
+  document.getElementById('race-note').textContent=`${name}: ${raceData.desc} · Speed ${raceData.speed}ft`;
   document.getElementById('race-next').disabled=false;
 }
 
@@ -768,7 +814,7 @@ function step2Next(){
 function buildClassGrid(){
   const g=document.getElementById('class-grid');
   g.innerHTML='';
-  Object.entries(CLASSES).forEach(([name,cls])=>{
+  Object.entries(getActiveClasses()).forEach(([name,cls])=>{
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p>d${cls.hitDie} · ${cls.sp?'Spellcaster':'Martial'}</p>`;
@@ -783,7 +829,7 @@ function selectClass(name,el){
   G.char.cls=name;
   selSkills=[];
 
-  const cls=CLASSES[name];
+  const cls=getActiveClasses()[name];
   document.getElementById('class-detail').style.display='block';
   document.getElementById('class-info-text').textContent=
     `Hit Die: d${cls.hitDie} · Saving throws: ${cls.saves.join(', ')} · Equipment: ${cls.equip}`;
@@ -812,11 +858,11 @@ function toggleSkill(sk,el,max){
     selSkills.push(sk);
     el.classList.add('sel');
   }
-  document.getElementById('class-next').disabled=selSkills.length<CLASSES[G.char.cls].sc;
+  document.getElementById('class-next').disabled=selSkills.length<getActiveClasses()[G.char.cls].sc;
 }
 
 function step3Next(){
-  const cls=CLASSES[G.char.cls];
+  const cls=getActiveClasses()[G.char.cls];
   if(!G.char.cls){toast('Select a class.');return;}
   if(selSkills.length<cls.sc){toast(`Select ${cls.sc} skills.`);return;}
   G.char.skills=[...selSkills];
@@ -892,13 +938,13 @@ function buildStatAssign(){
     g.appendChild(box);
   });
 
-  const b=RACES[G.char.race]?.bonuses||{};
+  const b=getActiveRaces()[G.char.race]?.bonuses||{};
   const bText=Object.entries(b).map(([s,v])=>`+${v} ${s}`).join(', ');
   document.getElementById('racial-note').textContent=`Racial bonuses applied after assignment: ${bText}`;
 }
 
 function refreshMods(){
-  const b=RACES[G.char.race]?.bonuses||{};
+  const b=getActiveRaces()[G.char.race]?.bonuses||{};
   STATS.forEach(stat=>{
     const sel=document.getElementById('asgn-'+stat);
     const modDiv=document.getElementById('smod-'+stat);
@@ -925,7 +971,7 @@ function step4Next(){
   G.char.base={...assignedScores};
   G.char.final=applyRacialBonuses(assignedScores,G.char.race);
 
-  const cls=CLASSES[G.char.cls];
+  const cls=getActiveClasses()[G.char.cls];
   const conM=mod(G.char.final.CON);
   G.char.maxHp=Math.max(1, cls.hitDie+conM);
   G.char.hp=G.char.maxHp;
@@ -1001,7 +1047,7 @@ function buildSpellList(containerId,spells,max,toggleFn){
 }
 
 function buildSpellPicker(){
-  const cls=CLASSES[G.char.cls];
+  const cls=getActiveClasses()[G.char.cls];
   selCantrips=[]; selSpells=[];
   let cantrips=[],lvl1=[];
   const cached=DATA_CACHE[activeRuleset];
@@ -1054,7 +1100,7 @@ function toggleSpell(sp,el,max){
 }
 
 function checkSpellBtn(){
-  const cls=CLASSES[G.char.cls];
+  const cls=getActiveClasses()[G.char.cls];
   document.getElementById('spells-next').disabled=
     selCantrips.length!==cls.cantrips||selSpells.length!==cls.pick;
 }
@@ -1073,7 +1119,7 @@ function step5Next(){
 function buildReview(){
   const c=G.char;
   const s=c.final;
-  const cls=CLASSES[c.cls];
+  const cls=getActiveClasses()[c.cls];
 
   let h='';
 

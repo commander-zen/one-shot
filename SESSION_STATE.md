@@ -10,9 +10,11 @@
 - ✅ 2026-05-24: Fixed species list to show exactly 10 entries. Replaced source-based filter (was silently failing) with `XPHB_SPECIES` name allowlist in `getActiveRaces()`. Exported `XPHB_SPECIES` constant from schema.js as single source of truth.
 - ✅ 2026-05-24: Removed ruleset toggle entirely. App is hardcoded to 5.5e (2024 rules). Phase 0 picker screen deleted from index.html and CSS. loader.js now exports `initApp()` instead of `chooseRuleset`/`initRuleset`. BASE_URL hardcoded to 5etools-src/main. storage.js no longer stores ruleset key. schema.js reads `DATA_CACHE['5.5e']` directly.
 
+- ✅ 2026-05-24: Added Power Gamer mode — ⚡ toggle in builder header, persisted in localStorage. Adds `.powergamer-on` to body. Rating badges (10×10 colored dots) appear top-right of species cards, skill chips, and stat boxes when active. Ratings data in `js/data/ratings.js` with Barbarian and Artificer fully rated; all other classes return null → neutral badge. `pgBadge()` helper in `builder.js`, `getRating()` in `ratings.js`.
+
 ## Known Issues
 - 5.5e races use flexible ASI (no fixed bonuses) — racial bonuses are empty for 5.5e races; `applyRacialBonuses` correctly applies nothing.
 - Class spellcasting fields (cantrips count, slots, pick, ac type, equip) remain hardcoded in CLASSES — only hitDie, saves, and skill list/count are pulled live.
 
 ## Cold Start Prompt
-Next unresolved: Browser smoke-test the modular structure (UI testing not possible in CLI). Then: add background step, or start play phase / AI DM integration.
+Next unresolved: Populate ratings.js with remaining 10 class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). Then: add background step.

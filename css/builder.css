@@ -9,7 +9,7 @@
 
 /* stat grid */
 .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-.stat-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:10px; text-align:center; }
+.stat-box { position:relative; background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); padding:10px; text-align:center; }
 .stat-box label { font-size:.7rem; margin-bottom:4px; }
 .stat-box select { padding:6px; text-align:center; }
 .stat-box .smod { font-size:1rem; color:var(--gold); margin-top:4px; font-family:'Cinzel',serif; min-height:1.4em; }
@@ -44,6 +44,7 @@
 /* skill chips */
 .skill-picks { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .skill-chip {
+  position:relative;
   border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
   font-size:.8rem; cursor:pointer; transition:all .2s; background:var(--bg3);
 }

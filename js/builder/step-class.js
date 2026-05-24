@@ -1,7 +1,8 @@
 import { G } from '../shared/state.js';
-import { goStep } from './builder.js';
+import { goStep, pgBadge } from './builder.js';
 import { toast } from '../shared/overlay.js';
 import { getActiveClasses } from '../data/schema.js';
+import { getRating } from '../data/ratings.js';
 import { buildStatAssign } from './step-scores.js';
 
 let selSkills = [];
@@ -38,6 +39,7 @@ export function selectClass(name,el){
     const chip=document.createElement('div');
     chip.className='skill-chip';
     chip.textContent=sk;
+    chip.appendChild(pgBadge(getRating(name,'skills',sk)));
     chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
     list.appendChild(chip);
   });

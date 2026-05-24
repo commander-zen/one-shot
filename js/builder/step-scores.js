@@ -1,6 +1,7 @@
 import { G, STATS, STD_ARR } from '../shared/state.js';
-import { goStep } from './builder.js';
+import { goStep, pgBadge } from './builder.js';
 import { toast } from '../shared/overlay.js';
+import { getRating } from '../data/ratings.js';
 import { mod, modStr, roll4d6, calcAC } from '../shared/dice.js';
 import { getActiveRaces, applyRacialBonuses, getActiveClasses } from '../data/schema.js';
 import { buildSpellPicker } from './step-spells.js';
@@ -49,6 +50,7 @@ export function buildStatAssign(){
 
     const lbl=document.createElement('label');
     lbl.textContent=stat;
+    box.appendChild(pgBadge(getRating(G.char.cls,'abilityScores',stat.toLowerCase())));
 
     const sel=document.createElement('select');
     sel.id='asgn-'+stat;

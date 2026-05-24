@@ -1,7 +1,8 @@
 import { G } from '../shared/state.js';
-import { goStep } from './builder.js';
+import { goStep, pgBadge } from './builder.js';
 import { toast } from '../shared/overlay.js';
 import { getActiveRaces } from '../data/schema.js';
+import { getRating } from '../data/ratings.js';
 import { buildClassGrid } from './step-class.js';
 
 export function buildRaceGrid(){
@@ -11,6 +12,7 @@ export function buildRaceGrid(){
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p>${data.desc}</p>`;
+    c.appendChild(pgBadge(getRating(G.char.cls,'species',name)));
     c.onclick=()=>selectRace(name,c);
     g.appendChild(c);
   });

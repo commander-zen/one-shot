@@ -12,11 +12,12 @@
 
 - ✅ 2026-05-24: Added Power Gamer mode — ⚡ toggle in builder header, persisted in localStorage. Adds `.powergamer-on` to body. Rating badges (10×10 colored dots) appear top-right of species cards, skill chips, and stat boxes when active. Ratings data in `js/data/ratings.js` with Barbarian and Artificer fully rated; all other classes return null → neutral badge. `pgBadge()` helper in `builder.js`, `getRating()` in `ratings.js`.
 
+- ✅ 2026-05-24: Reordered builder steps to match 2024 PHB order: 1-Name, 2-Class, 3-Background, 4-Species, 5-Scores, 6-Languages, 7-Spells, 8-Review. Progress dots updated to 8. Import chain re-threaded: each step imports the next step's build function. step-languages.js created new — shows locked Common chip + 9 selectable standard languages, requires 2 selections, saves to oneshot_languages in localStorage. step-background.js updated from stub to pass-through (full implementation deferred). All stepXNext functions renamed and goStep targets updated throughout.
+- ✅ 2026-05-24: Applied XPHB_CLASSES name allowlist to class step. `XPHB_CLASSES` exported from loader.js, added 'artificer' to CLASS_FILES fetch list. `getActiveClasses()` now iterates XPHB_CLASSES instead of hardcoded CLASSES object; falls back to CLASSES[name] for equip/sp/ac fields, uses DEFAULT_FB sentinel for Artificer (not in CLASSES). Class grid now shows all 13 2024-legal classes from live 5etools data.
+
 ## Known Issues
 - 5.5e races use flexible ASI (no fixed bonuses) — racial bonuses are empty for 5.5e races; `applyRacialBonuses` correctly applies nothing.
-- Class spellcasting fields (cantrips count, slots, pick, ac type, equip) remain hardcoded in CLASSES — only hitDie, saves, and skill list/count are pulled live.
-
-- ✅ 2026-05-24: Reordered builder steps to match 2024 PHB order: 1-Name, 2-Class, 3-Background, 4-Species, 5-Scores, 6-Languages, 7-Spells, 8-Review. Progress dots updated to 8. Import chain re-threaded: each step imports the next step's build function. step-languages.js created new — shows locked Common chip + 9 selectable standard languages, requires 2 selections, saves to oneshot_languages in localStorage. step-background.js updated from stub to pass-through (full implementation deferred). All stepXNext functions renamed and goStep targets updated throughout.
+- Class spellcasting fields (cantrips count, slots, pick, ac type, equip) remain hardcoded in CLASSES — only hitDie, saves, and skill list/count are pulled live. Artificer uses DEFAULT_FB fallback for these fields (equip shows "Basic adventuring gear").
 
 ## Cold Start Prompt
 Next unresolved: Populate ratings.js with remaining 10 class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). Then: implement background step.

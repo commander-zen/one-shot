@@ -1,4 +1,4 @@
-import { DATA_CACHE } from './loader.js';
+import { DATA_CACHE, XPHB_CLASSES } from './loader.js';
 import { RACES, CLASSES } from '../shared/state.js';
 
 export const XPHB_SPECIES = ['Aasimar','Dragonborn','Dwarf','Elf','Gnome','Goliath','Halfling','Human','Orc','Tiefling'];
@@ -31,8 +31,10 @@ export function getActiveClasses(){
   const cached=DATA_CACHE['5.5e'];
   if(!cached?.classes) return CLASSES;
   const STAT_MAP={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
+  const DEFAULT_FB={hitDie:8,sp:false,saves:[],skills:[],sc:2,equip:'Basic adventuring gear',cantrips:0,slots:0,pick:0,ac:'light'};
   const result={};
-  Object.entries(CLASSES).forEach(([name,fb])=>{
+  XPHB_CLASSES.forEach(name=>{
+    const fb=CLASSES[name]||DEFAULT_FB;
     const clsData=cached.classes[name.toLowerCase()]?.class?.[0];
     if(!clsData){result[name]=fb;return;}
     const hitDie=clsData.hd?.faces||fb.hitDie;
@@ -45,7 +47,7 @@ export function getActiveClasses(){
     }
     result[name]={...fb,hitDie,saves:saves.length?saves:fb.saves,skills,sc};
   });
-  return Object.keys(result).length?result:CLASSES;
+  return Object.keys(result).length>=5?result:CLASSES;
 }
 
 export function applyRacialBonuses(base, race){

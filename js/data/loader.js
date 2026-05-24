@@ -3,7 +3,8 @@ export const rulesetRef = { value: '5.5e' };
 
 const BASE_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/';
 
-export const CLASS_FILES = ['barbarian','bard','cleric','druid','fighter','monk','paladin','ranger','rogue','sorcerer','warlock','wizard'];
+export const XPHB_CLASSES = ['Artificer','Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'];
+export const CLASS_FILES = ['artificer','barbarian','bard','cleric','druid','fighter','monk','paladin','ranger','rogue','sorcerer','warlock','wizard'];
 
 export async function safeFetch(url, optional=false){
   try{

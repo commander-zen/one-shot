@@ -1046,6 +1046,14 @@ function buildSpellList(containerId,spells,max,toggleFn){
   });
 }
 
+function inClass(spell,className){
+  const name=className.toLowerCase();
+  const primary=(spell.classes?.fromClassList||[]).map(c=>c.name.toLowerCase());
+  const variant=(spell.classes?.fromClassListVariant||[]).map(c=>c.name.toLowerCase());
+  const all=[...new Set([...primary,...variant])];
+  return all.includes(name);
+}
+
 function buildSpellPicker(){
   const cls=getActiveClasses()[G.char.cls];
   selCantrips=[]; selSpells=[];
@@ -1057,8 +1065,7 @@ function buildSpellPicker(){
     const clsName=G.char.cls;
     const seenC=new Set(),seenL=new Set();
     allSpells.forEach(sp=>{
-      const inCls=(sp.classes?.fromClassList||[]).some(c=>c.name===clsName);
-      if(!inCls) return;
+      if(!inClass(sp,clsName)) return;
       if(sp.level===0&&!seenC.has(sp.name)){seenC.add(sp.name);cantrips.push(sp);}
       if(sp.level===1&&!seenL.has(sp.name)){seenL.add(sp.name);lvl1.push(sp);}
     });

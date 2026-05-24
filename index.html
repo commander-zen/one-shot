@@ -69,10 +69,10 @@
   <!-- Step 3: Background -->
   <div id="step3" class="sbox hidden">
     <h3>Choose Your Background</h3>
-    <p style="font-size:.85rem;color:var(--dim);margin-bottom:20px;">Background selection is coming in a future update. Your character will begin with no background feat.</p>
+    <div class="card-grid" id="background-grid"></div>
     <div class="step-nav">
       <button class="btn" onclick="goStep(2)">← Back</button>
-      <button class="btn btn-pri" id="background-next" onclick="step3Next()">Choose Species →</button>
+      <button class="btn btn-pri" id="background-next" onclick="step3Next()" disabled>Choose Species →</button>
     </div>
   </div>
 

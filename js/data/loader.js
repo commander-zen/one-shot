@@ -5,6 +5,7 @@ const BASE_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src
 
 export const XPHB_CLASSES = ['Artificer','Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'];
 export const CLASS_FILES = ['artificer','barbarian','bard','cleric','druid','fighter','monk','paladin','ranger','rogue','sorcerer','warlock','wizard'];
+export const XPHB_BACKGROUNDS = ['Acolyte','Artisan','Charlatan','Criminal','Entertainer','Farmer','Guard','Guide','Hermit','Merchant','Noble','Sage','Sailor','Scribe','Soldier','Wayfarer'];
 
 export async function safeFetch(url, optional=false){
   try{
@@ -18,13 +19,14 @@ export async function fetchGameData(){
   if(DATA_CACHE['5.5e']) return;
   const results = await Promise.all([
     safeFetch(BASE_URL + 'races.json'),
+    safeFetch(BASE_URL + 'backgrounds.json'),
     safeFetch(BASE_URL + 'spells/spells-phb.json'),
     safeFetch(BASE_URL + 'spells/spells-xge.json', true),
     safeFetch(BASE_URL + 'spells/spells-tce.json', true),
     ...CLASS_FILES.map(n => safeFetch(BASE_URL + `class/class-${n}.json`)),
   ]);
-  const [races, spellsPhb, spellsXge, spellsTce, ...classResults] = results;
-  const cache = { races, spells: [spellsPhb, spellsXge, spellsTce].filter(Boolean), classes: {} };
+  const [races, backgrounds, spellsPhb, spellsXge, spellsTce, ...classResults] = results;
+  const cache = { races, backgrounds, spells: [spellsPhb, spellsXge, spellsTce].filter(Boolean), classes: {} };
   CLASS_FILES.forEach((n,i) => { cache.classes[n] = classResults[i]; });
   DATA_CACHE['5.5e'] = cache;
 }

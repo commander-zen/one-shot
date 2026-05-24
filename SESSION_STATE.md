@@ -21,5 +21,7 @@
 
 - ✅ 2026-05-24: Populated ratings.js with all 10 remaining class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). All five sections rated per class: species (10 entries), abilityScores (6), skills (class-accessible only), backgrounds (empty placeholder), subclasses (empty placeholder). getRating now returns non-null for all 13 classes.
 
+- ✅ 2026-05-24: Implemented background step (step 3) fully. Fetches backgrounds.json from 5etools, filters to 16 XPHB_BACKGROUNDS by name allowlist (exported from loader.js). getActiveBackgrounds() in schema.js extracts skills (from skillProficiencies[0]) and origin feat (from feats[0] key, strips source suffix and title-cases). Cards show name, 2 skills, feat name. Power Gamer badges use getRating(cls,'backgrounds',name). Selection saves to oneshot_background via storage.js saveBackground(). G.char gains background/bgSkills/bgFeat fields at selection time.
+
 ## Cold Start Prompt
-Next unresolved: Implement background step (step 3). Currently a pass-through stub. Then: add Artificer equip/sp/slots to CLASSES in state.js so its equipment and spellcasting display correctly.
+Next unresolved: Add Artificer equip/sp/slots/cantrips/pick to CLASSES in state.js so its class card and review display correctly. Then: show background in the review step (step-review.js).

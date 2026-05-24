@@ -1,4 +1,4 @@
-import { DATA_CACHE, XPHB_CLASSES } from './loader.js';
+import { DATA_CACHE, XPHB_CLASSES, XPHB_BACKGROUNDS } from './loader.js';
 import { RACES, CLASSES } from '../shared/state.js';
 
 export const XPHB_SPECIES = ['Aasimar','Dragonborn','Dwarf','Elf','Gnome','Goliath','Halfling','Human','Orc','Tiefling'];
@@ -48,6 +48,21 @@ export function getActiveClasses(){
     result[name]={...fb,hitDie,saves:saves.length?saves:fb.saves,skills,sc};
   });
   return Object.keys(result).length>=5?result:CLASSES;
+}
+
+export function getActiveBackgrounds(){
+  const cached=DATA_CACHE['5.5e'];
+  if(!cached?.backgrounds?.background) return [];
+  const entries=cached.backgrounds.background.filter(b=>XPHB_BACKGROUNDS.includes(b.name));
+  return entries.map(b=>{
+    const skillsRaw=b.skillProficiencies?.[0]||{};
+    const skills=Object.entries(skillsRaw)
+      .filter(([,v])=>v===true)
+      .map(([k])=>k.charAt(0).toUpperCase()+k.slice(1).replace(/_/g,' '));
+    const featKey=Object.keys(b.feats?.[0]||{})[0]||'';
+    const feat=featKey.split('|')[0].replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    return {name:b.name,skills,feat};
+  });
 }
 
 export function applyRacialBonuses(base, race){

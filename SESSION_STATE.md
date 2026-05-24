@@ -19,5 +19,7 @@
 - 5.5e races use flexible ASI (no fixed bonuses) — racial bonuses are empty for 5.5e races; `applyRacialBonuses` correctly applies nothing.
 - Class spellcasting fields (cantrips count, slots, pick, ac type, equip) remain hardcoded in CLASSES — only hitDie, saves, and skill list/count are pulled live. Artificer uses DEFAULT_FB fallback for these fields (equip shows "Basic adventuring gear").
 
+- ✅ 2026-05-24: Populated ratings.js with all 10 remaining class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). All five sections rated per class: species (10 entries), abilityScores (6), skills (class-accessible only), backgrounds (empty placeholder), subclasses (empty placeholder). getRating now returns non-null for all 13 classes.
+
 ## Cold Start Prompt
-Next unresolved: Populate ratings.js with remaining 10 class entries (Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard). Then: implement background step.
+Next unresolved: Implement background step (step 3). Currently a pass-through stub. Then: add Artificer equip/sp/slots to CLASSES in state.js so its equipment and spellcasting display correctly.

@@ -25,5 +25,7 @@
 
 - ✅ 2026-05-24: Added Artificer to CLASSES in state.js. sp:true, d8, CON+INT saves, 2 cantrips, 2 spell slots, pick:2, scale armor, studded leather equip. hitDie/saves/skills/sc will be overridden by getActiveClasses() from 5etools JSON; CLASSES entry provides the fallback + sp/cantrips/slots/pick/ac/equip which the JSON doesn't supply.
 
+- ✅ 2026-05-24: Added Background section to review step (step-review.js). Imports getBackground() from storage.js. Displays background name (gold), skill proficiencies, and origin feat in a .sheet-sec block between Skill Proficiencies and Starting Equipment.
+
 ## Cold Start Prompt
-Next unresolved: Show background in the review step (step-review.js) — add a Background section displaying name, skills, and feat.
+Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders).

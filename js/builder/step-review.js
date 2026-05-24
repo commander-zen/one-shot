@@ -2,7 +2,7 @@ import { G, STATS } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { modStr } from '../shared/dice.js';
 import { getActiveClasses } from '../data/schema.js';
-import { saveChar } from '../shared/storage.js';
+import { saveChar, getBackground } from '../shared/storage.js';
 import { selectMod } from '../play/play.js';
 
 export function buildReview(){
@@ -40,6 +40,15 @@ export function buildReview(){
 
   h+=`<div class="sheet-sec"><h4>Skill Proficiencies</h4>
     <div style="font-size:.84rem;color:var(--dim)">${c.skills.join(', ')}</div></div>`;
+
+  const bg=getBackground();
+  if(bg){
+    h+=`<div class="sheet-sec"><h4>Background</h4>
+      <div style="color:var(--gold2);font-size:.9rem;margin-bottom:4px">${bg.name}</div>
+      <div style="font-size:.84rem;color:var(--dim);margin-bottom:3px">Skills: ${bg.skills.join(', ')}</div>
+      ${bg.feat?`<div style="font-size:.84rem;color:var(--dim)">Origin Feat: ${bg.feat}</div>`:''}
+    </div>`;
+  }
 
   h+=`<div class="sheet-sec"><h4>Starting Equipment</h4>
     <div style="font-size:.84rem;color:var(--dim)">${c.equip}</div></div>`;

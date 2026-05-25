@@ -1,5 +1,5 @@
 import { G } from '../shared/state.js';
-import { goStep, pgBadge } from './builder.js';
+import { goStep } from './builder.js';
 import { toast } from '../shared/overlay.js';
 import { saveLanguages } from '../shared/storage.js';
 import { buildSpellPicker } from './step-spells.js';
@@ -27,7 +27,7 @@ export function buildLanguages(){
     const chip = document.createElement('div');
     chip.className = 'skill-chip';
     chip.textContent = lang;
-    chip.appendChild(pgBadge(null));
+
     chip.onclick = () => toggleLanguage(lang, chip);
     list.appendChild(chip);
   });

@@ -1,5 +1,5 @@
 /* ── LAYOUT ── */
-#app { max-width: 680px; margin: 0 auto; padding: 0 16px 120px; }
+#app { max-width: 680px; margin: 0 auto; padding: 0 16px 20px; }
 
 .ph-header { text-align:center; padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
 .ph-header h1 { font-size: 1.8rem; }
@@ -12,7 +12,7 @@
 .dot.done { width:7px; height:7px; background:var(--gold2); opacity:.6; }
 
 /* step boxes */
-.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; margin-bottom:20px; }
+.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; overflow-y:auto; height:calc(100dvh - 240px); }
 .sbox h3 { font-family:'Noto Serif',serif; font-size:22px; color:#C9A84C; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
 
 .step-nav {
@@ -24,4 +24,4 @@
   z-index:10;
 }
 .step-nav .btn { min-height:44px; flex-shrink:0; }
-.step-nav .btn-pri { flex:1; min-height:52px; }
+.step-nav .btn-pri { flex:1; min-height:52px; white-space:nowrap; }

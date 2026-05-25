@@ -1,5 +1,5 @@
 import { initApp } from './data/loader.js';
-import { renderDots, goStep, initPowerGamer, togglePowerGamer } from './builder/builder.js';
+import { renderDots, goStep } from './builder/builder.js';
 import { step1Next } from './builder/step-name.js';
 import { step2Next } from './builder/step-class.js';
 import { step3Next } from './builder/step-background.js';
@@ -13,7 +13,6 @@ import { closeOvl, openInfoOverlay } from './shared/overlay.js';
 
 // Expose functions needed by inline onclick handlers
 window.goStep           = goStep;
-window.togglePowerGamer = togglePowerGamer;
 window.step1Next        = step1Next;
 window.step2Next        = step2Next;
 window.step3Next        = step3Next;
@@ -41,7 +40,6 @@ document.addEventListener('keydown', e => {
 function init(){
   renderDots();
   selectMod('lmop');
-  initPowerGamer();
   initApp();
 }
 

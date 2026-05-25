@@ -6,16 +6,29 @@ import { getRating } from '../data/ratings.js';
 import { buildStatAssign } from './step-scores.js';
 
 const SPECIES_VIBES = {
-  Aasimar:'Touched by celestial light',
-  Dragonborn:'Dragon blood runs hot in your veins',
-  Dwarf:'Tough as stone, loyal as iron',
-  Elf:'Ancient grace, keen senses, long memory',
-  Gnome:'Curious, clever, and full of ideas',
-  Goliath:'Mountain-born. Built like one too.',
-  Halfling:'Small, lucky, and surprisingly hard to kill',
-  Human:'Adaptable, ambitious, and everywhere',
-  Orc:'Fierce, fast, and built to endure.',
-  Tiefling:'Your bloodline turns heads — and raises suspicions',
+  Aasimar:    "Celestial radiance heals nearby allies and eventually lets you fly",
+  Dragonborn: "Draconic ancestry gives you a breath weapon and resistance to that damage type",
+  Dwarf:      "Resistant to poison, built tough — your HP stays higher than most",
+  Elf:        "Keen senses, can't be put to sleep by magic, and never need to fully rest",
+  Gnome:      "Resistant to mental magic — illusions and charms barely touch you",
+  Goliath:    "Giant ancestry lets you reduce a big hit once per combat — staying in the fight when others would go down",
+  Halfling:   "Once per turn you can reroll a 1 — luck keeps you alive when others would fall",
+  Human:      "Naturally gifted — you get an extra feat at level 1 that other species don't",
+  Orc:        "When you'd drop to zero HP, you stay at 1 instead — you just don't go down",
+  Tiefling:   "Hellish resistance to fire and a set of innate spells that cost no spell slots",
+};
+
+const SPECIES_WHY = {
+  Aasimar:    "Healing Hands provides free healing, Celestial Revelation adds a damage or healing aura, and eventual flight — strong at every tier",
+  Dragonborn: "Breath weapon gives a reliable area attack option that scales with level, and the paired damage resistance is useful for frontline classes",
+  Dwarf:      "Stonecunning provides Tremorsense and Dwarven Resilience adds poison resistance and advantage on poison saves — consistently useful for martials",
+  Elf:        "Darkvision, Fey Ancestry (can't be put to sleep by magic), and Keen Senses combine into a consistently useful package for any class",
+  Gnome:      "Gnomish Cunning gives advantage on all INT/WIS/CHA saves against magic, making you dramatically harder to control with spells",
+  Goliath:    "Stone's Endurance lets you reduce significant damage once per short rest, keeping you in fights longer than most other species",
+  Halfling:   "Lucky — rerolling 1s on attack rolls, saves, and ability checks — provides a subtle but consistent statistical advantage every session",
+  Human:      "Ranked highly across most classes because an extra feat at level 1 provides a significant power boost unavailable to any other species",
+  Orc:        "Relentless Endurance prevents you from dropping to 0 HP once per long rest — particularly strong for frontline characters",
+  Tiefling:   "Hellish Resistance to fire damage and free spells (Hellish Rebuke, Darkness) that never consume your spell slots",
 };
 
 const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
@@ -24,28 +37,25 @@ export function buildRaceGrid(){
   const g=document.getElementById('race-grid');
   g.innerHTML='';
   const races=getActiveRaces();
-  const isPG=document.body.classList.contains('powergamer-on');
   let entries=Object.entries(races);
-  if(isPG){
-    entries.sort(([a],[b])=>{
-      const ra=RATING_ORDER[getRating(G.char.cls,'species',a)]??4;
-      const rb=RATING_ORDER[getRating(G.char.cls,'species',b)]??4;
-      return ra!==rb?ra-rb:a.localeCompare(b);
-    });
-  } else {
-    entries.sort(([a],[b])=>a.localeCompare(b));
-  }
+  entries.sort(([a],[b])=>{
+    const ra=RATING_ORDER[getRating(G.char.cls,'species',a)]??4;
+    const rb=RATING_ORDER[getRating(G.char.cls,'species',b)]??4;
+    return ra!==rb?ra-rb:a.localeCompare(b);
+  });
   entries.forEach(([name,data])=>{
-    const rating=getRating(G.char.cls,'species',name);
     const mechText=`${data.desc} · Speed ${data.speed}ft`;
     const c=document.createElement('div');
     c.className='opt-card';
-    c.dataset.rating=rating||'';
-    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${SPECIES_VIBES[name]||data.desc}</p><p class="card-mech">${mechText}</p>`;
+    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${SPECIES_VIBES[name]||data.desc}</p>`;
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';
-    infoBtn.onclick=e=>{e.stopPropagation();openInfoOverlay(name,mechText,`https://rpgbot.net/2024-dnd/species/${name.toLowerCase()}/`);};
+    infoBtn.onclick=e=>{
+      e.stopPropagation();
+      const body=`<p>${SPECIES_VIBES[name]||data.desc}</p><p style="margin-top:10px">${SPECIES_WHY[name]||''}</p><p style="margin-top:10px;color:#aaa">${mechText}</p>`;
+      openInfoOverlay(name,body,`https://rpgbot.net/2024-dnd/species/${name.toLowerCase()}/`);
+    };
     c.appendChild(infoBtn);
     c.onclick=()=>selectRace(name,c);
     g.appendChild(c);

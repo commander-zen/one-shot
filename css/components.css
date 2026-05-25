@@ -36,13 +36,6 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
 .opt-card h4 { font-family:'Noto Serif',serif; font-size:17px; font-weight:700; color:var(--gold); margin-bottom:4px; }
 .opt-card p { font-size:.76rem; color:var(--dim); line-height:1.4; }
 
-/* power gamer card borders */
-.powergamer-on .opt-card[data-rating="blue"]   { border:2px solid #4A90D9; }
-.powergamer-on .opt-card[data-rating="green"]  { border:2px solid #5A9E5A; }
-.powergamer-on .opt-card[data-rating="orange"] { border:2px solid #C97B2A; }
-.powergamer-on .opt-card[data-rating="red"]    { border:2px solid #9E3A3A; }
-.powergamer-on .opt-card:hover { border-color:var(--gold); }
-
 /* overlays */
 .overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.88);
@@ -97,31 +90,7 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
   .act-btn { padding:7px 10px; font-size:.68rem; }
 }
 
-/* power gamer toggle */
-.pg-toggle {
-  display:flex; align-items:center; gap:6px;
-  font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.12em;
-  color:#888; opacity:0.4; cursor:pointer; user-select:none;
-  transition:all .2s; margin:8px 0 0; justify-content:flex-end;
-  min-height:44px;
-}
-.pg-toggle.active { color:#C9A84C; opacity:1; }
-.pg-toggle .pg-icon { font-size:.9rem; }
-
-/* power gamer rating badges */
-.pg-badge {
-  position:absolute; top:6px; right:6px;
-  width:10px; height:10px; border-radius:50%;
-  pointer-events:none; display:none;
-}
-.powergamer-on .pg-badge { display:block; }
-.pg-blue    { background:#4a90d9; }
-.pg-green   { background:#4caf50; }
-.pg-orange  { background:#f0a500; }
-.pg-red     { background:#e53935; }
-.pg-neutral { background:rgba(255,255,255,.15); }
-
-/* vibe mode card elements */
+/* card tagline */
 .card-tagline {
   font-family:'Noto Sans',sans-serif;
   font-style:italic;
@@ -130,15 +99,6 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
   margin-top:4px;
   line-height:1.4;
 }
-.card-mech {
-  font-family:'Noto Sans',sans-serif;
-  font-size:11px;
-  color:#888;
-  margin-top:5px;
-  line-height:1.4;
-  display:none;
-}
-.powergamer-on .card-mech { display:block; }
 
 .card-info-btn {
   position:absolute;

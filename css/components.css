@@ -113,3 +113,24 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
 .pg-orange  { background:#f0a500; }
 .pg-red     { background:#e53935; }
 .pg-neutral { background:rgba(255,255,255,.15); }
+
+/* vibe mode card elements */
+.card-tagline {
+  font-style:italic;
+  font-size:12px;
+  color:rgba(255,255,255,.45);
+  margin-top:4px;
+  line-height:1.4;
+}
+
+.card-info-btn {
+  position:absolute;
+  top:6px;
+  left:6px;
+  font-size:11px;
+  color:rgba(255,255,255,.3);
+  cursor:pointer;
+  user-select:none;
+  transition:color .2s;
+}
+.card-info-btn:hover { color:rgba(255,255,255,.7); }

@@ -229,6 +229,15 @@
   <button class="btn btn-pri" onclick="restartGame()">Begin Again</button>
 </div>
 
+<div id="info-overlay" class="overlay hidden">
+  <div class="ovl-box">
+    <h3 id="info-ovl-name"></h3>
+    <div id="info-ovl-mech" style="font-size:.84rem;color:var(--dim);margin-bottom:16px;line-height:1.6"></div>
+    <a id="info-ovl-link" href="#" target="_blank" rel="noopener" style="font-size:.82rem;color:var(--gold);text-decoration:none;display:block;margin-bottom:16px">Deep dive at RPGBOT →</a>
+    <button class="btn btn-full" onclick="closeOvl('info-overlay')">Close</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module" src="js/main.js"></script>

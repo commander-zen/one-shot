@@ -9,7 +9,7 @@ import { step6Next, toggleLanguage } from './builder/step-languages.js';
 import { step7Next } from './builder/step-spells.js';
 import { reviewBack, beginAdventure } from './builder/step-review.js';
 import { selectMod, handleUpload, enterDungeon, sendCustom, restartGame } from './play/play.js';
-import { closeOvl } from './shared/overlay.js';
+import { closeOvl, openInfoOverlay } from './shared/overlay.js';
 
 // Expose functions needed by inline onclick handlers
 window.goStep           = goStep;
@@ -30,6 +30,7 @@ window.selectMod        = selectMod;
 window.enterDungeon     = enterDungeon;
 window.sendCustom       = sendCustom;
 window.closeOvl         = closeOvl;
+window.openInfoOverlay  = openInfoOverlay;
 window.restartGame      = restartGame;
 
 // keydown for custom action input

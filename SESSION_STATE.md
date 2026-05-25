@@ -27,5 +27,7 @@
 
 - ✅ 2026-05-24: Added Background section to review step (step-review.js). Imports getBackground() from storage.js. Displays background name (gold), skill proficiencies, and origin feat in a .sheet-sec block between Skill Proficiencies and Starting Equipment.
 
+- ✅ 2026-05-24: Implemented Vibe Mode across builder. All option cards now show italic taglines instead of mechanical subtitles. ⓘ button (top-left) opens info overlay with mechanical summary + RPGBOT deep-dive link. Power Gamer mode sorts cards by rating (blue→green→orange→red→neutral) instead of alphabetically. Changes: css/components.css (.card-tagline, .card-info-btn), index.html (#info-overlay), overlay.js (openInfoOverlay), main.js (window.openInfoOverlay), step-class.js, step-species.js, step-background.js (vibes data inline, sorting, ⓘ button, pgBadge added to class cards).
+
 ## Cold Start Prompt
 Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders).

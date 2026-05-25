@@ -6,19 +6,19 @@ import { getRating } from '../data/ratings.js';
 import { buildBackground } from './step-background.js';
 
 const CLASS_VIBES = {
-  Artificer:'Gadgets, gizmos, and magic items. You built that.',
-  Barbarian:'Get mad. Hit harder.',
-  Bard:'Charm, wit, and magic — usually in that order.',
-  Cleric:"Divine power. You decide if that's a blessing or a threat.",
-  Druid:"The wilderness doesn't scare you. You are the wilderness.",
-  Fighter:'No magic required. Just skill, steel, and discipline.',
-  Monk:'Fists, focus, and superhuman speed. No weapon needed.',
-  Paladin:'Armored, righteous, and absolutely done with evil.',
-  Ranger:'Hunter, tracker, survivor. The wilds are home.',
-  Rogue:'Strike fast, disappear faster. Work smarter, not harder.',
-  Sorcerer:"Magic runs in your blood. Try not to explode.",
-  Warlock:'You made a deal. The power was worth it. Probably.',
-  Wizard:'You studied. Now you rewrite reality.',
+  Artificer:'Guns, gadgets, and a little bit of magic',
+  Barbarian:'Get mad and hit things. Hard.',
+  Bard:'Charm your way out of anything',
+  Cleric:'Holy power, divine purpose',
+  Druid:'The wild answers to you',
+  Fighter:'The best at one thing: winning fights',
+  Monk:'Your body is the weapon',
+  Paladin:'Smite evil, protect the weak',
+  Ranger:'Hunter of the wilderness',
+  Rogue:'Strike fast, vanish, repeat',
+  Sorcerer:'Magic runs in your blood',
+  Warlock:'Power borrowed from something ancient',
+  Wizard:"You've read every spell ever written",
 };
 
 const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
@@ -42,16 +42,17 @@ export function buildClassGrid(){
     entries.sort(([a],[b])=>a.localeCompare(b));
   }
   entries.forEach(([name,cls])=>{
+    const rating=getRating(G.char.cls,'classes',name);
+    const mechText=`Hit Die: d${cls.hitDie} · Armor: ${cls.ac} · Saves: ${cls.saves.join(', ')} · Choose ${cls.sc} from: ${cls.skills.join(', ')}`;
     const c=document.createElement('div');
     c.className='opt-card';
-    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${CLASS_VIBES[name]||''}</p>`;
+    c.dataset.rating=rating||'';
+    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${CLASS_VIBES[name]||''}</p><p class="card-mech">${mechText}</p>`;
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';
-    const mechText=`Hit Die: d${cls.hitDie} · Armor: ${cls.ac} · Saves: ${cls.saves.join(', ')} · Choose ${cls.sc} from: ${cls.skills.join(', ')}`;
     infoBtn.onclick=e=>{e.stopPropagation();openInfoOverlay(name,mechText,`https://rpgbot.net/2024-dnd/classes/${name.toLowerCase()}/`);};
     c.appendChild(infoBtn);
-    c.appendChild(pgBadge(getRating(G.char.cls,'classes',name)));
     c.onclick=()=>selectClass(name,c);
     g.appendChild(c);
   });

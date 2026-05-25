@@ -1,21 +1,21 @@
 import { G } from '../shared/state.js';
-import { goStep, pgBadge } from './builder.js';
+import { goStep } from './builder.js';
 import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveRaces } from '../data/schema.js';
 import { getRating } from '../data/ratings.js';
 import { buildStatAssign } from './step-scores.js';
 
 const SPECIES_VIBES = {
-  Aasimar:'Touched by celestial light. Wings optional.',
-  Dragonborn:'Born of dragons, built to dominate.',
-  Dwarf:'Stubborn, durable, and absolutely unimpressed by you.',
-  Elf:'Ancient, graceful, and quietly judging everyone.',
-  Gnome:'Curious, clever, and probably already three steps ahead.',
+  Aasimar:'Touched by celestial light',
+  Dragonborn:'Dragon blood runs hot in your veins',
+  Dwarf:'Tough as stone, loyal as iron',
+  Elf:'Ancient grace, keen senses, long memory',
+  Gnome:'Curious, clever, and full of ideas',
   Goliath:'Mountain-born. Built like one too.',
-  Halfling:'Small, lucky, and somehow always fine.',
-  Human:'Adaptable, ambitious, and everywhere.',
+  Halfling:'Small, lucky, and surprisingly hard to kill',
+  Human:'Adaptable, ambitious, and everywhere',
   Orc:'Fierce, fast, and built to endure.',
-  Tiefling:'Infernal heritage. Remarkable cheekbones.',
+  Tiefling:'Your bloodline turns heads — and raises suspicions',
 };
 
 const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
@@ -36,16 +36,17 @@ export function buildRaceGrid(){
     entries.sort(([a],[b])=>a.localeCompare(b));
   }
   entries.forEach(([name,data])=>{
+    const rating=getRating(G.char.cls,'species',name);
+    const mechText=`${data.desc} · Speed ${data.speed}ft`;
     const c=document.createElement('div');
     c.className='opt-card';
-    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${SPECIES_VIBES[name]||data.desc}</p>`;
+    c.dataset.rating=rating||'';
+    c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${SPECIES_VIBES[name]||data.desc}</p><p class="card-mech">${mechText}</p>`;
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';
-    const mechText=`${data.desc} · Speed ${data.speed}ft`;
     infoBtn.onclick=e=>{e.stopPropagation();openInfoOverlay(name,mechText,`https://rpgbot.net/2024-dnd/species/${name.toLowerCase()}/`);};
     c.appendChild(infoBtn);
-    c.appendChild(pgBadge(getRating(G.char.cls,'species',name)));
     c.onclick=()=>selectRace(name,c);
     g.appendChild(c);
   });

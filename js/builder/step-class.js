@@ -76,6 +76,11 @@ const SKILL_PRIORITY = {
   Wizard:    ['Arcana','Investigation'],
 };
 
+function getSkillDesc(name){
+  const key=Object.keys(SKILL_DESC).find(k=>k.toLowerCase()===name.trim().toLowerCase());
+  return key?SKILL_DESC[key]:'';
+}
+
 let selSkills = [];
 export { selSkills };
 
@@ -123,7 +128,8 @@ export function selectClass(name,el){
   const autoSelected=[];
   for(const sk of priority){
     if(autoSelected.length>=cls.sc) break;
-    if(cls.skills.includes(sk)) autoSelected.push(sk);
+    const match=cls.skills.find(s=>s.trim().toLowerCase()===sk.trim().toLowerCase());
+    if(match) autoSelected.push(match);
   }
   selSkills=[...autoSelected];
 
@@ -149,7 +155,7 @@ export function selectClass(name,el){
   cls.skills.forEach(sk=>{
     const chip=document.createElement('div');
     chip.className='skill-chip'+(autoSelected.includes(sk)?' sel':'');
-    chip.innerHTML=`<span>${sk}</span><span style="font-size:11px;color:#888;display:block;margin-top:2px">${SKILL_DESC[sk]||''}</span>`;
+    chip.innerHTML=`<span>${sk}</span><span style="font-size:11px;color:#888;display:block;margin-top:2px">${getSkillDesc(sk)}</span>`;
     chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
     list.appendChild(chip);
   });

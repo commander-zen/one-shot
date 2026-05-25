@@ -1,6 +1,9 @@
 export const DATA_CACHE = {};
 export const rulesetRef = { value: '5.5e' };
 
+import { loadAdventure } from './adventure.js';
+import { loadBestiary }  from './bestiary.js';
+
 const BASE_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/';
 
 export const XPHB_CLASSES = ['Artificer','Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'];
@@ -17,18 +20,24 @@ export async function safeFetch(url, optional=false){
 
 export async function fetchGameData(){
   if(DATA_CACHE['5.5e']) return;
-  const results = await Promise.all([
-    safeFetch(BASE_URL + 'races.json'),
-    safeFetch(BASE_URL + 'backgrounds.json'),
-    safeFetch(BASE_URL + 'spells/spells-phb.json'),
-    safeFetch(BASE_URL + 'spells/spells-xge.json', true),
-    safeFetch(BASE_URL + 'spells/spells-tce.json', true),
-    ...CLASS_FILES.map(n => safeFetch(BASE_URL + `class/class-${n}.json`)),
+  const [results, adventure, bestiary] = await Promise.all([
+    Promise.all([
+      safeFetch(BASE_URL + 'races.json'),
+      safeFetch(BASE_URL + 'backgrounds.json'),
+      safeFetch(BASE_URL + 'spells/spells-phb.json'),
+      safeFetch(BASE_URL + 'spells/spells-xge.json', true),
+      safeFetch(BASE_URL + 'spells/spells-tce.json', true),
+      ...CLASS_FILES.map(n => safeFetch(BASE_URL + `class/class-${n}.json`)),
+    ]),
+    loadAdventure().catch(e => { console.warn('Adventure load failed:', e); return null; }),
+    loadBestiary().catch(e  => { console.warn('Bestiary load failed:', e);  return null; }),
   ]);
   const [races, backgrounds, spellsPhb, spellsXge, spellsTce, ...classResults] = results;
   const cache = { races, backgrounds, spells: [spellsPhb, spellsXge, spellsTce].filter(Boolean), classes: {} };
   CLASS_FILES.forEach((n,i) => { cache.classes[n] = classResults[i]; });
   DATA_CACHE['5.5e'] = cache;
+  if(adventure) DATA_CACHE.adventure = adventure;
+  if(bestiary)  DATA_CACHE.bestiary  = bestiary;
 }
 
 export async function initApp(){

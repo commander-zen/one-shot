@@ -34,5 +34,7 @@
 ## Known Issues
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — beginAdventure() no longer routes there. They remain in the codebase but are unreachable from the builder.
 
+- ✅ 2026-05-24: Created js/data/adventure.js and js/data/bestiary.js. adventure.js fetches LMoP adventure JSON + adventures index from 5etools-2014-src, caches raw, exports loadAdventure/getChapter/getArea/getAllAreas/getAdventureTitle. bestiary.js fetches bestiary-lmop.json (2014 src) and bestiary-mm.json (2024 src), caches raw, exports loadBestiary/getMonster (mm-preferred)/getMonstersByChallenge. loader.js imports both and calls them in parallel with the existing game data fetch; results stored in DATA_CACHE.adventure and DATA_CACHE.bestiary. Both are non-blocking — failures log a warning and do not break builder load.
+
 ## Cold Start Prompt
-Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders). Also: wire the Continue button in #play to the actual LMoP scene rendering.
+Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders). Also: wire the Continue button in #play to the actual LMoP scene rendering using DATA_CACHE.adventure and DATA_CACHE.bestiary now available.

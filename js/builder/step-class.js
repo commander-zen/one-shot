@@ -39,6 +39,43 @@ const CLASS_WHY = {
 
 const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
 
+const SKILL_DESC = {
+  Acrobatics:       "Flip, dodge, and keep your balance",
+  'Animal Handling':"Calm, control, and read animals",
+  Arcana:           "Know spells, magic items, and mystical lore",
+  Athletics:        "Climb, swim, jump, and grapple",
+  Deception:        "Lie convincingly and disguise your intentions",
+  History:          "Recall events, lore, and important facts",
+  Insight:          "Read people — sense lies and hidden motives",
+  Intimidation:     "Frighten or pressure others into compliance",
+  Investigation:    "Search scenes and solve problems logically",
+  Medicine:         "Stabilize the dying and diagnose illness",
+  Nature:           "Know terrain, plants, animals, and weather",
+  Perception:       "Notice things — spot danger before it spots you",
+  Performance:      "Entertain, distract, and command attention",
+  Persuasion:       "Win people over through charm and reason",
+  Religion:         "Know gods, rituals, undead, and holy magic",
+  'Sleight of Hand':"Pick pockets, plant objects, do tricks",
+  Stealth:          "Move without being seen or heard",
+  Survival:         "Track, forage, navigate, and endure the wild",
+};
+
+const SKILL_PRIORITY = {
+  Artificer: ['Investigation','Perception'],
+  Barbarian: ['Athletics','Perception'],
+  Bard:      ['Persuasion','Perception','Deception'],
+  Cleric:    ['Insight','Persuasion'],
+  Druid:     ['Perception','Insight'],
+  Fighter:   ['Athletics','Perception'],
+  Monk:      ['Acrobatics','Insight'],
+  Paladin:   ['Persuasion','Athletics'],
+  Ranger:    ['Perception','Stealth','Survival'],
+  Rogue:     ['Stealth','Perception','Deception','Sleight of Hand'],
+  Sorcerer:  ['Persuasion','Arcana'],
+  Warlock:   ['Deception','Arcana'],
+  Wizard:    ['Arcana','Investigation'],
+};
+
 let selSkills = [];
 export { selSkills };
 
@@ -75,26 +112,49 @@ export function selectClass(name,el){
   document.querySelectorAll('#class-grid .opt-card').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
   G.char.cls=name;
-  selSkills=[];
 
   const cls=getActiveClasses()[name];
   document.getElementById('class-detail').style.display='block';
   document.getElementById('class-info-text').textContent=
     `Hit Die: d${cls.hitDie} · Saving throws: ${cls.saves.join(', ')} · Equipment: ${cls.equip}`;
 
+  // auto-select top recommended skills available in this class's list
+  const priority=SKILL_PRIORITY[name]||[];
+  const autoSelected=[];
+  for(const sk of priority){
+    if(autoSelected.length>=cls.sc) break;
+    if(cls.skills.includes(sk)) autoSelected.push(sk);
+  }
+  selSkills=[...autoSelected];
+
   document.getElementById('skill-label').textContent=`Choose ${cls.sc} skill proficiencie${cls.sc>1?'s':'y'}:`;
+
+  // hint line — inserted once, updated on each class switch
+  let hint=document.getElementById('skill-hint');
+  if(!hint){
+    hint=document.createElement('div');
+    hint.id='skill-hint';
+    hint.style.cssText='font-size:13px;font-style:italic;color:#999;margin:4px 0 8px;';
+    document.getElementById('skill-label').insertAdjacentElement('afterend',hint);
+  }
+  if(autoSelected.length>0){
+    hint.textContent="We’ve selected the best starting skills for your class — change them if you know what you’re doing.";
+    hint.style.display='block';
+  } else {
+    hint.style.display='none';
+  }
 
   const list=document.getElementById('skill-list');
   list.innerHTML='';
   cls.skills.forEach(sk=>{
     const chip=document.createElement('div');
-    chip.className='skill-chip';
-    chip.textContent=sk;
+    chip.className='skill-chip'+(autoSelected.includes(sk)?' sel':'');
+    chip.innerHTML=`<span>${sk}</span><span style="font-size:11px;color:#888;display:block;margin-top:2px">${SKILL_DESC[sk]||''}</span>`;
     chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
     list.appendChild(chip);
   });
 
-  document.getElementById('class-next').disabled=true;
+  document.getElementById('class-next').disabled=selSkills.length<cls.sc;
 }
 
 export function toggleSkill(sk,el,max){

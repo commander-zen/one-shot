@@ -2,8 +2,8 @@ import { G, STATS } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { modStr } from '../shared/dice.js';
 import { getActiveClasses } from '../data/schema.js';
-import { saveChar, getBackground } from '../shared/storage.js';
-import { selectMod } from '../play/play.js';
+import { saveCharacter, setCampaignActive, getBackground } from '../shared/storage.js';
+import { startCampaign } from '../play/play.js';
 
 export function buildReview(){
   const c=G.char;
@@ -70,8 +70,7 @@ export function reviewBack(){
 }
 
 export function beginAdventure(){
-  saveChar(G.char);
-  document.getElementById('phase1').classList.add('hidden');
-  document.getElementById('phase2').classList.remove('hidden');
-  selectMod('lmop');
+  saveCharacter(G.char);
+  setCampaignActive(true);
+  startCampaign();
 }

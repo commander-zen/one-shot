@@ -29,5 +29,10 @@
 
 - ✅ 2026-05-24: Implemented Vibe Mode across builder. All option cards now show italic taglines instead of mechanical subtitles. ⓘ button (top-left) opens info overlay with mechanical summary + RPGBOT deep-dive link. Power Gamer mode sorts cards by rating (blue→green→orange→red→neutral) instead of alphabetically. Changes: css/components.css (.card-tagline, .card-info-btn), index.html (#info-overlay), overlay.js (openInfoOverlay), main.js (window.openInfoOverlay), step-class.js, step-species.js, step-background.js (vibes data inline, sorting, ⓘ button, pgBadge added to class cards).
 
+- ✅ 2026-05-24: Wired builder→play handoff. beginAdventure() now saves full character via saveCharacter(), sets oneshot_campaign_active flag, and calls startCampaign(). startCampaign() hides #phase1, shows #play div with placeholder scene card (LMoP title, subtitle, Continue button). campaignState object added to state.js. storage.js gains saveCharacter/getCharacter, saveCampaignState/getCampaignState, setCampaignActive/getCampaignActive. #play div added to index.html (hidden by default). Old phase2 module-select flow is bypassed; #phase2 and #phase3 remain intact for the old AI DM path.
+
+## Known Issues
+- #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — beginAdventure() no longer routes there. They remain in the codebase but are unreachable from the builder.
+
 ## Cold Start Prompt
-Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders).
+Next unresolved: Populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} placeholders). Also: wire the Continue button in #play to the actual LMoP scene rendering.

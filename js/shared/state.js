@@ -94,3 +94,12 @@ export const G = {
   combat:false,
   enemies:[],
 };
+
+export const campaignState = {
+  adventureId: 'lmop',
+  chapter: 1,
+  areaId: null,
+  questFlags: {},
+  visitedAreas: [],
+  characterId: 'oneshot_character',
+};

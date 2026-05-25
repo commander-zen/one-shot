@@ -6,6 +6,21 @@ import { updateSlots, processMechEvents, setActionsDisabled } from './combat.js'
 
 let uploadedContent = '';
 
+export function startCampaign(){
+  document.getElementById('phase1').classList.add('hidden');
+  const play=document.getElementById('play');
+  play.style.display='block';
+  play.innerHTML=`
+    <div class="ph-header">
+      <h1>Lost Mine of Phandelver</h1>
+      <p>The adventure begins...</p>
+    </div>
+    <div style="margin-top:24px;text-align:center">
+      <button class="btn btn-pri" onclick="console.log('campaign started')">Continue</button>
+    </div>
+  `;
+}
+
 export function selectMod(type){
   G.mod.type=type;
   ['lmop','paste','upload'].forEach(t=>{

@@ -1,25 +1,246 @@
-import { G } from '../shared/state.js';
+import { G, campaignState } from '../shared/state.js';
 import { toast, closeOvl } from '../shared/overlay.js';
-import { clearChar } from '../shared/storage.js';
+import { clearChar, saveCampaignState, getCampaignState, getCharacter } from '../shared/storage.js';
 import { modStr } from '../shared/dice.js';
 import { updateSlots, processMechEvents, setActionsDisabled } from './combat.js';
+import { loadAdventure, getChapter } from '../data/adventure.js';
 
 let uploadedContent = '';
 
-export function startCampaign(){
-  document.getElementById('phase1').classList.add('hidden');
-  const play=document.getElementById('play');
-  play.style.display='block';
-  play.innerHTML=`
-    <div class="ph-header">
-      <h1>Lost Mine of Phandelver</h1>
-      <p>The adventure begins...</p>
+// ── Scene state for active play session ──────────────────────────────────────
+const sceneState = { currentHp: 0, slotsUsed: 0, conditions: [] };
+const conversationHistory = [];
+
+function calcMaxHp(char) {
+  const HIT_DIE_MAP = { Fighter:10, Paladin:12, Ranger:10, Barbarian:12 };
+  const die = char.hitDie || HIT_DIE_MAP[char.cls] || 8;
+  const con = char.final?.CON ?? char.CON ?? 10;
+  return die + Math.floor((con - 10) / 2);
+}
+
+function buildPips(total, used) {
+  let html = '';
+  for (let i = 0; i < total; i++) html += `<span class="spell-pip${i < used ? ' used' : ''}"></span>`;
+  return html;
+}
+
+function buildCharDrawer(char) {
+  if (!char) return '<p>No character loaded.</p>';
+  const s = char.final || {};
+  const STAT_KEYS = ['STR','DEX','CON','INT','WIS','CHA'];
+  const statRow = STAT_KEYS.map(st => {
+    const v = s[st] || 10;
+    const mod = Math.floor((v - 10) / 2);
+    return `<div class="drawer-stat"><span>${st}</span><span>${v} (${mod>=0?'+':''}${mod})</span></div>`;
+  }).join('');
+  return `
+    <div class="drawer-header">
+      <h3>${char.name}</h3>
+      <div class="drawer-sub">${char.race} ${char.cls} · Level 1</div>
     </div>
-    <div style="margin-top:24px;text-align:center">
-      <button class="btn btn-pri" onclick="console.log('campaign started')">Continue</button>
-    </div>
+    <div class="drawer-stats">${statRow}</div>
+    <div class="drawer-section"><strong>Saves:</strong> ${(char.saves||[]).join(', ')||'—'}</div>
+    <div class="drawer-section"><strong>Skills:</strong> ${(char.skills||[]).join(', ')||'—'}</div>
+    <div class="drawer-section"><strong>Equipment:</strong> ${char.equip||'—'}</div>
+    ${char.sp?`<div class="drawer-section"><strong>Cantrips:</strong> ${(char.cantrips||[]).join(', ')||'—'}</div>
+    <div class="drawer-section"><strong>Spells:</strong> ${(char.spells||[]).join(', ')||'—'}</div>`:''}
+    ${char.backstory?`<div class="drawer-section"><strong>Backstory:</strong> ${char.backstory}</div>`:''}
   `;
 }
+
+function updateHud() {
+  const char = getCharacter();
+  if (!char) return;
+  const maxHp = calcMaxHp(char);
+  const pct = Math.max(0, Math.round((sceneState.currentHp / maxHp) * 100));
+  const fill = document.getElementById('hp-fill');
+  if (fill) fill.style.width = `${pct}%`;
+  const label = document.getElementById('hud-hp-label');
+  if (label) label.textContent = `${sceneState.currentHp} / ${maxHp} HP`;
+  const pips = document.getElementById('spell-pips');
+  if (pips && char.maxSlots) pips.innerHTML = buildPips(char.maxSlots, sceneState.slotsUsed);
+}
+
+function renderActionButtons(actions) {
+  const container = document.getElementById('action-btns');
+  if (!container) return;
+  container.innerHTML = actions.map(a =>
+    `<button class="action-btn" data-action="${a.replace(/"/g,'&quot;')}">${a}</button>`
+  ).join('');
+  container.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleAction(btn.dataset.action));
+  });
+}
+
+// ── New campaign flow ─────────────────────────────────────────────────────────
+
+export async function startCampaign() {
+  await loadAdventure();
+  const chapter = getChapter(1);
+  const area = chapter?.sections?.[0] ?? { name: 'Triboar Trail', id: 'ch1-s0', entries: [] };
+  campaignState.areaId = area.id || 'ch1-s0';
+  saveCampaignState(campaignState);
+  document.getElementById('phase1').classList.add('hidden');
+  renderScene(area);
+}
+
+export function renderScene(area) {
+  const char = getCharacter();
+  const maxHp = calcMaxHp(char);
+  if (!sceneState.currentHp) sceneState.currentHp = maxHp;
+
+  let readAloud = null;
+  for (const e of (area.entries || [])) {
+    if (typeof e === 'string') { readAloud = e; break; }
+    if (e?.type === 'entries' && Array.isArray(e.entries)) {
+      for (const sub of e.entries) {
+        if (typeof sub === 'string') { readAloud = sub; break; }
+      }
+      if (readAloud) break;
+    }
+  }
+  if (!readAloud) readAloud = `You arrive at ${area.name}.`;
+
+  const play = document.getElementById('play');
+  play.style.display = 'block';
+  play.innerHTML = `
+    <div id="scene-header">
+      <h2 id="area-name">${area.name}</h2>
+    </div>
+    <div id="chat-log">
+      <blockquote class="scene-narration">${readAloud}</blockquote>
+    </div>
+    <div id="action-menu">
+      <div id="action-btns"></div>
+      <div id="dm-thinking" style="display:none;font-size:.8rem;color:var(--dim);font-style:italic;text-align:center;padding:6px 0">The DM is thinking…</div>
+    </div>
+    <div id="character-hud">
+      <div class="hud-row">
+        <div class="hud-name">${char.name} · ${char.cls}</div>
+        <button class="hud-char-btn" id="hud-char-btn">Character</button>
+      </div>
+      <div class="hp-bar-track"><div class="hp-bar-fill" id="hp-fill" style="width:100%"></div></div>
+      <div class="hud-hp-label" id="hud-hp-label">${sceneState.currentHp} / ${maxHp} HP</div>
+      ${char.sp && char.maxSlots ? `<div class="spell-pips" id="spell-pips">${buildPips(char.maxSlots, sceneState.slotsUsed)}</div>` : ''}
+    </div>
+    <div id="character-drawer" class="hidden">
+      <div class="drawer-inner">
+        ${buildCharDrawer(char)}
+        <button class="btn btn-full drawer-close-btn">Close</button>
+      </div>
+    </div>
+    <div id="drawer-backdrop" class="hidden"></div>
+  `;
+
+  const closeDrawer = () => {
+    document.getElementById('character-drawer').classList.add('hidden');
+    document.getElementById('drawer-backdrop').classList.add('hidden');
+  };
+  document.getElementById('hud-char-btn').addEventListener('click', () => {
+    document.getElementById('character-drawer').classList.remove('hidden');
+    document.getElementById('drawer-backdrop').classList.remove('hidden');
+  });
+  document.querySelector('.drawer-close-btn').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+
+  renderActionButtons(['Look Around', 'Move On', 'Check Character', 'Rest']);
+}
+
+export async function handleAction(label) {
+  document.querySelectorAll('.action-btn').forEach(b => { b.disabled = true; });
+  const thinking = document.getElementById('dm-thinking');
+  if (thinking) thinking.style.display = 'block';
+  try {
+    const response = await askDM(label);
+    renderDMResponse(response);
+  } catch(e) {
+    console.error('DM call failed:', e);
+    renderDMResponse({
+      narration: 'The DM is unreachable. Check your connection and try again.',
+      mechanicalEvents: [],
+      newCharacterState: null,
+      newCampaignState: null,
+      availableActions: ['Look Around', 'Move On', 'Check Character', 'Rest'],
+    });
+  } finally {
+    if (thinking) thinking.style.display = 'none';
+  }
+}
+
+export async function askDM(playerAction) {
+  const char = getCharacter();
+  const state = getCampaignState() || campaignState;
+  const chapter = getChapter(1);
+  const area = chapter?.sections?.find(s => s.id === state.areaId)
+    ?? chapter?.sections?.[0]
+    ?? { name: 'Triboar Trail', entries: [] };
+
+  const res = await fetch('/api/dm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      playerAction,
+      area,
+      character: { ...char, currentHp: sceneState.currentHp },
+      campaignState: state,
+      history: conversationHistory.slice(-6),
+    }),
+  });
+  if (!res.ok) throw new Error('DM API error');
+  return await res.json();
+}
+
+export function renderDMResponse(response) {
+  const { narration='', mechanicalEvents=[], newCharacterState, newCampaignState, availableActions=[] } = response;
+
+  const log = document.getElementById('chat-log');
+  if (log) {
+    const entry = document.createElement('div');
+    entry.className = 'chat-entry';
+
+    const narEl = document.createElement('blockquote');
+    narEl.className = 'scene-narration';
+    narEl.innerHTML = narration.replace(/\n/g, '<br>');
+    entry.appendChild(narEl);
+
+    if (mechanicalEvents.length) {
+      const chips = document.createElement('div');
+      chips.className = 'mech-chips';
+      chips.innerHTML = mechanicalEvents.map(ev =>
+        `<span class="mechanical-chip chip-${ev.type||'status'}">${ev.description||''}${ev.value!=null?` (${ev.value})`:''}</span>`
+      ).join('');
+      entry.appendChild(chips);
+    }
+
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  if (newCharacterState) {
+    if (newCharacterState.currentHp != null) sceneState.currentHp = newCharacterState.currentHp;
+    if (newCharacterState.spellSlotsUsed != null) {
+      sceneState.slotsUsed = typeof newCharacterState.spellSlotsUsed === 'number'
+        ? newCharacterState.spellSlotsUsed
+        : Object.values(newCharacterState.spellSlotsUsed).reduce((a,b)=>a+b, 0);
+    }
+    if (newCharacterState.conditions != null) sceneState.conditions = newCharacterState.conditions;
+    updateHud();
+  }
+
+  if (newCampaignState) {
+    Object.assign(campaignState, newCampaignState);
+    saveCampaignState(campaignState);
+  }
+
+  const nextActions = availableActions.length
+    ? availableActions
+    : ['Look Around', 'Move On', 'Check Character', 'Rest'];
+  renderActionButtons(nextActions);
+
+  conversationHistory.push({ role: 'assistant', content: narration });
+}
+
+// ── Legacy phase3 functions (orphaned from builder flow) ──────────────────────
 
 export function selectMod(type){
   G.mod.type=type;

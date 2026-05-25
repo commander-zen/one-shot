@@ -1,8 +1,8 @@
-import { G, STATS } from '../shared/state.js';
+import { G, STATS, campaignState } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { modStr } from '../shared/dice.js';
 import { getActiveClasses } from '../data/schema.js';
-import { saveCharacter, setCampaignActive, getBackground } from '../shared/storage.js';
+import { saveCharacter, setCampaignActive, getBackground, getRespecState, clearRespecState, saveCampaignState } from '../shared/storage.js';
 import { startCampaign } from '../play/play.js';
 
 export function buildReview(){
@@ -72,5 +72,13 @@ export function reviewBack(){
 export function beginAdventure(){
   saveCharacter(G.char);
   setCampaignActive(true);
-  startCampaign();
+  const respecState = getRespecState();
+  if(respecState){
+    clearRespecState();
+    Object.assign(campaignState, respecState);
+    saveCampaignState(campaignState);
+    startCampaign(true);
+  } else {
+    startCampaign();
+  }
 }

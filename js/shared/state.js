@@ -68,7 +68,7 @@ export const SPELLS = {
     lvl1:['Cure Wounds','Healing Word','Entangle','Goodberry','Speak with Animals','Thunderwave','Fog Cloud','Faerie Fire','Animal Friendship','Charm Person','Detect Magic','Longstrider','Absorb Elements','Ice Knife','Snare'],
   },
   Sorcerer:{
-    cantrips:['Fire Bolt','Ray of Frost','Shocking Grasp','Mage Hand','Minor Illusion','Light','Prestidigitation','Acid Splash','Chill Touch','True Strike'],
+    cantrips:['Fire Bolt','Ray of Frost','Shocking Grasp','Mage Hand','Minor Illusion','Light','Prestidigitation','Acid Splash','Chill Touch','True Strike','Sorcerous Burst'],
     lvl1:['Magic Missile','Burning Hands','Sleep','Charm Person','Shield','Mage Armor','Thunderwave','Detect Magic','Fog Cloud','Expeditious Retreat','Chromatic Orb','Disguise Self','Feather Fall','Jump','Absorb Elements'],
   },
   Warlock:{

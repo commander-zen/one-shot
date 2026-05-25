@@ -4,6 +4,8 @@ import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveClasses } from '../data/schema.js';
 import { getRating } from '../data/ratings.js';
 import { buildBackground } from './step-background.js';
+import { buildSpellPicker } from './step-spells.js';
+import { buildReview } from './step-review.js';
 
 const CLASS_VIBES = {
   Artificer:  "You fix, build, and invent — and your gadgets hit harder than most swords",
@@ -83,6 +85,9 @@ function getSkillDesc(name){
 
 let selSkills = [];
 export { selSkills };
+
+let isRespec = false;
+export function setRespec(v){ isRespec = v; }
 
 export function buildClassGrid(){
   const g=document.getElementById('class-grid');
@@ -180,6 +185,12 @@ export function step2Next(){
   if(!G.char.cls){toast('Select a class.');return;}
   if(selSkills.length<cls.sc){toast(`Select ${cls.sc} skills.`);return;}
   G.char.skills=[...selSkills];
+  if(isRespec){
+    isRespec=false;
+    if(cls.sp){ goStep(7); buildSpellPicker(); }
+    else { G.char.cantrips=[]; G.char.spells=[]; goStep(8); buildReview(); }
+    return;
+  }
   goStep(3);
   buildBackground();
 }

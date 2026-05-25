@@ -54,5 +54,17 @@
 
 - ✅ 2026-05-25: Auto-assign ability scores from Standard Array. Added `STAT_PRIORITY` (13 classes) to step-scores.js. Added `autoAssign()` — reads `G.char.cls`, sets each `asgn-<STAT>` select to `idx-N` matching priority order, dispatches change events, shows "Optimized for [Class] — change any value if you want" hint below grid. `buildStatAssign()` hides any previous hint then calls `autoAssign()` when `scoreMethod === 'std'`, covering both initial step entry (called from step-species.js) and Standard Array button click (via setMethod → buildStatAssign). Also fixed step-nav button labels showing all-caps — Cinzel is a caps-only typeface; added `font-family:'Noto Sans',sans-serif` to `.step-nav .btn` in layout.css.
 
+- ✅ 2026-05-25: UAT fixes pass — 10 items across 11 files:
+  1. **Typography**: Removed italic from `.scene-narration` and `.dm-text` in play.css; switched both to Noto Serif upright.
+  2. **Builder header**: Reduced `.ph-header` padding (32px→8px/6px), margin-bottom (24px→10px), h1 font-size (1.8rem→1rem), p font-size to .78rem — saves ~80px vertical space on 390px viewport.
+  3. **Sticky step title**: `.sbox h3` now `position:sticky; top:0; z-index:5; background:var(--bg2)` with negative side-margins + matching padding to extend bg edge-to-edge within the scroll container.
+  4. **Skill chips 2-col grid**: `.skill-picks` changed from flex-wrap to `display:grid; grid-template-columns:repeat(2,1fr)`. No orphan chips possible. `border-radius:20px→8px`.
+  5. **Skill chip selected contrast**: `.skill-chip.sel` now solid gold fill (`background:var(--gold)`), dark text (`color:var(--bg)`), `font-weight:600` — unambiguous at a glance.
+  6. **Language guidance**: `buildLanguages()` injects a plain-language hint above the chip list (first call only). LMoP soft recommendations: Goblin (Cragmaw tribes), Dwarvish (Wave Echo Cave).
+  7. **Sildar NPC companion**: Added full Sildar Hallwinter stat block + companion rules to `api/dm.js` SYSTEM_PROMPT (AC 18, HP 27, Longsword +3, Crossbow +2, Healing Word 1/day). `renderScene()` in play.js appends Sildar presence note to first-scene read-aloud when `visitedAreas` is empty.
+  8. **Respec flow**: Added `saveRespecState/getRespecState/clearRespecState` to storage.js. `setRespec()`/`isRespec` flag in step-class.js — when set, `step2Next()` skips steps 3-6 and jumps directly to spells or review. `beginAdventure()` in step-review.js restores saved campaignState on respec and calls `startCampaign(true)`. `startCampaign()` accepts `resumeFromSavedState` param, uses saved areaId. `doRespec()` window global in main.js. "↩ Try a Different Class" button in play UI below action buttons.
+  9. **Sorcerous Burst**: Added to SPELLS.Sorcerer.cantrips fallback in state.js. Live 5etools-src (2024 PHB) already fetches it; fallback now consistent.
+  10. **Shield as reaction**: Added explicit rule to SYSTEM_PROMPT — Shield must never appear in availableActions on a normal turn; only offered immediately after a player is hit and has their reaction available.
+
 ## Cold Start Prompt
-Next unresolved: Smoke-test full builder flow — especially step 5: scores auto-assign populates all 6 dropdowns and shows confirmation hint. Then: populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} for 11 classes).
+Next unresolved: Smoke-test full play flow — especially respec (Try a Different Class → pick new class → skip to review or spells → Begin Adventure resumes correct area). Then smoke-test Sildar in initial narration and DM responses.

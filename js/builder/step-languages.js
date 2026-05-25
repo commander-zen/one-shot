@@ -17,6 +17,14 @@ export function buildLanguages(){
   const list = document.getElementById('lang-list');
   list.innerHTML = '';
 
+  if(!document.getElementById('lang-guidance')){
+    const guide = document.createElement('div');
+    guide.id = 'lang-guidance';
+    guide.style.cssText = 'font-size:.84rem;color:var(--dim);line-height:1.55;margin-bottom:12px;';
+    guide.innerHTML = 'Languages are flavor, not power — Common already gets you everywhere. Pick what fits your character\'s story. <span style="color:var(--gold2)">For this adventure: Goblin helps with the Cragmaw goblin tribes, Dwarvish unlocks lore inside Wave Echo Cave.</span>';
+    list.insertAdjacentElement('beforebegin', guide);
+  }
+
   const common = document.createElement('div');
   common.className = 'skill-chip sel locked';
   common.textContent = 'Common';

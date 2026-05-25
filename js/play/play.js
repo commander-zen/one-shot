@@ -74,11 +74,19 @@ function renderActionButtons(actions) {
 
 // ── New campaign flow ─────────────────────────────────────────────────────────
 
-export async function startCampaign() {
+export async function startCampaign(resumeFromSavedState = false) {
+  sceneState.currentHp = 0;
+  sceneState.slotsUsed = 0;
+  sceneState.conditions = [];
   await loadAdventure();
   const chapter = getChapter(1);
-  const area = chapter?.sections?.[0] ?? { name: 'Triboar Trail', id: 'ch1-s0', entries: [] };
-  campaignState.areaId = area.id || 'ch1-s0';
+  const firstArea = chapter?.sections?.[0] ?? { name: 'Triboar Trail', id: 'ch1-s0', entries: [] };
+  let area = firstArea;
+  if(resumeFromSavedState && campaignState.areaId){
+    area = chapter?.sections?.find(s => s.id === campaignState.areaId) ?? firstArea;
+  } else {
+    campaignState.areaId = firstArea.id || 'ch1-s0';
+  }
   saveCampaignState(campaignState);
   document.getElementById('phase1').classList.add('hidden');
   renderScene(area);
@@ -100,6 +108,9 @@ export function renderScene(area) {
     }
   }
   if (!readAloud) readAloud = `You arrive at ${area.name}.`;
+  if (!campaignState.visitedAreas?.length) {
+    readAloud += ' Sildar Hallwinter, a seasoned soldier hired by Gundren Rockseeker, walks the trail beside you — wary, crossbow within reach.';
+  }
 
   const play = document.getElementById('play');
   play.style.display = 'block';
@@ -113,6 +124,9 @@ export function renderScene(area) {
     <div id="action-menu">
       <div id="action-btns"></div>
       <div id="dm-thinking" style="display:none;font-size:.8rem;color:var(--dim);font-style:italic;text-align:center;padding:6px 0">The DM is thinking…</div>
+      <div style="text-align:center;padding-top:8px;border-top:1px solid var(--border);margin-top:8px">
+        <button class="hud-char-btn" onclick="doRespec()" style="font-size:.65rem;opacity:.55;">↩ Try a Different Class</button>
+      </div>
     </div>
     <div id="character-hud">
       <div class="hud-row">

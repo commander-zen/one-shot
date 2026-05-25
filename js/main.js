@@ -1,7 +1,8 @@
 import { initApp } from './data/loader.js';
 import { renderDots, goStep } from './builder/builder.js';
 import { step1Next } from './builder/step-name.js';
-import { step2Next } from './builder/step-class.js';
+import { step2Next, setRespec, buildClassGrid } from './builder/step-class.js';
+import { getCampaignState, saveRespecState } from './shared/storage.js';
 import { step3Next } from './builder/step-background.js';
 import { step4Next } from './builder/step-species.js';
 import { setMethod, rollStats, step5Next } from './builder/step-scores.js';
@@ -31,6 +32,15 @@ window.sendCustom       = sendCustom;
 window.closeOvl         = closeOvl;
 window.openInfoOverlay  = openInfoOverlay;
 window.restartGame      = restartGame;
+window.doRespec = function(){
+  const cs = getCampaignState() || {};
+  saveRespecState(cs);
+  document.getElementById('play').style.display = 'none';
+  document.getElementById('phase1').classList.remove('hidden');
+  setRespec(true);
+  goStep(2);
+  buildClassGrid();
+};
 
 // keydown for custom action input
 document.addEventListener('keydown', e => {

@@ -36,7 +36,7 @@
   padding:1px 8px; border-radius:10px; font-family:'Cinzel',serif;
   font-size:.62rem; color:var(--gold); letter-spacing:.05em;
 }
-.dm-text { color:var(--parch); font-style:italic; line-height:1.75; }
+.dm-text { color:var(--parch); line-height:1.75; font-family:'Noto Serif',serif; }
 
 .player-msg { text-align:right; }
 .player-bubble {
@@ -114,8 +114,7 @@
   background: #111;
   border-left: 3px solid var(--gold);
   border-radius: 0 4px 4px 0;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
+  font-family: 'Noto Serif', serif;
   font-size: .97rem;
   line-height: 1.75;
   color: var(--parch);

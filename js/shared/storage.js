@@ -14,3 +14,6 @@ export const saveCampaignState = state => localStorage.setItem(PREFIX+'campaign_
 export const getCampaignState  = ()    => JSON.parse(localStorage.getItem(PREFIX+'campaign_state')||'null');
 export const setCampaignActive = val   => localStorage.setItem(PREFIX+'campaign_active', String(val));
 export const getCampaignActive = ()    => localStorage.getItem(PREFIX+'campaign_active')==='true';
+export const saveRespecState   = state => localStorage.setItem(PREFIX+'respec_state', JSON.stringify(state));
+export const getRespecState    = ()    => JSON.parse(localStorage.getItem(PREFIX+'respec_state')||'null');
+export const clearRespecState  = ()    => localStorage.removeItem(PREFIX+'respec_state');

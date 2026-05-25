@@ -1,9 +1,9 @@
 /* ── LAYOUT ── */
 #app { max-width: 680px; margin: 0 auto; padding: 0 16px 20px; }
 
-.ph-header { text-align:center; padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
-.ph-header h1 { font-size: 1.8rem; }
-.ph-header p { color: var(--dim); margin-top: 6px; font-style: italic; }
+.ph-header { text-align:center; padding: 8px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+.ph-header h1 { font-size: 1rem; }
+.ph-header p { color: var(--dim); margin-top: 2px; font-style: italic; font-size: .78rem; }
 
 /* step dots */
 .step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:28px; align-items:center; }
@@ -13,7 +13,12 @@
 
 /* step boxes */
 .sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; overflow-y:auto; min-height:calc(100dvh - 180px); }
-.sbox h3 { font-family:'Noto Serif',serif; font-size:22px; color:#C9A84C; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+.sbox h3 {
+  font-family:'Noto Serif',serif; font-size:22px; color:#C9A84C;
+  margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:5; background:var(--bg2);
+  margin-left:-24px; margin-right:-24px; padding-left:24px; padding-right:24px; padding-top:12px;
+}
 
 .step-nav {
   display:flex; gap:10px; align-items:center;

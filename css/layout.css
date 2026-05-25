@@ -23,5 +23,5 @@
   border-top:1px solid var(--border);
   z-index:10;
 }
-.step-nav .btn { min-height:44px; flex-shrink:0; white-space:nowrap; }
+.step-nav .btn { min-height:44px; flex-shrink:0; white-space:nowrap; font-family:'Noto Sans',sans-serif; }
 .step-nav .btn-pri { flex:1; min-height:52px; }

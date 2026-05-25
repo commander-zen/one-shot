@@ -5,6 +5,22 @@ import { mod, modStr, roll4d6, calcAC } from '../shared/dice.js';
 import { getActiveRaces, applyRacialBonuses, getActiveClasses } from '../data/schema.js';
 import { buildLanguages } from './step-languages.js';
 
+const STAT_PRIORITY = {
+  Artificer:  ['INT','CON','DEX','WIS','CHA','STR'],
+  Barbarian:  ['STR','CON','DEX','WIS','CHA','INT'],
+  Bard:       ['CHA','DEX','CON','WIS','INT','STR'],
+  Cleric:     ['WIS','CON','STR','CHA','DEX','INT'],
+  Druid:      ['WIS','CON','DEX','CHA','INT','STR'],
+  Fighter:    ['STR','CON','DEX','WIS','CHA','INT'],
+  Monk:       ['DEX','WIS','CON','STR','CHA','INT'],
+  Paladin:    ['STR','CHA','CON','DEX','WIS','INT'],
+  Ranger:     ['DEX','WIS','CON','STR','CHA','INT'],
+  Rogue:      ['DEX','CHA','CON','WIS','INT','STR'],
+  Sorcerer:   ['CHA','CON','DEX','WIS','INT','STR'],
+  Warlock:    ['CHA','CON','DEX','WIS','INT','STR'],
+  Wizard:     ['INT','CON','DEX','WIS','CHA','STR'],
+};
+
 let scoreMethod = 'std';
 let rolledVals = [];
 let assignedScores = {};
@@ -33,6 +49,26 @@ export function rollStats(){
   buildStatAssign();
 }
 
+function autoAssign(){
+  const priority=STAT_PRIORITY[G.char.cls];
+  if(!priority) return;
+  priority.forEach((stat,i)=>{
+    const sel=document.getElementById('asgn-'+stat);
+    if(!sel) return;
+    sel.value='idx-'+i;
+    sel.dispatchEvent(new Event('change'));
+  });
+  let hint=document.getElementById('std-assign-hint');
+  if(!hint){
+    hint=document.createElement('div');
+    hint.id='std-assign-hint';
+    hint.style.cssText='font-size:13px;font-style:italic;color:#999;margin-top:8px;';
+    document.getElementById('stat-assign-grid').insertAdjacentElement('afterend',hint);
+  }
+  hint.textContent=`Optimized for ${G.char.cls} — change any value if you want`;
+  hint.style.display='block';
+}
+
 export function buildStatAssign(){
   const vals=(scoreMethod==='roll'&&rolledVals.length===6)
     ? [...rolledVals].sort((a,b)=>b-a)
@@ -41,6 +77,9 @@ export function buildStatAssign(){
   const g=document.getElementById('stat-assign-grid');
   g.innerHTML='';
   assignedScores={};
+
+  const existingHint=document.getElementById('std-assign-hint');
+  if(existingHint) existingHint.style.display='none';
 
   STATS.forEach(stat=>{
     const box=document.createElement('div');
@@ -75,6 +114,8 @@ export function buildStatAssign(){
   const b=getActiveRaces()[G.char.race]?.bonuses||{};
   const bText=Object.entries(b).map(([s,v])=>`+${v} ${s}`).join(', ');
   document.getElementById('racial-note').textContent=`Racial bonuses applied after assignment: ${bText}`;
+
+  if(scoreMethod==='std') autoAssign();
 }
 
 export function refreshMods(){

@@ -52,5 +52,7 @@
 
 - ✅ 2026-05-25: Auto-select recommended skills in class step. `SKILL_PRIORITY` object (13 classes) picks top-N skills from live class list on class selection; `selSkills` pre-populated so Next button enables immediately when all slots filled. Hint line ("We've selected the best…") shown below label when ≥1 auto-selected. `SKILL_DESC` object (18 skills) adds 11px #888 description line inside each skill chip. Changes in step-class.js only.
 
+- ✅ 2026-05-25: Auto-assign ability scores from Standard Array. Added `STAT_PRIORITY` (13 classes) to step-scores.js. Added `autoAssign()` — reads `G.char.cls`, sets each `asgn-<STAT>` select to `idx-N` matching priority order, dispatches change events, shows "Optimized for [Class] — change any value if you want" hint below grid. `buildStatAssign()` hides any previous hint then calls `autoAssign()` when `scoreMethod === 'std'`, covering both initial step entry (called from step-species.js) and Standard Array button click (via setMethod → buildStatAssign). Also fixed step-nav button labels showing all-caps — Cinzel is a caps-only typeface; added `font-family:'Noto Sans',sans-serif` to `.step-nav .btn` in layout.css.
+
 ## Cold Start Prompt
-Next unresolved: Smoke-test the full builder flow in browser — verify all 8 steps render, skill auto-select works, ⓘ overlay shows 3 paragraphs, play screen loads. Then: populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} for 11 classes).
+Next unresolved: Smoke-test full builder flow — especially step 5: scores auto-assign populates all 6 dropdowns and shows confirmation hint. Then: populate `backgrounds` and `subclasses` sections in ratings.js for all 13 classes (currently empty {} for 11 classes).

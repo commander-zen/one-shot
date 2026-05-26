@@ -1,6 +1,6 @@
 const PREFIX = 'oneshot_';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export const DEFAULT_CAMPAIGN_STATE = {
   _schemaVersion: SCHEMA_VERSION,
@@ -11,9 +11,10 @@ export const DEFAULT_CAMPAIGN_STATE = {
   currentArea: null,
   questFlags: {},
   visitedAreas: [],
-  willhp: 28,
-  seamushp: 51,
-  kraghp: 58,
+  playerLevel: 1,
+  willhp: 14,
+  seamushp: 12,
+  kraghp: 15,
   kraghorExhaustion: false,
   sildarMet: false,
   conversationHistory: [],
@@ -64,7 +65,16 @@ function migrateState(saved, defaults) {
 }
 
 const PREFIX_KEY = k => PREFIX + k;
-const save = (k, v) => localStorage.setItem(PREFIX_KEY(k), JSON.stringify(v));
+
+// Optional Firebase sync hook — set by auth.js after sign-in.
+// Called with (fullKey, rawValue) on every save. Fire-and-forget; failures are silent.
+let _saveHook = null;
+export function registerSaveHook(fn) { _saveHook = fn; }
+
+const save = (k, v) => {
+  localStorage.setItem(PREFIX_KEY(k), JSON.stringify(v));
+  if (_saveHook) _saveHook(PREFIX_KEY(k), v);
+};
 const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(PREFIX_KEY(k)) ?? 'null') ?? fallback; } catch { return fallback; } };
 
 // ── Character ──────────────────────────────────────────────────────────────────

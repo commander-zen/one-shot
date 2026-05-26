@@ -33,9 +33,17 @@ You must ALWAYS respond with valid JSON in exactly this shape:
   "narration": "string",
   "mechanicalEvents": [ { "type": "damage|heal|status|xp|item", "description": "string", "value": 0 } ],
   "newCharacterState": { "currentHp": 0, "spellSlotsUsed": 0, "conditions": [] },
-  "newCampaignState": { "areaId": "string", "questFlags": {}, "visitedAreas": [], "willhp": 28, "seamushp": 51, "kraghp": 58, "kraghorExhaustion": false },
+  "newCampaignState": { "areaId": "string", "questFlags": {}, "visitedAreas": [], "willhp": 0, "seamushp": 0, "kraghp": 0, "kraghorExhaustion": false },
+  "levelUp": false,
   "availableActions": [ "string" ]
 }
+
+LEVEL-UP RULES — PaBtSo milestone progression. Set levelUp: true exactly once when the party completes the milestone:
+- Level 1 → 2: Party defeats the goblins at Cragmaw Hideout and escapes with Gundren's location.
+- Level 2 → 3: Party defeats the Redbrand leader and clears Tresendar Manor.
+- Level 3 → 4: Party rescues Gundren from Cragmaw Castle.
+- Level 4 → 5: Party enters Wave Echo Cave and confronts the Black Spider.
+When levelUp is true, narrate the party's moment of growth briefly. The frontend handles all stat increases automatically.
 
 For combat encounters, availableActions must include relevant attack/spell options for the character's class and current resources. For exploration, offer movement and investigation options. Always include at least one cautious option and one bold option.
 
@@ -67,14 +75,19 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { playerAction, area, character, campaignState, history = [] } = req.body;
+  const { playerAction, area, character, campaignState, companionMaxHp: cMax, history = [] } = req.body;
 
   const char = character || {};
+  const playerLevel = campaignState?.playerLevel || 1;
   const areaText = extractAreaText(area);
+  const willMax   = cMax?.will   ?? 14;
+  const seamusMax = cMax?.seamus ?? 12;
+  const kragMax   = cMax?.krag   ?? 15;
   const userMessage = [
     `Area: ${area?.name || 'Unknown'}`,
     areaText ? `\n${areaText}` : '',
-    `\nCharacter: ${char.name || 'Unknown'}, ${char.cls || 'Unknown'}, Level ${char.level || 1}, HP ${char.currentHp ?? char.maxHp ?? '?'}/${char.maxHp || '?'}`,
+    `\nCharacter: ${char.name || 'Unknown'}, ${char.cls || 'Unknown'}, Level ${playerLevel}, HP ${char.currentHp ?? char.maxHp ?? '?'}/${char.maxHp || '?'}`,
+    `\nCompanion max HP at level ${playerLevel} — Williwaw: ${willMax}, Seamus: ${seamusMax}, Kraghor: ${kragMax}`,
     `\nPlayer action: ${playerAction}`,
   ].join('');
 
@@ -92,6 +105,7 @@ module.exports = async (req, res) => {
       conditions: [],
     },
     newCampaignState: campaignState || {},
+    levelUp: false,
     availableActions: FALLBACK_ACTIONS,
   };
 

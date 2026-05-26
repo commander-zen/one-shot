@@ -103,5 +103,23 @@
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
 - api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
 
+- ✅ 2026-05-26: Spell chip selected state — `.spell-chip.sel` now uses gold fill (`var(--gold)`), dark text (`var(--bg)`), `font-weight:600`. Matches skill chip pattern. Transition removed from `.spell-chip` for instant tap feedback. No other chip styles changed.
+
+- ✅ 2026-05-26: HUD companion collapse out of combat. `#companion-toggle` label (▲/▼ companions, gold, 11px Cinzel) appears below HP when not in combat; hidden in combat. `#companion-status` hidden by default, shown via `.in-combat` or `.hud-expanded` on `#character-hud`. `renderActions()` syncs `.in-combat` on every combat state change. Toggle click handler flips `.hud-expanded` and swaps chevron text. No changes to combat logic or Character button.
+
+- ✅ 2026-05-26: Companion HP scaling by player level. `COMPANION_LEVELS` table added to `state.js` (levels 1–5 for Williwaw, Seamus, Kraghor — HP, AC, attack bonus, damage, spell stats). `companionMaxHp(level)` helper exported. `storage.js` schema bumped to version 2, `DEFAULT_CAMPAIGN_STATE` gains `playerLevel: 1` and level-1 companion HP defaults (14/12/15). `play.js`: `COMPANION_MAX` is now `let`, initialized from saved `playerLevel` in `startCampaign`, companion HPs clamped to max on load. `askDM` sends `companionMaxHp` in request body. `renderDMResponse` handles `levelUp: true` — increments level (capped at 5), recomputes max HP, tops companions off, saves state. `api/dm.js`: `levelUp: false` added to JSON schema and fallback; PaBtSo milestone guidance added (4 milestones, levels 1→5); `userMessage` includes player level and companion max HP.
+
+- ✅ 2026-05-26: Firebase Auth + cross-device save. New files: `api/firebase-config.js` (serves public Firebase config from Vercel env vars), `js/shared/auth.js` (lazy Firebase init, `sendMagicLink`, `confirmMagicLink`, `onAuthReady`, `loadStateFromDb`, `wireFirebaseSaves`). `storage.js` gains `registerSaveHook(fn)` — called by the internal `save()` on every write, enabling fire-and-forget Firebase sync. `index.html`: auth gate overlay added (three view states: form, sent, loading). `main.js` rewritten: `init()` only called after `onAuthReady` resolves with a UID; on sign-in, `loadStateFromDb` syncs Firebase → localStorage before game starts; `wireFirebaseSaves` registers the hook for ongoing saves. Magic link return detected via `confirmMagicLink()` on page load.
+
+## Known Issues
+- Firebase env vars must be set in Vercel dashboard: `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_DATABASE_URL`. App will not load (auth gate stuck) until these are set.
+- Firebase Console must whitelist `https://one-shot-taupe.vercel.app` in Authentication → Settings → Authorized domains.
+- Firebase Security Rules must restrict `users/{uid}` reads/writes to the authenticated user — default rules are open.
+- PaBtSo chapter path: console.log at adventure load will show the correct chapter index. If "Chapter 1" isn't found by name search, check the log and update `getChapter()` positional fallback (`n-1` vs `n`).
+- Send It cantrips: populated from SPELLS[cls] fallback (state.js), not from Groq response.
+- Fixed footer height padding (200px) is generous — may leave empty space on step 1 where footer is small.
+- #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
+- api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
+
 ## Cold Start Prompt
-Next unresolved: Visual verification needed — scroll architecture, fixed header/footer, selected card checkmark, spell labels in review. Smoke-test Send It + Send It Again full flow including error state reset. Check PaBtSo chapter console log on first adventure load.
+Next unresolved: Set Firebase env vars in Vercel (FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_DATABASE_URL). Create one-shot Firebase project, enable Email Link sign-in, whitelist app domain, set Security Rules. Smoke-test auth gate → magic link → sign-in → game loads with correct saved state on a second device.

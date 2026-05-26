@@ -13,6 +13,36 @@
 </head>
 <body>
 
+<!-- AUTH GATE — visible by default, dismissed after sign-in -->
+<div id="auth-gate" class="overlay" style="z-index:300;align-items:center">
+  <div class="ovl-box" style="max-width:360px;width:100%;text-align:center">
+
+    <!-- Form: default view -->
+    <div id="auth-form-view">
+      <h3 style="margin-bottom:6px">One-Shot</h3>
+      <p style="color:var(--dim);font-size:.84rem;margin-bottom:20px;font-family:'Noto Serif',serif;font-style:normal">Sign in to save your campaign across devices</p>
+      <div class="field" style="text-align:left">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <button class="btn btn-pri btn-full" id="auth-send-btn">Send Magic Link</button>
+      <div id="auth-error" style="display:none;color:var(--red);font-size:.84rem;margin-top:10px;font-family:'Noto Serif',serif;font-style:normal"></div>
+    </div>
+
+    <!-- Sent: after email link dispatched -->
+    <div id="auth-sent-view" class="hidden">
+      <h3 style="margin-bottom:12px">Check Your Email</h3>
+      <p style="color:var(--dim);font-size:.88rem;line-height:1.7;font-family:'Noto Serif',serif;font-style:normal">A sign-in link is on its way.<br>Tap it to continue — no password needed.</p>
+    </div>
+
+    <!-- Loading: magic link detected, completing sign-in -->
+    <div id="auth-loading-view" class="hidden">
+      <p style="color:var(--dim);font-size:.88rem;font-style:italic;padding:16px 0">Signing you in…</p>
+    </div>
+
+  </div>
+</div>
+
 <div id="app">
 
 <!-- LOADING -->

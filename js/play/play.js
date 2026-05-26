@@ -1,4 +1,4 @@
-import { G, campaignState } from '../shared/state.js';
+import { G, campaignState, companionMaxHp } from '../shared/state.js';
 import { toast, closeOvl } from '../shared/overlay.js';
 import { clearChar, saveCampaignState, getCampaignState, getCharacter } from '../shared/storage.js';
 import { modStr } from '../shared/dice.js';
@@ -8,7 +8,7 @@ import { loadAdventure, getChapter } from '../data/adventure.js';
 let uploadedContent = '';
 
 // ── Scene state for active play session ──────────────────────────────────────
-const COMPANION_MAX = { will: 28, seamus: 51, krag: 58 };
+let COMPANION_MAX = { will: 14, seamus: 12, krag: 15 }; // updated from playerLevel at init
 const sceneState = { currentHp: 0, slotsUsed: 0, conditions: [], willhp: 0, seamushp: 0, kraghp: 0 };
 const conversationHistory = [];
 
@@ -118,9 +118,10 @@ export async function startCampaign(resumeFromSavedState = false) {
   sceneState.slotsUsed = 0;
   sceneState.conditions = [];
   const saved = getCampaignState() || {};
-  sceneState.willhp   = saved.willhp   ?? COMPANION_MAX.will;
-  sceneState.seamushp = saved.seamushp ?? COMPANION_MAX.seamus;
-  sceneState.kraghp   = saved.kraghp   ?? COMPANION_MAX.krag;
+  COMPANION_MAX = companionMaxHp(saved.playerLevel || 1);
+  sceneState.willhp   = Math.min(saved.willhp   ?? COMPANION_MAX.will,   COMPANION_MAX.will);
+  sceneState.seamushp = Math.min(saved.seamushp ?? COMPANION_MAX.seamus, COMPANION_MAX.seamus);
+  sceneState.kraghp   = Math.min(saved.kraghp   ?? COMPANION_MAX.krag,   COMPANION_MAX.krag);
   await loadAdventure();
   const chapter = getChapter(1);
   if(!chapter?.sections?.length) console.error('[adventure] Chapter 1 sections not found — check console log for correct path');
@@ -181,6 +182,7 @@ export function renderScene(area) {
       <div class="hp-bar-track"><div class="hp-bar-fill" id="hp-fill" style="width:100%"></div></div>
       <div class="hud-hp-label" id="hud-hp-label">${sceneState.currentHp} / ${maxHp} HP</div>
       ${char.sp && char.maxSlots ? `<div class="spell-pips" id="spell-pips">${buildPips(char.maxSlots, sceneState.slotsUsed)}</div>` : ''}
+      <div id="companion-toggle">▲ companions</div>
       <div id="companion-status">${buildCompanionStatus()}</div>
     </div>
     <div id="character-drawer" class="hidden">
@@ -199,6 +201,11 @@ export function renderScene(area) {
   document.getElementById('hud-char-btn').addEventListener('click', () => {
     document.getElementById('character-drawer').classList.remove('hidden');
     document.getElementById('drawer-backdrop').classList.remove('hidden');
+  });
+  document.getElementById('companion-toggle').addEventListener('click', () => {
+    const hud = document.getElementById('character-hud');
+    const expanded = hud.classList.toggle('hud-expanded');
+    document.getElementById('companion-toggle').textContent = expanded ? '▼ companions' : '▲ companions';
   });
   document.querySelector('.drawer-close-btn').addEventListener('click', closeDrawer);
   document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
@@ -243,6 +250,7 @@ export async function askDM(playerAction) {
       area,
       character: { ...char, currentHp: sceneState.currentHp },
       campaignState: { ...state, willhp: sceneState.willhp, seamushp: sceneState.seamushp, kraghp: sceneState.kraghp },
+      companionMaxHp: COMPANION_MAX,
       history: conversationHistory.slice(-6),
     }),
   });
@@ -289,10 +297,25 @@ export function renderDMResponse(response) {
 
   if (newCampaignState) {
     Object.assign(campaignState, newCampaignState);
-    saveCampaignState(campaignState);
     if (newCampaignState.willhp   != null) sceneState.willhp   = newCampaignState.willhp;
     if (newCampaignState.seamushp != null) sceneState.seamushp = newCampaignState.seamushp;
     if (newCampaignState.kraghp   != null) sceneState.kraghp   = newCampaignState.kraghp;
+  }
+
+  if (response.levelUp) {
+    const newLevel = Math.min((campaignState.playerLevel || 1) + 1, 5);
+    campaignState.playerLevel = newLevel;
+    COMPANION_MAX = companionMaxHp(newLevel);
+    sceneState.willhp   = COMPANION_MAX.will;
+    sceneState.seamushp = COMPANION_MAX.seamus;
+    sceneState.kraghp   = COMPANION_MAX.krag;
+    campaignState.willhp   = sceneState.willhp;
+    campaignState.seamushp = sceneState.seamushp;
+    campaignState.kraghp   = sceneState.kraghp;
+  }
+
+  if (newCampaignState || response.levelUp) {
+    saveCampaignState(campaignState);
     updateCompanionHud();
   }
 
@@ -411,6 +434,8 @@ export function renderActions(){
   const cr=document.getElementById('custom-row');
   bar.innerHTML='';
   cr.style.display='none';
+  const hud=document.getElementById('character-hud');
+  if(hud) hud.classList.toggle('in-combat', !!G.combat);
 
   const mkBtn=(label,fn)=>{
     const b=document.createElement('button');

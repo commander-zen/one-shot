@@ -81,6 +81,43 @@ export const SPELLS = {
   },
 };
 
+// Companion stats by player level (1–5). Level 5 matches the handoff doc stat blocks.
+export const COMPANION_LEVELS = {
+  will: [
+    null,
+    { hp: 14, ac: 13, atkBonus: 3, meleeDmg: '1d6+1', flameDmg: '1d4',  spellDC: 11, healBonus: 3, healDmg: '1d4+1' }, // L1
+    { hp: 18, ac: 13, atkBonus: 3, meleeDmg: '1d6+1', flameDmg: '1d4',  spellDC: 11, healBonus: 3, healDmg: '1d4+1' }, // L2
+    { hp: 22, ac: 13, atkBonus: 4, meleeDmg: '1d6+2', flameDmg: '1d6',  spellDC: 12, healBonus: 4, healDmg: '1d4+2' }, // L3
+    { hp: 25, ac: 13, atkBonus: 4, meleeDmg: '1d6+2', flameDmg: '1d6',  spellDC: 12, healBonus: 4, healDmg: '1d4+2' }, // L4
+    { hp: 28, ac: 13, atkBonus: 5, meleeDmg: '1d6+3', flameDmg: '1d8',  spellDC: 13, healBonus: 5, healDmg: '1d4+3' }, // L5
+  ],
+  seamus: [
+    null,
+    { hp: 12, ac: 15, atkBonus: 4, dmg: '1d6+2', superiority: null,  multiattack: false }, // L1
+    { hp: 22, ac: 15, atkBonus: 4, dmg: '1d6+2', superiority: '4d6', multiattack: false }, // L2
+    { hp: 32, ac: 16, atkBonus: 5, dmg: '1d6+3', superiority: '4d6', multiattack: false }, // L3
+    { hp: 41, ac: 16, atkBonus: 6, dmg: '1d6+4', superiority: '4d8', multiattack: false }, // L4
+    { hp: 51, ac: 17, atkBonus: 8, dmg: '1d6+5', superiority: '4d8', multiattack: true  }, // L5
+  ],
+  krag: [
+    null,
+    { hp: 15, ac: 13, atkBonus: 4, dmg: '1d12+3', frenzy: false }, // L1
+    { hp: 25, ac: 13, atkBonus: 4, dmg: '1d12+3', frenzy: false }, // L2
+    { hp: 36, ac: 14, atkBonus: 5, dmg: '1d12+4', frenzy: false }, // L3
+    { hp: 47, ac: 14, atkBonus: 6, dmg: '1d12+4', frenzy: false }, // L4
+    { hp: 58, ac: 14, atkBonus: 7, dmg: '1d12+5', frenzy: true  }, // L5
+  ],
+};
+
+export function companionMaxHp(level) {
+  const lvl = Math.min(Math.max(level || 1, 1), 5);
+  return {
+    will:   COMPANION_LEVELS.will[lvl].hp,
+    seamus: COMPANION_LEVELS.seamus[lvl].hp,
+    krag:   COMPANION_LEVELS.krag[lvl].hp,
+  };
+}
+
 export const G = {
   char:{
     name:'',backstory:'',race:'',cls:'',

@@ -62,7 +62,7 @@ function autoAssign(){
   if(!hint){
     hint=document.createElement('div');
     hint.id='std-assign-hint';
-    hint.style.cssText='font-size:13px;font-style:italic;color:#999;margin-top:8px;';
+    hint.className='skill-hint';
     document.getElementById('stat-assign-grid').insertAdjacentElement('afterend',hint);
   }
   hint.textContent=`Optimized for ${G.char.cls} — change any value if you want`;

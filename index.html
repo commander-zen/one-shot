@@ -41,10 +41,14 @@
     </div>
     <div class="field">
       <label>Backstory / Description <span style="color:var(--dim);font-size:.75rem">(optional — feeds DM context)</span></label>
-      <textarea id="char-backstory" placeholder="A grizzled veteran haunted by loss… a young thief seeking redemption…"></textarea>
+      <textarea id="char-backstory" placeholder="A grizzled veteran haunted by loss… a young thief seeking redemption…" oninput="onBackstoryInput()"></textarea>
+    </div>
+    <div style="text-align:center;margin:12px 0 4px">
+      <button class="btn btn-pri" id="send-it-btn" onclick="sendIt()" disabled style="width:100%;font-size:.95rem;letter-spacing:.06em">✨ Send It</button>
+      <div id="send-it-status" style="display:none;font-family:'Noto Serif',serif;font-size:14px;color:#e74c3c;margin-top:8px;"></div>
     </div>
     <div class="step-nav">
-      <button class="btn btn-pri" onclick="step1Next()">Class →</button>
+      <button class="btn btn-pri" onclick="step1Next()">Build Manually →</button>
     </div>
   </div>
 
@@ -106,12 +110,11 @@
     </div>
   </div>
 
-  <!-- Step 6: Languages -->
+  <!-- Step 6: Languages (auto-assigned) -->
   <div id="step6" class="sbox hidden">
-    <h3>Choose Your Languages</h3>
-    <p style="font-size:.84rem;color:var(--dim);margin-bottom:14px;">You know Common. Choose 2 additional languages.</p>
-    <div class="skill-picks" id="lang-list"></div>
-    <div id="lang-count" style="font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px;">0 of 2 selected</div>
+    <h3>Languages</h3>
+    <div id="lang-list"></div>
+    <div id="lang-count"></div>
     <div class="step-nav">
       <button class="btn" onclick="goStep(5)">← Back</button>
       <button class="btn btn-pri" id="lang-next" onclick="step6Next()" disabled>Continue →</button>
@@ -134,6 +137,7 @@
     <h3>Character Summary</h3>
     <div id="review-content"></div>
     <div class="step-nav" style="flex-direction:column;gap:12px;margin-top:24px">
+      <button class="btn btn-full" id="send-it-again-btn" onclick="sendItAgain()" style="display:none;font-size:.85rem;border-color:var(--border-g);color:var(--gold2)">✨ Send It Again</button>
       <button class="btn" id="review-back" onclick="reviewBack()">← Back</button>
       <button class="btn btn-pri btn-full" onclick="beginAdventure()">Begin Adventure ⚔</button>
     </div>

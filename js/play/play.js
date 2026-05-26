@@ -123,7 +123,8 @@ export async function startCampaign(resumeFromSavedState = false) {
   sceneState.kraghp   = saved.kraghp   ?? COMPANION_MAX.krag;
   await loadAdventure();
   const chapter = getChapter(1);
-  const firstArea = chapter?.sections?.[0] ?? { name: 'Triboar Trail', id: 'ch1-s0', entries: [] };
+  if(!chapter?.sections?.length) console.error('[adventure] Chapter 1 sections not found — check console log for correct path');
+  const firstArea = chapter?.sections?.[0] ?? { name: 'Chapter 1', id: 'ch1-s0', entries: [] };
   let area = firstArea;
   if(resumeFromSavedState && campaignState.areaId){
     area = chapter?.sections?.find(s => s.id === campaignState.areaId) ?? firstArea;
@@ -171,9 +172,6 @@ export function renderScene(area) {
     <div id="action-menu">
       <div id="action-btns"></div>
       <div id="dm-thinking" style="display:none;font-size:.8rem;color:var(--dim);font-style:italic;text-align:center;padding:6px 0">The DM is thinking…</div>
-      <div style="text-align:center;padding-top:8px;border-top:1px solid var(--border);margin-top:8px">
-        <button class="hud-char-btn" onclick="doRespec()" style="font-size:.65rem;opacity:.55;">↩ Try a Different Class</button>
-      </div>
     </div>
     <div id="character-hud">
       <div class="hud-row">
@@ -235,7 +233,7 @@ export async function askDM(playerAction) {
   const chapter = getChapter(1);
   const area = chapter?.sections?.find(s => s.id === state.areaId)
     ?? chapter?.sections?.[0]
-    ?? { name: 'Triboar Trail', entries: [] };
+    ?? { name: 'Chapter 1', entries: [] };
 
   const res = await fetch('/api/dm', {
     method: 'POST',

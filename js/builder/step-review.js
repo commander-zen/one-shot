@@ -12,11 +12,19 @@ export function buildReview(){
 
   let h='';
 
+  // Send It vibe hero block
+  if(c.fromSendIt && c.vibeTagline){
+    h+=`<div class="sheet-sec" style="border:1px solid var(--gold);border-radius:6px;padding:14px 16px;background:var(--parch-bg);margin-bottom:20px">
+      <div style="font-family:'Noto Serif',serif;font-size:17px;color:var(--gold2);margin-bottom:8px">"${c.vibeTagline}"</div>
+      ${c.whyThisWorks?`<div style="font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6">${c.whyThisWorks}</div>`:''}
+    </div>`;
+  }
+
   h+=`<div class="sheet-sec">
     <h4>Identity</h4>
     <div style="font-size:1.15rem;color:var(--gold2);font-family:'Cinzel',serif;margin-bottom:3px">${c.name}</div>
-    <div style="color:var(--dim);font-size:.85rem">${c.race} ${c.cls} · Level 1</div>
-    ${c.backstory?`<div style="margin-top:8px;font-size:.84rem;font-style:italic;color:var(--dim)">${c.backstory}</div>`:''}
+    <div style="color:#c8a97a;font-size:15px">${c.race} ${c.cls} · Level 1</div>
+    ${c.backstory?`<div style="margin-top:8px;font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6">${c.backstory}</div>`:''}
   </div>`;
 
   h+=`<div class="sheet-sec"><h4>Combat Stats</h4><div class="stat-row">
@@ -36,10 +44,10 @@ export function buildReview(){
   h+=`</div></div>`;
 
   h+=`<div class="sheet-sec"><h4>Saving Throws</h4>
-    <div style="font-size:.84rem;color:var(--dim)">${c.saves.join(', ')} (proficient) · Others at base modifier</div></div>`;
+    <div style="font-size:15px;color:#c8a97a">${c.saves.join(', ')} (proficient) · Others at base modifier</div></div>`;
 
   h+=`<div class="sheet-sec"><h4>Skill Proficiencies</h4>
-    <div style="font-size:.84rem;color:var(--dim)">${c.skills.join(', ')}</div></div>`;
+    <div style="font-size:15px;color:#c8a97a">${c.skills.join(', ')}</div></div>`;
 
   const bg=getBackground();
   if(bg){
@@ -51,7 +59,7 @@ export function buildReview(){
   }
 
   h+=`<div class="sheet-sec"><h4>Starting Equipment</h4>
-    <div style="font-size:.84rem;color:var(--dim)">${c.equip}</div></div>`;
+    <div style="font-size:15px;color:#c8a97a">${c.equip}</div></div>`;
 
   if(c.sp){
     h+=`<div class="sheet-sec"><h4>Spells</h4>
@@ -63,6 +71,10 @@ export function buildReview(){
   }
 
   document.getElementById('review-content').innerHTML=h;
+
+  // Show/hide Send It Again button
+  const againBtn = document.getElementById('send-it-again-btn');
+  if(againBtn) againBtn.style.display = c.fromSendIt ? 'block' : 'none';
 }
 
 export function reviewBack(){

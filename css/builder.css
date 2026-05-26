@@ -20,11 +20,11 @@
 /* spells */
 .spell-sec { margin-bottom:20px; }
 .spell-sec h4 { color:var(--gold2); font-size:.9rem; margin-bottom:8px; }
-.spell-count { color:var(--dim); font-size:.8rem; margin-bottom:8px; font-style:italic; }
+.spell-count { color:#b8956a; font-size:14px; margin-bottom:8px; font-family:'Noto Serif',serif; font-style:normal; }
 .spell-list { display:flex; flex-wrap:wrap; gap:8px; }
 .spell-chip {
   border:1px solid var(--border-g); border-radius:20px; padding:5px 12px;
-  font-size:.82rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+  font-size:15px; cursor:pointer; transition:all .2s; background:var(--bg3); color:#c8a97a;
 }
 .spell-chip:hover { border-color:var(--gold); }
 .spell-chip.sel { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); }
@@ -37,21 +37,32 @@
 }
 .spell-entry:hover { border-color:var(--gold); }
 .spell-entry.sel { border-color:var(--gold); background:var(--parch-bg); }
-.se-name { font-size:.88rem; color:var(--gold2); }
-.se-meta { font-size:.72rem; color:var(--dim); margin-top:2px; }
-.se-desc { font-size:.76rem; color:var(--dim); margin-top:4px; font-style:italic; line-height:1.4; }
+.se-name { font-size:16px; color:var(--gold2); }
+.se-meta { font-size:14px; color:#b8956a; margin-top:2px; }
+.se-desc { font-size:14px; color:#b8956a; margin-top:4px; font-family:'Noto Serif',serif; font-style:normal; line-height:1.4; }
 
 /* skill chips */
 .skill-picks { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:10px; }
 .skill-chip {
   position:relative;
   border:1px solid var(--border-g); border-radius:8px; padding:8px 12px;
-  font-size:.8rem; cursor:pointer; transition:all .2s; background:var(--bg3);
+  font-size:15px; cursor:pointer; transition:all .2s; background:var(--bg3); color:#c8a97a;
 }
 .skill-chip:hover { border-color:var(--gold); }
 .skill-chip.sel { border-color:var(--gold); background:var(--gold); color:var(--bg); font-weight:600; }
 .skill-chip.sel:hover { background:var(--gold2); border-color:var(--gold2); }
 .skill-chip.locked { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); opacity:.6; cursor:default; }
+.skill-chip .chip-desc { font-size:13px; color:#b8956a; display:block; margin-top:2px; font-family:'Noto Serif',serif; font-style:normal; }
+
+/* hint / helper text */
+.skill-hint {
+  font-family:'Noto Serif',serif;
+  font-style:normal;
+  color:#b8956a;
+  font-size:14px;
+  margin-top:8px;
+  line-height:1.5;
+}
 
 /* review */
 .sheet-sec { margin-bottom:18px; }
@@ -59,9 +70,9 @@
 .stat-row { display:flex; flex-wrap:wrap; gap:6px; }
 .stat-pill {
   background:var(--bg3); border:1px solid var(--border); border-radius:4px;
-  padding:5px 10px; font-size:.83rem; display:flex; gap:5px; align-items:center;
+  padding:5px 10px; font-size:15px; display:flex; gap:5px; align-items:center;
 }
-.stat-pill span:first-child { color:var(--dim); font-size:.72rem; }
+.stat-pill span:first-child { color:#c8a97a; font-size:13px; }
 .stat-pill span:last-child { color:var(--gold2); font-family:'Cinzel',serif; }
 
 /* module select */

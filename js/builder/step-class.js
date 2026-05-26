@@ -145,7 +145,8 @@ export function selectClass(name,el){
   if(!hint){
     hint=document.createElement('div');
     hint.id='skill-hint';
-    hint.style.cssText='font-size:13px;font-style:italic;color:#999;margin:4px 0 8px;';
+    hint.className='skill-hint';
+    hint.style.cssText='margin:4px 0 8px;';
     document.getElementById('skill-label').insertAdjacentElement('afterend',hint);
   }
   if(autoSelected.length>0){
@@ -160,7 +161,7 @@ export function selectClass(name,el){
   cls.skills.forEach(sk=>{
     const chip=document.createElement('div');
     chip.className='skill-chip'+(autoSelected.includes(sk)?' sel':'');
-    chip.innerHTML=`<span>${sk}</span><span style="font-size:11px;color:#888;display:block;margin-top:2px">${getSkillDesc(sk)}</span>`;
+    chip.innerHTML=`<span>${sk}</span><span class="chip-desc">${getSkillDesc(sk)}</span>`;
     chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
     list.appendChild(chip);
   });

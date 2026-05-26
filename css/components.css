@@ -92,10 +92,10 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
 
 /* card tagline */
 .card-tagline {
-  font-family:'Noto Sans',sans-serif;
-  font-style:italic;
-  font-size:13px;
-  color:#999;
+  font-family:'Noto Serif',serif;
+  font-style:normal;
+  font-size:15px;
+  color:#c8a97a;
   margin-top:4px;
   line-height:1.4;
 }

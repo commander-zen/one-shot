@@ -115,7 +115,7 @@
   border-left: 3px solid var(--gold);
   border-radius: 0 4px 4px 0;
   font-family: 'Noto Serif', serif;
-  font-size: .97rem;
+  font-size: 16px;
   line-height: 1.75;
   color: var(--parch);
 }
@@ -187,8 +187,8 @@
 }
 .hud-name {
   font-family: 'Cinzel', serif;
-  font-size: .78rem;
-  color: var(--gold2);
+  font-size: 13px;
+  color: #d4b896;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -223,8 +223,8 @@
 }
 
 .hud-hp-label {
-  font-size: .72rem;
-  color: var(--dim);
+  font-size: 13px;
+  color: #d4b896;
   margin-bottom: 4px;
 }
 
@@ -342,13 +342,13 @@
 }
 .companion-name {
   flex: 1;
-  color: var(--dim);
+  color: #d4b896;
   font-family: 'Cinzel', serif;
-  font-size: .65rem;
+  font-size: 13px;
   letter-spacing: .03em;
 }
 .companion-hp {
-  color: var(--dim);
-  font-size: .65rem;
+  color: #d4b896;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
 }

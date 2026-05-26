@@ -1,67 +1,72 @@
 import { G } from '../shared/state.js';
 import { goStep } from './builder.js';
-import { toast } from '../shared/overlay.js';
 import { saveLanguages } from '../shared/storage.js';
 import { buildSpellPicker } from './step-spells.js';
 import { buildReview } from './step-review.js';
 
-const STANDARD_LANGUAGES = [
-  'Common Sign Language','Draconic','Dwarvish','Elvish',
-  'Giant','Gnomish','Goblin','Halfling','Orc',
-];
+const DEFAULT_EXTRA = ['Goblin', 'Dwarvish'];
+const SUBSTITUTIONS = { Goblin: 'Orc', Dwarvish: 'Elvish' };
 
-let selLanguages = [];
+let _autoAdvanceTimer = null;
 
-export function buildLanguages(){
-  selLanguages = [];
-  const list = document.getElementById('lang-list');
-  list.innerHTML = '';
-
-  if(!document.getElementById('lang-guidance')){
-    const guide = document.createElement('div');
-    guide.id = 'lang-guidance';
-    guide.style.cssText = 'font-size:.84rem;color:var(--dim);line-height:1.55;margin-bottom:12px;';
-    guide.innerHTML = 'Languages are flavor, not power — Common already gets you everywhere. Pick what fits your character\'s story. <span style="color:var(--gold2)">For this adventure: Goblin helps with the Cragmaw goblin tribes, Dwarvish unlocks lore inside Wave Echo Cave.</span>';
-    list.insertAdjacentElement('beforebegin', guide);
+function pickLanguages(){
+  // Determine any languages the species already grants (stub — 5.5e flexible ASI means most species don't)
+  const speciesLangs = [];
+  const extras = [];
+  for(const lang of DEFAULT_EXTRA){
+    if(speciesLangs.includes(lang)){
+      extras.push(SUBSTITUTIONS[lang]);
+    } else {
+      extras.push(lang);
+    }
   }
-
-  const common = document.createElement('div');
-  common.className = 'skill-chip sel locked';
-  common.textContent = 'Common';
-  common.title = 'You always know Common';
-  list.appendChild(common);
-
-  STANDARD_LANGUAGES.forEach(lang => {
-    const chip = document.createElement('div');
-    chip.className = 'skill-chip';
-    chip.textContent = lang;
-
-    chip.onclick = () => toggleLanguage(lang, chip);
-    list.appendChild(chip);
-  });
-
-  document.getElementById('lang-count').textContent = '0 of 2 selected';
-  document.getElementById('lang-next').disabled = true;
+  return ['Common', ...extras];
 }
 
-export function toggleLanguage(lang, el){
-  if(selLanguages.includes(lang)){
-    selLanguages = selLanguages.filter(l => l !== lang);
-    el.classList.remove('sel');
-  } else {
-    if(selLanguages.length >= 2){ toast('Choose only 2 languages.'); return; }
-    selLanguages.push(lang);
-    el.classList.add('sel');
+export function buildLanguages(){
+  if(_autoAdvanceTimer) clearTimeout(_autoAdvanceTimer);
+
+  const langs = pickLanguages();
+  G.char.languages = langs;
+  saveLanguages(langs);
+
+  const container = document.getElementById('step6');
+  if(!container) return;
+
+  // Remove old lang-guidance and lang-list content — replaced by auto-assign message
+  const oldGuide = document.getElementById('lang-guidance');
+  if(oldGuide) oldGuide.remove();
+
+  const list = document.getElementById('lang-list');
+  if(list) list.innerHTML = '';
+
+  const count = document.getElementById('lang-count');
+  if(count) count.style.display = 'none';
+
+  // Show the auto-assign message
+  let msgEl = document.getElementById('lang-auto-msg');
+  if(!msgEl){
+    msgEl = document.createElement('div');
+    msgEl.id = 'lang-auto-msg';
+    msgEl.style.cssText = 'font-family:"Noto Serif",serif;font-size:16px;color:#d4b896;line-height:1.7;padding:16px 0 8px;';
+    if(list) list.insertAdjacentElement('beforebegin', msgEl);
   }
-  document.getElementById('lang-count').textContent = `${selLanguages.length} of 2 selected`;
-  document.getElementById('lang-next').disabled = selLanguages.length < 2;
+  msgEl.textContent = `You speak ${langs.join(', ')} — useful for the road ahead.`;
+
+  // Enable Continue immediately
+  const nextBtn = document.getElementById('lang-next');
+  if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
+
+  // Auto-advance after 1.5 s
+  _autoAdvanceTimer = setTimeout(() => step6Next(), 1500);
 }
 
 export function step6Next(){
-  if(selLanguages.length < 2){ toast('Choose 2 languages.'); return; }
-  const all = ['Common', ...selLanguages];
-  G.char.languages = all;
-  saveLanguages(all);
+  if(_autoAdvanceTimer){ clearTimeout(_autoAdvanceTimer); _autoAdvanceTimer = null; }
+
+  const langs = G.char.languages?.length ? G.char.languages : pickLanguages();
+  G.char.languages = langs;
+  saveLanguages(langs);
 
   if(G.char.sp){
     goStep(7);
@@ -73,3 +78,6 @@ export function step6Next(){
     buildReview();
   }
 }
+
+// Stub — kept for backwards compat (no-op, UI no longer has chips to toggle)
+export function toggleLanguage(){}

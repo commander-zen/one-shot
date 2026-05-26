@@ -12,9 +12,9 @@
 .dot.done { width:7px; height:7px; background:var(--gold2); opacity:.6; }
 
 /* step boxes */
-.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; overflow-y:auto; min-height:calc(100dvh - 180px); }
+.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; overflow-y:auto; height:calc(100dvh - 180px); }
 .sbox h3 {
-  font-family:'Noto Serif',serif; font-size:22px; color:#C9A84C;
+  font-family:'Noto Serif',serif; font-size:22px; font-weight:700; color:#f0d080;
   margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);
   position:sticky; top:0; z-index:5; background:var(--bg2);
   margin-left:-24px; margin-right:-24px; padding-left:24px; padding-right:24px; padding-top:12px;

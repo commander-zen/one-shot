@@ -66,5 +66,9 @@
   9. **Sorcerous Burst**: Added to SPELLS.Sorcerer.cantrips fallback in state.js. Live 5etools-src (2024 PHB) already fetches it; fallback now consistent.
   10. **Shield as reaction**: Added explicit rule to SYSTEM_PROMPT — Shield must never appear in availableActions on a normal turn; only offered immediately after a player is hit and has their reaction available.
 
+- ✅ 2026-05-25: Switched adventure source from LMoP (2014-src) to PaBtSo (5etools-src/main). Updated `js/data/adventure.js` URLs + title fallback. Updated `js/data/bestiary.js` from LMoP bestiary → PaBtSo bestiary (same 2024-src repo as MM).
+
+- ✅ 2026-05-25: Replaced Sildar solo companion with 3-character party (Williwaw, Seamus, Kraghor). `api/dm.js` SYSTEM_PROMPT replaced: full stat blocks, personalities, combat roles, companion HP tracked in `newCampaignState.willhp/seamushp/kraghp`, kraghorExhaustion flag, downed/revive rules, Sildar is now module NPC (rescued prisoner) not a party member. JSON schema updated. `play.js`: COMPANION_MAX constants, sceneState extended with willhp/seamushp/kraghp, `buildCompanionStatus()` + `updateCompanionHud()` helpers, companion HUD row in fixed character HUD (dot color: green>50%, yellow 25-50%, red<25%, grey=down), companion HP initialized in `startCampaign()`, synced from `newCampaignState` in `renderDMResponse()`, passed in `askDM()` body. `css/play.css`: companion status styles, padding-bottom 160→220px, chat-log max-height 280→380px offset.
+
 ## Cold Start Prompt
-Next unresolved: Smoke-test full play flow — especially respec (Try a Different Class → pick new class → skip to review or spells → Begin Adventure resumes correct area). Then smoke-test Sildar in initial narration and DM responses.
+Next unresolved: Smoke-test PaBtSo adventure load (check that Chapter 1 JSON path resolves — `adv.adventure[0].adventure[0]` — and fallback area name displays correctly). Then smoke-test companion party in initial narration and DM combat responses (willhp/seamushp/kraghp tracked in campaignState).

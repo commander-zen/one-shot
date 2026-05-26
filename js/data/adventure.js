@@ -1,7 +1,7 @@
 const ADVENTURE_CACHE = {};
 
-const ADVENTURE_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-2014-src/main/data/adventure/adventure-lmop.json';
-const ADVENTURES_INDEX_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-2014-src/main/data/adventures.json';
+const ADVENTURE_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/adventure/adventure-pabtso.json';
+const ADVENTURES_INDEX_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/adventures.json';
 
 export async function loadAdventure(){
   if(ADVENTURE_CACHE.data) return ADVENTURE_CACHE;
@@ -47,5 +47,5 @@ export function getAllAreas(){
 
 export function getAdventureTitle(){
   const adv = ADVENTURE_CACHE.data;
-  return adv?.adventure?.[0]?.name ?? 'Lost Mine of Phandelver';
+  return adv?.adventure?.[0]?.name ?? 'Phandelver and Below: The Shattered Obelisk';
 }

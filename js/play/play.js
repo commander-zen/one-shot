@@ -8,7 +8,8 @@ import { loadAdventure, getChapter } from '../data/adventure.js';
 let uploadedContent = '';
 
 // ── Scene state for active play session ──────────────────────────────────────
-const sceneState = { currentHp: 0, slotsUsed: 0, conditions: [] };
+const COMPANION_MAX = { will: 28, seamus: 51, krag: 58 };
+const sceneState = { currentHp: 0, slotsUsed: 0, conditions: [], willhp: 0, seamushp: 0, kraghp: 0 };
 const conversationHistory = [];
 
 function calcMaxHp(char) {
@@ -16,6 +17,43 @@ function calcMaxHp(char) {
   const die = char.hitDie || HIT_DIE_MAP[char.cls] || 8;
   const con = char.final?.CON ?? char.CON ?? 10;
   return die + Math.floor((con - 10) / 2);
+}
+
+function dotColor(hp, max) {
+  if (hp <= 0) return '#555';
+  const pct = hp / max;
+  if (pct > 0.5) return '#2ecc71';
+  if (pct > 0.25) return '#f39c12';
+  return '#e74c3c';
+}
+
+function buildCompanionStatus() {
+  const companions = [
+    { id: 'will',  name: 'Williwaw', max: COMPANION_MAX.will,  hp: sceneState.willhp  },
+    { id: 'seamus',name: 'Seamus',   max: COMPANION_MAX.seamus, hp: sceneState.seamushp },
+    { id: 'krag',  name: 'Kraghor',  max: COMPANION_MAX.krag,   hp: sceneState.kraghp  },
+  ];
+  return companions.map(c =>
+    `<div class="companion-row">
+      <span class="companion-dot" id="dot-${c.id}" style="background:${dotColor(c.hp, c.max)}"></span>
+      <span class="companion-name">${c.name}</span>
+      <span class="companion-hp" id="chp-${c.id}">${Math.max(0, c.hp)}/${c.max}</span>
+    </div>`
+  ).join('');
+}
+
+function updateCompanionHud() {
+  const companions = [
+    { id: 'will',  max: COMPANION_MAX.will,  hp: sceneState.willhp  },
+    { id: 'seamus',max: COMPANION_MAX.seamus, hp: sceneState.seamushp },
+    { id: 'krag',  max: COMPANION_MAX.krag,   hp: sceneState.kraghp  },
+  ];
+  companions.forEach(c => {
+    const dot = document.getElementById('dot-' + c.id);
+    const label = document.getElementById('chp-' + c.id);
+    if (dot)   dot.style.background = dotColor(c.hp, c.max);
+    if (label) label.textContent = `${Math.max(0, c.hp)}/${c.max}`;
+  });
 }
 
 function buildPips(total, used) {
@@ -59,6 +97,7 @@ function updateHud() {
   if (label) label.textContent = `${sceneState.currentHp} / ${maxHp} HP`;
   const pips = document.getElementById('spell-pips');
   if (pips && char.maxSlots) pips.innerHTML = buildPips(char.maxSlots, sceneState.slotsUsed);
+  updateCompanionHud();
 }
 
 function renderActionButtons(actions) {
@@ -78,6 +117,10 @@ export async function startCampaign(resumeFromSavedState = false) {
   sceneState.currentHp = 0;
   sceneState.slotsUsed = 0;
   sceneState.conditions = [];
+  const saved = getCampaignState() || {};
+  sceneState.willhp   = saved.willhp   ?? COMPANION_MAX.will;
+  sceneState.seamushp = saved.seamushp ?? COMPANION_MAX.seamus;
+  sceneState.kraghp   = saved.kraghp   ?? COMPANION_MAX.krag;
   await loadAdventure();
   const chapter = getChapter(1);
   const firstArea = chapter?.sections?.[0] ?? { name: 'Triboar Trail', id: 'ch1-s0', entries: [] };
@@ -86,6 +129,10 @@ export async function startCampaign(resumeFromSavedState = false) {
     area = chapter?.sections?.find(s => s.id === campaignState.areaId) ?? firstArea;
   } else {
     campaignState.areaId = firstArea.id || 'ch1-s0';
+    campaignState.willhp   = sceneState.willhp;
+    campaignState.seamushp = sceneState.seamushp;
+    campaignState.kraghp   = sceneState.kraghp;
+    campaignState.kraghorExhaustion = false;
   }
   saveCampaignState(campaignState);
   document.getElementById('phase1').classList.add('hidden');
@@ -109,7 +156,7 @@ export function renderScene(area) {
   }
   if (!readAloud) readAloud = `You arrive at ${area.name}.`;
   if (!campaignState.visitedAreas?.length) {
-    readAloud += ' Sildar Hallwinter, a seasoned soldier hired by Gundren Rockseeker, walks the trail beside you — wary, crossbow within reach.';
+    readAloud += ' Williwaw Icefang Amarok stands at your side — a towering Goliath druid, blue-grey skin marked with frost-tribe tattoos, already watching the tree line. Behind him, Seamus Muckbuckle checks his handaxes with practiced efficiency, eyes flat and unreadable. And Kraghor — a Minotaur large enough to make the wagon creak — grins at the thought of what lies ahead.';
   }
 
   const play = document.getElementById('play');
@@ -136,6 +183,7 @@ export function renderScene(area) {
       <div class="hp-bar-track"><div class="hp-bar-fill" id="hp-fill" style="width:100%"></div></div>
       <div class="hud-hp-label" id="hud-hp-label">${sceneState.currentHp} / ${maxHp} HP</div>
       ${char.sp && char.maxSlots ? `<div class="spell-pips" id="spell-pips">${buildPips(char.maxSlots, sceneState.slotsUsed)}</div>` : ''}
+      <div id="companion-status">${buildCompanionStatus()}</div>
     </div>
     <div id="character-drawer" class="hidden">
       <div class="drawer-inner">
@@ -196,7 +244,7 @@ export async function askDM(playerAction) {
       playerAction,
       area,
       character: { ...char, currentHp: sceneState.currentHp },
-      campaignState: state,
+      campaignState: { ...state, willhp: sceneState.willhp, seamushp: sceneState.seamushp, kraghp: sceneState.kraghp },
       history: conversationHistory.slice(-6),
     }),
   });
@@ -244,6 +292,10 @@ export function renderDMResponse(response) {
   if (newCampaignState) {
     Object.assign(campaignState, newCampaignState);
     saveCampaignState(campaignState);
+    if (newCampaignState.willhp   != null) sceneState.willhp   = newCampaignState.willhp;
+    if (newCampaignState.seamushp != null) sceneState.seamushp = newCampaignState.seamushp;
+    if (newCampaignState.kraghp   != null) sceneState.kraghp   = newCampaignState.kraghp;
+    updateCompanionHud();
   }
 
   const nextActions = availableActions.length

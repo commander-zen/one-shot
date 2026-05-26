@@ -1,16 +1,16 @@
-const BESTIARY_CACHE = { lmop: [], mm: [] };
+const BESTIARY_CACHE = { pabtso: [], mm: [] };
 
-const LMOP_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-2014-src/main/data/bestiary/bestiary-lmop.json';
-const MM_URL   = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/bestiary-mm.json';
+const PABTSO_URL = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/bestiary-pabtso.json';
+const MM_URL     = 'https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/bestiary-mm.json';
 
 export async function loadBestiary(){
   try{
-    const [lmopRes, mmRes] = await Promise.all([
-      fetch(LMOP_URL),
+    const [pabtsoRes, mmRes] = await Promise.all([
+      fetch(PABTSO_URL),
       fetch(MM_URL),
     ]);
-    if(lmopRes.ok){ const d = await lmopRes.json(); BESTIARY_CACHE.lmop = d.monster || []; }
-    if(mmRes.ok)  { const d = await mmRes.json();   BESTIARY_CACHE.mm   = d.monster || []; }
+    if(pabtsoRes.ok){ const d = await pabtsoRes.json(); BESTIARY_CACHE.pabtso = d.monster || []; }
+    if(mmRes.ok)    { const d = await mmRes.json();     BESTIARY_CACHE.mm     = d.monster || []; }
   }catch(e){ console.warn('Failed to load bestiary data:', e); }
   return BESTIARY_CACHE;
 }
@@ -19,8 +19,8 @@ export function getMonster(name){
   const key = name.toLowerCase();
   const fromMM   = BESTIARY_CACHE.mm.find(m => m.name.toLowerCase() === key);
   if(fromMM) return fromMM;
-  const fromLmop = BESTIARY_CACHE.lmop.find(m => m.name.toLowerCase() === key);
-  return fromLmop ?? null;
+  const fromPabtso = BESTIARY_CACHE.pabtso.find(m => m.name.toLowerCase() === key);
+  return fromPabtso ?? null;
 }
 
 function crToNum(cr){
@@ -34,6 +34,6 @@ function crToNum(cr){
 
 export function getMonstersByChallenge(cr){
   const max = crToNum(cr);
-  const combined = [...BESTIARY_CACHE.mm, ...BESTIARY_CACHE.lmop];
+  const combined = [...BESTIARY_CACHE.mm, ...BESTIARY_CACHE.pabtso];
   return combined.filter(m => crToNum(m.cr) <= max);
 }

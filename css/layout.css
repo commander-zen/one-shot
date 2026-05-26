@@ -1,32 +1,56 @@
 /* ── LAYOUT ── */
-#app { max-width: 680px; margin: 0 auto; padding: 0 16px 20px; }
+#app { max-width: 680px; margin: 0 auto; padding: 0 16px; }
 
-.ph-header { text-align:center; padding: 8px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+/* Fixed builder header — header + progress dots pinned to top */
+.builder-hd {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #1a1008; z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+.builder-hd-inner {
+  max-width: 680px; margin: 0 auto; padding: 0 16px;
+}
+
+.ph-header { text-align:center; padding: 8px 0 4px; }
 .ph-header h1 { font-size: 1rem; }
 .ph-header p { color: var(--dim); margin-top: 2px; font-style: italic; font-size: .78rem; }
 
 /* step dots */
-.step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:28px; align-items:center; }
+.step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:8px; padding-bottom:4px; align-items:center; }
 .dot { width:7px; height:7px; border-radius:50%; background:#555; transition:all .3s; }
 .dot.active { width:10px; height:10px; background:#C9A84C; }
 .dot.done { width:7px; height:7px; background:var(--gold2); opacity:.6; }
 
-/* step boxes */
-.sbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:24px; overflow-y:auto; height:calc(100dvh - 180px); }
-.sbox h3 {
-  font-family:'Noto Serif',serif; font-size:22px; font-weight:700; color:#f0d080;
-  margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:5; background:var(--bg2);
-  margin-left:-24px; margin-right:-24px; padding-left:24px; padding-right:24px; padding-top:12px;
+/* Page-level offset so content starts below fixed header */
+#phase1 { padding-top: 105px; }
+
+/* Step content — no scroll container, no height constraint */
+.sbox {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 24px;
+  padding-bottom: 200px; /* generous clearance for fixed footer (tallest = step 8, 3 stacked buttons) */
 }
 
-.step-nav {
-  display:flex; gap:10px; align-items:center;
-  position:sticky; bottom:0;
-  background:var(--bg2);
-  margin-top:16px; padding:10px 0 12px;
-  border-top:1px solid var(--border);
-  z-index:10;
+/* Step title — plain flow, not sticky */
+.sbox h3 {
+  font-family: 'Noto Serif', serif; font-size: 22px; font-weight: 700; color: #f0d080;
+  margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
 }
-.step-nav .btn { min-height:44px; flex-shrink:0; white-space:nowrap; font-family:'Noto Sans',sans-serif; }
-.step-nav .btn-pri { flex:1; min-height:52px; }
+
+/* Fixed CTA footer — always visible, never scrolled past */
+.step-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #1a1008; z-index: 100;
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px 20px 20px;
+  border-top: 1px solid var(--border);
+}
+.step-nav .btn { min-height: 44px; flex-shrink: 0; white-space: nowrap; font-family: 'Noto Sans', sans-serif; }
+.step-nav .btn-pri { flex: 1; min-height: 52px; }
+
+/* Step 8 review nav — stacked column */
+.step-nav-col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}

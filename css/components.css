@@ -32,7 +32,14 @@ label { display:block; color:var(--gold2); font-family:'Cinzel',serif; font-size
   min-height:72px; cursor:pointer; transition:all .2s; background:var(--bg3); text-align:left;
 }
 .opt-card:hover { border-color:var(--gold); background:#2a1f0e; }
-.opt-card.sel { background:#2a1f0e; box-shadow:0 0 0 1px var(--gold), 0 0 10px rgba(201,168,76,.2); }
+.opt-card.sel { background:#0e0a04; box-shadow:0 0 0 2px var(--gold), 0 0 12px rgba(201,168,76,.25); }
+.opt-card.sel .card-info-btn { display:none; }
+.opt-card.sel::after {
+  content:'✓'; position:absolute; top:0; right:0;
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--gold); font-size:20px; font-weight:700; z-index:2;
+}
 
 /* RPGBOT tier borders — applied via data-tier attribute */
 [data-tier="S"] { border-color:#4a9eff !important; border-width:2px !important; }

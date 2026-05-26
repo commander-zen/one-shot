@@ -87,11 +87,21 @@
 
 - ✅ 2026-05-26: RPGBOT tier border system. Added `CLASS_OVERALL` map, `applyTier()`, and `tierLegendHTML()` to ratings.js. CSS: `[data-tier="S/A/B/C"]` rules with `!important` border color/width (#4a9eff/#4caf50/#ff9800/#ef5350). `.opt-card.sel` changed from gold border to gold box-shadow so tier border shows through selection. `.tier-legend` + `.tier-swatch` CSS. Tier legend injected before class, background, and species grids. Class cards tiered by `CLASS_OVERALL`. Background cards tiered by `getRating(cls, 'backgrounds', name)`. Species cards tiered by `getRating(cls, 'species', name)`. Skill chips tiered by `getRating(cls, 'skills', name)`. Class sort fixed to use `CLASS_OVERALL` (previous sort was broken — was looking for nonexistent 'classes' section in RATINGS).
 
+- ✅ 2026-05-26: UAT fixes — 7 tasks:
+  1. **Scroll architecture rebuild**: Fixed broken nested scroll. `.builder-hd` wraps `.ph-header` + `.step-dots` → `position:fixed; top:0; left:0; right:0; background:#1a1008; z-index:100`. `#phase1` gets `padding-top:105px` to clear fixed header. `.sbox` loses `overflow-y:auto` and `height` — no scroll container, `padding-bottom:200px` for fixed footer clearance. `.step-nav` → `position:fixed; bottom:0; left:0; right:0; background:#1a1008; z-index:100`. `.sbox h3` loses `position:sticky` — plain flow element. Step 8 nav gets `.step-nav-col` class for column layout. `index.html` updated: `.ph-header`+`.step-dots` wrapped in `.builder-hd > .builder-hd-inner`, step 8 nav inline style replaced with class.
+  2. **Selected card state**: `.opt-card.sel` → dark background `#0e0a04`, gold box-shadow outline. `.opt-card.sel::after` injects `✓` at top-right (44×44 tap area, 20px gold). `.opt-card.sel .card-info-btn` hidden. Tier borders persist via `!important` — unaffected by selection.
+  3. **RPGBOT tier wiring**: Verified already wired in step-background.js and step-species.js from prior session. No code changes needed.
+  4. **Send It Again stuck loading**: `sendIt()` now resets `btnAgain` to "✨ Send It Again" / enabled on BOTH success and error paths. Added `#send-it-again-status` div in step 8 nav (index.html) for inline error display. Error routing: shows in step-8 status if btnAgain is visible, step-1 status otherwise.
+  5. **Spell list display**: Review section now guards `c.sp && (c.cantrips?.length || c.spells?.length)`. Renders cantrips and 1st-level sections independently — each only if present. Labels changed from Cinzel all-caps to Noto Serif readable: "Cantrips" and "1st Level Spells (N slot/s)". Spell text color `#c8a97a`.
+  6. **Backstory copy rewrite**: Label → "Describe your vibe". Sublabel paragraph (`.skill-hint`) explains Send It. Placeholder updated to example vibes. Send It button: enabled = "✨ Send It — Build My Character", disabled = "✨ Send It (describe your vibe first)". `onBackstoryInput()` updates button text dynamically.
+  7. **Language auto-advance removed**: Removed `_autoAdvanceTimer` and `setTimeout(() => step6Next(), 1500)` from `buildLanguages()`. Continue button stays enabled, player must tap to advance.
+
 ## Known Issues
 - PaBtSo chapter path: console.log at adventure load will show the correct chapter index. If "Chapter 1" isn't found by name search, check the log and update `getChapter()` positional fallback (`n-1` vs `n`).
 - Send It cantrips: populated from SPELLS[cls] fallback (state.js), not from Groq response. The Groq schema doesn't include a separate cantrips field.
+- Fixed footer height padding (200px) is generous — may leave empty space on step 1 where footer is small. Can tune `padding-bottom` on `.sbox` if needed per step.
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
 - api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
 
 ## Cold Start Prompt
-Next unresolved: Check console log on first adventure load to confirm PaBtSo chapter index (look for "[adventure] chapter list" log). Smoke-test Send It flow end-to-end: fill backstory, tap Send It, verify review renders with vibeTagline + whyThisWorks. Verify Send It Again re-calls and re-renders. Verify tier borders appear on class/background/species cards and skill chips.
+Next unresolved: Visual verification needed — scroll architecture, fixed header/footer, selected card checkmark, spell labels in review. Smoke-test Send It + Send It Again full flow including error state reset. Check PaBtSo chapter console log on first adventure load.

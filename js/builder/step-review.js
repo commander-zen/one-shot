@@ -61,13 +61,21 @@ export function buildReview(){
   h+=`<div class="sheet-sec"><h4>Starting Equipment</h4>
     <div style="font-size:15px;color:#c8a97a">${c.equip}</div></div>`;
 
-  if(c.sp){
-    h+=`<div class="sheet-sec"><h4>Spells</h4>
-      <div style="margin-bottom:8px"><div style="color:var(--dim);font-size:.76rem;font-family:'Cinzel',serif">CANTRIPS (no slot cost)</div>
-        <div style="font-size:.84rem;margin-top:3px">${c.cantrips.join(', ')}</div></div>
-      <div><div style="color:var(--dim);font-size:.76rem;font-family:'Cinzel',serif">1ST LEVEL (${c.maxSlots} slot${c.maxSlots>1?'s':''})</div>
-        <div style="font-size:.84rem;margin-top:3px">${c.spells.join(', ')}</div></div>
-    </div>`;
+  if(c.sp && (c.cantrips?.length || c.spells?.length)){
+    h+=`<div class="sheet-sec"><h4>Spells</h4>`;
+    if(c.cantrips?.length){
+      h+=`<div style="margin-bottom:10px">
+        <div style="color:var(--dim);font-size:.8rem;font-family:'Noto Serif',serif;margin-bottom:3px">Cantrips</div>
+        <div style="font-size:.84rem;color:#c8a97a">${c.cantrips.join(', ')}</div>
+      </div>`;
+    }
+    if(c.spells?.length){
+      h+=`<div>
+        <div style="color:var(--dim);font-size:.8rem;font-family:'Noto Serif',serif;margin-bottom:3px">1st Level Spells (${c.maxSlots} slot${c.maxSlots>1?'s':''})</div>
+        <div style="font-size:.84rem;color:#c8a97a">${c.spells.join(', ')}</div>
+      </div>`;
+    }
+    h+=`</div>`;
   }
 
   document.getElementById('review-content').innerHTML=h;

@@ -2,6 +2,7 @@
 // Lazily initializes Firebase on first use — no SDK loaded until auth functions are called.
 
 import { registerSaveHook } from './storage.js';
+import { promptEmail } from './overlay.js';
 
 const FB_VERSION = '10.14.1';
 const FB_CDN = `https://www.gstatic.com/firebasejs/${FB_VERSION}`;
@@ -44,7 +45,7 @@ export async function confirmMagicLink() {
   let email = localStorage.getItem('emailForSignIn');
   if (!email) {
     // Cross-device case: user opened link on a different device
-    email = window.prompt('Please enter your email address to complete sign-in:');
+    email = await promptEmail('Enter the email address you used to request the sign-in link.');
     if (!email) return false;
   }
 

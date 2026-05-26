@@ -2,7 +2,7 @@ import { G } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveRaces } from '../data/schema.js';
-import { getRating } from '../data/ratings.js';
+import { getRating, applyTier, tierLegendHTML } from '../data/ratings.js';
 import { buildStatAssign } from './step-scores.js';
 
 const SPECIES_VIBES = {
@@ -36,6 +36,16 @@ const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
 export function buildRaceGrid(){
   const g=document.getElementById('race-grid');
   g.innerHTML='';
+
+  // Tier legend
+  let legend=document.getElementById('species-tier-legend');
+  if(!legend){
+    legend=document.createElement('div');
+    legend.id='species-tier-legend';
+    legend.innerHTML=tierLegendHTML();
+    g.insertAdjacentElement('beforebegin',legend);
+  }
+
   const races=getActiveRaces();
   let entries=Object.entries(races);
   entries.sort(([a],[b])=>{
@@ -48,6 +58,7 @@ export function buildRaceGrid(){
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${SPECIES_VIBES[name]||data.desc}</p>`;
+    applyTier(c, getRating(G.char.cls, 'species', name));
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';

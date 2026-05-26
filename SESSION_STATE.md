@@ -83,5 +83,15 @@
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
 - api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
 
+- ✅ 2026-05-26: Versioned schema + auto-migration in storage.js. Added `SCHEMA_VERSION = 1`, `DEFAULT_CAMPAIGN_STATE` (all keys: areaId, visitedAreas, questFlags, willhp/seamushp/kraghp, kraghorExhaustion, sildarMet, conversationHistory, currentArea, currentChapter, round, inCombat, enemies, _schemaVersion), `DEFAULT_CHARACTER_STATE` (all G.char fields + vibeTagline/whyThisWorks/fromSendIt). `migrateState()` fills missing keys from defaults without removing extra keys. `getCampaignState()` returns defaults (not null) on first load; `getCharacter()` still returns null on first load. Both migrate silently and re-save on version mismatch.
+
+- ✅ 2026-05-26: RPGBOT tier border system. Added `CLASS_OVERALL` map, `applyTier()`, and `tierLegendHTML()` to ratings.js. CSS: `[data-tier="S/A/B/C"]` rules with `!important` border color/width (#4a9eff/#4caf50/#ff9800/#ef5350). `.opt-card.sel` changed from gold border to gold box-shadow so tier border shows through selection. `.tier-legend` + `.tier-swatch` CSS. Tier legend injected before class, background, and species grids. Class cards tiered by `CLASS_OVERALL`. Background cards tiered by `getRating(cls, 'backgrounds', name)`. Species cards tiered by `getRating(cls, 'species', name)`. Skill chips tiered by `getRating(cls, 'skills', name)`. Class sort fixed to use `CLASS_OVERALL` (previous sort was broken — was looking for nonexistent 'classes' section in RATINGS).
+
+## Known Issues
+- PaBtSo chapter path: console.log at adventure load will show the correct chapter index. If "Chapter 1" isn't found by name search, check the log and update `getChapter()` positional fallback (`n-1` vs `n`).
+- Send It cantrips: populated from SPELLS[cls] fallback (state.js), not from Groq response. The Groq schema doesn't include a separate cantrips field.
+- #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
+- api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
+
 ## Cold Start Prompt
-Next unresolved: Check console log on first adventure load to confirm PaBtSo chapter index (look for "[adventure] chapter list" log). If sections are empty, adjust positional fallback in getChapter(). Then smoke-test Send It flow end-to-end: fill backstory, tap Send It, verify review renders with vibeTagline + whyThisWorks. Verify Send It Again re-calls and re-renders.
+Next unresolved: Check console log on first adventure load to confirm PaBtSo chapter index (look for "[adventure] chapter list" log). Smoke-test Send It flow end-to-end: fill backstory, tap Send It, verify review renders with vibeTagline + whyThisWorks. Verify Send It Again re-calls and re-renders. Verify tier borders appear on class/background/species cards and skill chips.

@@ -2,7 +2,7 @@ import { G } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveClasses } from '../data/schema.js';
-import { getRating } from '../data/ratings.js';
+import { getRating, applyTier, CLASS_OVERALL, tierLegendHTML } from '../data/ratings.js';
 import { buildBackground } from './step-background.js';
 import { buildSpellPicker } from './step-spells.js';
 import { buildReview } from './step-review.js';
@@ -92,11 +92,22 @@ export function setRespec(v){ isRespec = v; }
 export function buildClassGrid(){
   const g=document.getElementById('class-grid');
   g.innerHTML='';
+
+  // Tier legend — insert/update above the grid
+  let legend=document.getElementById('class-tier-legend');
+  if(!legend){
+    legend=document.createElement('div');
+    legend.id='class-tier-legend';
+    legend.innerHTML=tierLegendHTML();
+    g.insertAdjacentElement('beforebegin',legend);
+  }
+
   const classes=getActiveClasses();
   let entries=Object.entries(classes);
+  // Sort by class overall RPGBOT tier
   entries.sort(([a],[b])=>{
-    const ra=RATING_ORDER[getRating(G.char.cls,'classes',a)]??4;
-    const rb=RATING_ORDER[getRating(G.char.cls,'classes',b)]??4;
+    const ra=RATING_ORDER[CLASS_OVERALL[a]]??4;
+    const rb=RATING_ORDER[CLASS_OVERALL[b]]??4;
     return ra!==rb?ra-rb:a.localeCompare(b);
   });
   entries.forEach(([name,cls])=>{
@@ -104,6 +115,7 @@ export function buildClassGrid(){
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${CLASS_VIBES[name]||''}</p>`;
+    applyTier(c, CLASS_OVERALL[name] || null);
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';
@@ -162,6 +174,7 @@ export function selectClass(name,el){
     const chip=document.createElement('div');
     chip.className='skill-chip'+(autoSelected.includes(sk)?' sel':'');
     chip.innerHTML=`<span>${sk}</span><span class="chip-desc">${getSkillDesc(sk)}</span>`;
+    applyTier(chip, getRating(name, 'skills', sk));
     chip.onclick=()=>toggleSkill(sk,chip,cls.sc);
     list.appendChild(chip);
   });

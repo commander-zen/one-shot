@@ -2,7 +2,7 @@ import { G } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveBackgrounds } from '../data/schema.js';
-import { getRating } from '../data/ratings.js';
+import { getRating, applyTier, tierLegendHTML } from '../data/ratings.js';
 import { saveBackground } from '../shared/storage.js';
 import { buildRaceGrid } from './step-species.js';
 
@@ -49,6 +49,16 @@ const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
 export function buildBackground(){
   const g=document.getElementById('background-grid');
   g.innerHTML='';
+
+  // Tier legend
+  let legend=document.getElementById('bg-tier-legend');
+  if(!legend){
+    legend=document.createElement('div');
+    legend.id='bg-tier-legend';
+    legend.innerHTML=tierLegendHTML();
+    g.insertAdjacentElement('beforebegin',legend);
+  }
+
   let bgs=getActiveBackgrounds();
   const seen=new Set();
   bgs=bgs.filter(b=>seen.has(b.name)?false:seen.add(b.name));
@@ -62,6 +72,7 @@ export function buildBackground(){
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${bg.name}</h4><p class="card-tagline">${BACKGROUND_VIBES[bg.name]||''}</p>`;
+    applyTier(c, getRating(G.char.cls, 'backgrounds', bg.name));
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';

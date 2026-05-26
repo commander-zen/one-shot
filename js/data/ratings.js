@@ -93,10 +93,50 @@ export const RATINGS = {
   }
 };
 
+// Overall RPGBOT tier per class (for class card borders)
+export const CLASS_OVERALL = {
+  Barbarian: 'blue',
+  Fighter:   'blue',
+  Paladin:   'green',
+  Ranger:    'green',
+  Cleric:    'green',
+  Rogue:     'green',
+  Bard:      'green',
+  Druid:     'green',
+  Warlock:   'orange',
+  Sorcerer:  'orange',
+  Wizard:    'orange',
+  Monk:      'orange',
+  Artificer: 'red',
+};
+
+const TIER_COLORS = { blue: '#4a9eff', green: '#4caf50', orange: '#ff9800', red: '#ef5350' };
+const TIER_LETTER = { blue: 'S', green: 'A', orange: 'B', red: 'C' };
+
 export function getRating(className, section, optionName){
   const classData = RATINGS[className?.toLowerCase()];
   if(!classData) return null;
   const sectionData = classData[section];
   if(!sectionData) return null;
   return sectionData[optionName] || null;
+}
+
+// Sets data-tier attribute and tier border color on an element
+export function applyTier(el, rating){
+  if(rating && TIER_COLORS[rating]){
+    el.dataset.tier = TIER_LETTER[rating];
+  } else {
+    delete el.dataset.tier;
+  }
+}
+
+// Returns the tier legend HTML row
+export function tierLegendHTML(){
+  return `<div class="tier-legend">
+    <span class="tier-swatch" style="border-color:${TIER_COLORS.blue}">S</span>
+    <span class="tier-swatch" style="border-color:${TIER_COLORS.green}">A</span>
+    <span class="tier-swatch" style="border-color:${TIER_COLORS.orange}">B</span>
+    <span class="tier-swatch" style="border-color:${TIER_COLORS.red}">C</span>
+    <span class="tier-legend-label">Ranked by RPGBOT — tap ⓘ for details</span>
+  </div>`;
 }

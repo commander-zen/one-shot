@@ -131,6 +131,14 @@ document.getElementById('auth-send-btn')?.addEventListener('click', handleSendLi
 document.getElementById('auth-email')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSendLink();
 });
+document.getElementById('auth-email-toggle')?.addEventListener('click', () => {
+  const section = document.getElementById('auth-email-section');
+  const toggle  = document.getElementById('auth-email-toggle');
+  const open    = section.style.display === 'none';
+  section.style.display = open ? 'block' : 'none';
+  toggle.textContent    = open ? 'Sign in with email instead ▲' : 'Sign in with email instead ▼';
+  if (open) document.getElementById('auth-email')?.focus();
+});
 
 // ── Boot sequence ─────────────────────────────────────────────────────────────
 

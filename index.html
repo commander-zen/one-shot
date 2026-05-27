@@ -21,13 +21,18 @@
     <div id="auth-form-view">
       <h3 style="margin-bottom:6px">One-Shot</h3>
       <p style="color:var(--dim);font-size:.84rem;margin-bottom:20px;font-family:'Noto Serif',serif;font-style:normal">Sign in to save your campaign across devices</p>
-      <button id="auth-google-btn" style="display:block;width:100%;min-height:44px;background:#fff;color:#1a1008;border:2px solid #fff;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:20px">Sign in with Google</button>
-      <div style="color:var(--dim);font-size:.8rem;margin-bottom:16px;font-family:'Noto Serif',serif">or sign in with email link</div>
-      <div class="field" style="text-align:left">
-        <label for="auth-email">Email</label>
-        <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+      <button id="auth-google-btn" style="display:block;width:100%;min-height:44px;background:#fff;color:#1a1008;border:2px solid #fff;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:16px">Sign in with Google</button>
+      <button id="auth-email-toggle" style="background:none;border:none;color:var(--dim);font-size:.8rem;font-family:'Noto Serif',serif;cursor:pointer;padding:4px 0;margin-bottom:0">Sign in with email instead ▼</button>
+      <div id="auth-email-section" style="display:none;margin-top:14px;text-align:left">
+        <div style="background:#f59e0b;color:#1a1008;font-weight:700;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.8rem;line-height:1.5">
+          ⚠️ Magic link will likely land in spam.<br>Check spam for: noreply@one-shot-taupe.firebaseapp.com
+        </div>
+        <div class="field">
+          <label for="auth-email">Email</label>
+          <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <button class="btn btn-full" id="auth-send-btn" style="font-size:.84rem;opacity:.75">Send Magic Link</button>
       </div>
-      <button class="btn btn-full" id="auth-send-btn" style="font-size:.84rem;opacity:.75">Send Magic Link</button>
       <div id="auth-error" style="display:none;color:var(--red);font-size:.84rem;margin-top:10px;font-family:'Noto Serif',serif;font-style:normal"></div>
     </div>
 

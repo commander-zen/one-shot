@@ -121,6 +121,8 @@
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
 - api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
 
+- ✅ 2026-05-26: Magic link section collapsed behind disclosure toggle. Auth gate default view: Google button + "Sign in with email instead ▼" text link. Clicking toggle shows/hides `#auth-email-section` inline (email input + Send Magic Link button); chevron flips ▼/▲; email field auto-focuses on open. Spam warning banner moved into the collapsed section (above email input) as a pre-send reminder. Sent confirmation screen (with loud spam banner) unchanged. No auth logic touched — UI only. Wired in `main.js`.
+
 - ✅ 2026-05-26: Google OAuth added alongside magic link. `auth.js` exports `signInWithGoogle()` — creates `GoogleAuthProvider`, calls `signInWithPopup`, returns uid. `index.html` auth gate: "Sign in with Google" is now primary CTA (white button, full width, above email), magic link demoted to secondary (`.btn.btn-full` at 75% opacity, labeled "Send Magic Link", below "or sign in with email link" separator). `main.js`: imports `signInWithGoogle`, adds `handleGoogleSignIn()` (popup → `loadStateFromDb` → `wireFirebaseSaves` → dismiss gate → `init()`), wires `#auth-google-btn` click. Error silently swallowed for popup-closed-by-user; all other errors surface via `setAuthError()`.
 
 ## Known Issues

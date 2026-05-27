@@ -1,5 +1,13 @@
 module.exports = (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS: restrict to our deployed origin to reduce third-party abuse.
+  const origin = req.headers.origin;
+  const ALLOWED_ORIGINS = new Set([
+    'https://one-shot-taupe.vercel.app',
+  ]);
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();

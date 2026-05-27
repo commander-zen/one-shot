@@ -76,7 +76,15 @@ function extractAreaText(area) {
 }
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS: restrict to our deployed origin to reduce third-party abuse.
+  const origin = req.headers.origin;
+  const ALLOWED_ORIGINS = new Set([
+    'https://one-shot-taupe.vercel.app',
+  ]);
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -117,6 +125,70 @@ module.exports = async (req, res) => {
     availableActions: FALLBACK_ACTIONS,
   };
 
+  function clamp(n, lo, hi) {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return lo;
+    return Math.min(Math.max(x, lo), hi);
+  }
+
+  function cleanString(s, maxLen = 800) {
+    if (typeof s !== 'string') return '';
+    const trimmed = s.trim();
+    return trimmed.length > maxLen ? trimmed.slice(0, maxLen) : trimmed;
+  }
+
+  function normalizeDMResponse(parsed) {
+    const out = {
+      narration: cleanString(parsed?.narration, 1200) || fallback.narration,
+      mechanicalEvents: [],
+      newCharacterState: {
+        currentHp: fallback.newCharacterState.currentHp,
+        spellSlotsUsed: 0,
+        conditions: [],
+      },
+      newCampaignState: parsed?.newCampaignState && typeof parsed.newCampaignState === 'object'
+        ? parsed.newCampaignState
+        : (campaignState || {}),
+      levelUp: !!parsed?.levelUp,
+      availableActions: [],
+    };
+
+    // mechanicalEvents
+    if (Array.isArray(parsed?.mechanicalEvents)) {
+      out.mechanicalEvents = parsed.mechanicalEvents.slice(0, 12).map(ev => ({
+        type: cleanString(ev?.type, 20) || 'status',
+        description: cleanString(ev?.description, 140),
+        value: ev?.value,
+      }));
+    }
+
+    // newCharacterState
+    if (parsed?.newCharacterState && typeof parsed.newCharacterState === 'object') {
+      const ncs = parsed.newCharacterState;
+      if (ncs.currentHp != null) out.newCharacterState.currentHp = clamp(ncs.currentHp, 0, 999);
+      if (ncs.spellSlotsUsed != null) {
+        if (typeof ncs.spellSlotsUsed === 'number') out.newCharacterState.spellSlotsUsed = clamp(ncs.spellSlotsUsed, 0, 99);
+        else if (ncs.spellSlotsUsed && typeof ncs.spellSlotsUsed === 'object') {
+          // tolerate old shapes; sum numeric values
+          const sum = Object.values(ncs.spellSlotsUsed).reduce((a, b) => a + (Number(b) || 0), 0);
+          out.newCharacterState.spellSlotsUsed = clamp(sum, 0, 99);
+        }
+      }
+      if (Array.isArray(ncs.conditions)) out.newCharacterState.conditions = ncs.conditions.slice(0, 12).map(c => cleanString(c, 40)).filter(Boolean);
+    }
+
+    // availableActions
+    if (Array.isArray(parsed?.availableActions)) {
+      out.availableActions = parsed.availableActions
+        .map(a => cleanString(a, 60))
+        .filter(Boolean)
+        .slice(0, 10);
+    }
+    if (!out.availableActions.length) out.availableActions = FALLBACK_ACTIONS;
+
+    return out;
+  }
+
   try {
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -145,7 +217,7 @@ module.exports = async (req, res) => {
 
     try {
       const parsed = JSON.parse(raw);
-      return res.status(200).json(parsed);
+      return res.status(200).json(normalizeDMResponse(parsed));
     } catch(e) {
       console.error('DM JSON parse failed:', e.message, '| Raw:', raw.slice(0, 200));
       return res.status(200).json(fallback);

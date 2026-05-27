@@ -3,7 +3,15 @@ const CHARACTER_SYSTEM_PROMPT = `You are an expert D&D 5e character builder. Giv
 const VALID_CLASSES = ['Artificer','Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'];
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS: restrict to our deployed origin to reduce third-party abuse.
+  const origin = req.headers.origin;
+  const ALLOWED_ORIGINS = new Set([
+    'https://one-shot-taupe.vercel.app',
+  ]);
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -12,6 +20,12 @@ module.exports = async (req, res) => {
 
   const { vibe } = req.body;
   if (!vibe || !vibe.trim()) return res.status(400).json({ error: 'Vibe is required' });
+
+  function cleanString(s, maxLen = 400) {
+    if (typeof s !== 'string') return '';
+    const trimmed = s.trim();
+    return trimmed.length > maxLen ? trimmed.slice(0, maxLen) : trimmed;
+  }
 
   try {
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -51,7 +65,20 @@ module.exports = async (req, res) => {
       if (match) parsed.class = match;
     }
 
-    return res.status(200).json(parsed);
+    // Light validation / normalization to reduce frontend crashes.
+    const out = {
+      name: cleanString(parsed.name, 60),
+      class: parsed.class || '',
+      species: cleanString(parsed.species, 40),
+      background: cleanString(parsed.background, 60),
+      scores: parsed.scores && typeof parsed.scores === 'object' ? parsed.scores : undefined,
+      skills: Array.isArray(parsed.skills) ? parsed.skills.map(s => cleanString(s, 40)).filter(Boolean).slice(0, 8) : [],
+      spells: Array.isArray(parsed.spells) ? parsed.spells.map(s => cleanString(s, 60)).filter(Boolean).slice(0, 12) : [],
+      vibeTagline: cleanString(parsed.vibeTagline, 120),
+      whyThisWorks: cleanString(parsed.whyThisWorks, 600),
+    };
+
+    return res.status(200).json(out);
   } catch (err) {
     console.error('Character generation error:', err.message);
     return res.status(500).json({ error: 'Character generation failed' });

@@ -71,13 +71,23 @@ export function getCurrentUser() {
 // Only fires once — use for initialization gating.
 export function onAuthReady(callback) {
   initFirebase().then(() => {
-    const unsub = _authMod.onAuthStateChanged(_auth, user => {
-      _uid = user?.uid ?? null;
-      unsub(); // fire once only
-      callback(_uid);
-    });
-  }).catch(e => {
-    console.error('Firebase init failed:', e.message);
+    if (!_auth) {
+      console.error('Auth init error: _auth is null after initFirebase');
+      callback(null);
+      return;
+    }
+    try {
+      const unsub = _authMod.onAuthStateChanged(_auth, user => {
+        _uid = user?.uid ?? null;
+        unsub(); // fire once only
+        callback(_uid);
+      });
+    } catch (err) {
+      console.error('Auth init error:', err);
+      callback(null);
+    }
+  }).catch(err => {
+    console.error('Auth init error:', err);
     callback(null);
   });
 }

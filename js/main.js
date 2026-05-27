@@ -10,7 +10,7 @@ import { setMethod, rollStats, step5Next } from './builder/step-scores.js';
 import { step6Next, toggleLanguage } from './builder/step-languages.js';
 import { step7Next } from './builder/step-spells.js';
 import { reviewBack, beginAdventure } from './builder/step-review.js';
-import { selectMod, handleUpload, enterDungeon, sendCustom, restartGame } from './play/play.js';
+import { restartGame } from './play/play.js';
 import { closeOvl, openInfoOverlay } from './shared/overlay.js';
 import { sendMagicLink, confirmMagicLink, onAuthReady, loadStateFromDb, wireFirebaseSaves, signInWithGoogle } from './shared/auth.js';
 
@@ -81,7 +81,6 @@ async function handleSendLink() {
 
 function init() {
   renderDots();
-  selectMod('lmop');
   initApp();
 }
 
@@ -103,9 +102,6 @@ window.toggleLanguage   = toggleLanguage;
 window.step7Next        = step7Next;
 window.reviewBack       = reviewBack;
 window.beginAdventure   = beginAdventure;
-window.selectMod        = selectMod;
-window.enterDungeon     = enterDungeon;
-window.sendCustom       = sendCustom;
 window.closeOvl         = closeOvl;
 window.openInfoOverlay  = openInfoOverlay;
 window.restartGame      = restartGame;

@@ -12,10 +12,6 @@ export async function loadAdventure(){
     ]);
     if(adventureRes.ok){
       ADVENTURE_CACHE.data = await adventureRes.json();
-      // Log structure so we can confirm the correct chapter path
-      const adv = ADVENTURE_CACHE.data;
-      console.log('[adventure] top-level keys:', Object.keys(adv));
-      console.log('[adventure] chapter list:', (adv.adventure || []).map((c,i)=>({i, name:c.name, entryCount:(c.entries||[]).length})));
     }
     if(indexRes.ok) ADVENTURE_CACHE.index = await indexRes.json();
   }catch(e){ console.warn('Failed to load adventure data:', e); }

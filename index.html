@@ -191,64 +191,10 @@
   </div>
 </div><!-- /phase1 -->
 
-<!-- PHASE 2: MODULE SELECT -->
-<div id="phase2" class="hidden">
-  <div class="ph-header">
-    <h1>Choose Your Adventure</h1>
-    <p>Select a module to begin</p>
-  </div>
-
-  <div id="mod-lmop" class="mod-card featured" onclick="selectMod('lmop')">
-    <h3>Lost Mines of Phandelver <span class="badge">Recommended</span></h3>
-    <p>The classic starter adventure. Goblins, dungeons, a missing friend. You begin on the Triboar Trail, ambushed near Cragmaw Hideout.</p>
-  </div>
-
-  <div id="mod-paste" class="mod-card" onclick="selectMod('paste')">
-    <h3>Paste Your Adventure</h3>
-    <p>Drop in your own module text, a homebrew premise, or a published adventure synopsis.</p>
-    <textarea id="paste-text" style="margin-top:12px;display:none" rows="6"
-      placeholder="Paste your adventure text here…" onclick="event.stopPropagation()"></textarea>
-  </div>
-
-  <div id="mod-upload" class="mod-card" onclick="selectMod('upload')">
-    <h3>Upload a File</h3>
-    <p>Upload a .txt or .pdf file. Text content will be used as the adventure context.</p>
-    <div id="upload-area" style="margin-top:12px;display:none" onclick="event.stopPropagation()">
-      <input type="file" id="file-upload" accept=".txt,.pdf" style="color:var(--text);width:100%">
-      <div id="upload-status" style="margin-top:8px;font-size:.82rem;color:var(--dim)"></div>
-    </div>
-  </div>
-
-  <button class="btn btn-pri btn-full" style="margin-top:20px" onclick="enterDungeon()">Enter the Dungeon ⚔</button>
-</div><!-- /phase2 -->
-
 <!-- PLAY: Campaign screen -->
 <div id="play" style="display:none"></div>
 
 </div><!-- /app -->
-
-<!-- PHASE 3: PLAY (full-screen fixed) -->
-<div id="phase3">
-  <div id="play-header">
-    <h2 id="play-char-name">—</h2>
-    <div class="hp-pill">
-      <span class="hp-icon">♥</span>
-      <span id="hp-cur">—</span>
-      <span id="hp-max-disp">—</span>
-    </div>
-    <div class="slots-row" id="slots-row" style="display:none"></div>
-  </div>
-
-  <div id="chat-log"></div>
-
-  <div id="action-bar">
-    <div class="act-btns" id="act-btns"></div>
-    <div class="custom-row" id="custom-row" style="display:none">
-      <input type="text" id="custom-input" placeholder="Describe your action…" maxlength="200">
-      <button class="btn btn-sm btn-pri" onclick="sendCustom()">Go</button>
-    </div>
-  </div>
-</div>
 
 <!-- OVERLAYS -->
 <div id="spell-overlay" class="overlay hidden">

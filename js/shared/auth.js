@@ -110,6 +110,15 @@ export async function loadStateFromDb(uid) {
   }
 }
 
+// Signs in via Google OAuth popup. Returns uid on success, throws on failure.
+export async function signInWithGoogle() {
+  await initFirebase();
+  const provider = new _authMod.GoogleAuthProvider();
+  const result = await _authMod.signInWithPopup(_auth, provider);
+  _uid = result.user.uid;
+  return _uid;
+}
+
 // Registers a save hook so every storage write also syncs to Firebase.
 // Call this after auth resolves so the uid is available.
 export function wireFirebaseSaves(uid) {

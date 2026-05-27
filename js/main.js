@@ -12,7 +12,7 @@ import { step7Next } from './builder/step-spells.js';
 import { reviewBack, beginAdventure } from './builder/step-review.js';
 import { selectMod, handleUpload, enterDungeon, sendCustom, restartGame } from './play/play.js';
 import { closeOvl, openInfoOverlay } from './shared/overlay.js';
-import { sendMagicLink, confirmMagicLink, onAuthReady, loadStateFromDb, wireFirebaseSaves } from './shared/auth.js';
+import { sendMagicLink, confirmMagicLink, onAuthReady, loadStateFromDb, wireFirebaseSaves, signInWithGoogle } from './shared/auth.js';
 
 // ── Auth gate helpers ─────────────────────────────────────────────────────────
 
@@ -28,6 +28,28 @@ function setAuthError(msg) {
   if (!el) return;
   el.textContent = msg;
   el.style.display = msg ? 'block' : 'none';
+}
+
+async function handleGoogleSignIn() {
+  const btn = document.getElementById('auth-google-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Signing in…';
+  setAuthError('');
+
+  try {
+    const uid = await signInWithGoogle();
+    showAuthView('auth-loading-view');
+    await loadStateFromDb(uid);
+    wireFirebaseSaves(uid);
+    document.getElementById('auth-gate').classList.add('hidden');
+    init();
+  } catch (e) {
+    btn.disabled    = false;
+    btn.textContent = 'Sign in with Google';
+    if (e.code !== 'auth/popup-closed-by-user') {
+      setAuthError('Google sign-in failed. Please try again.');
+    }
+  }
 }
 
 async function handleSendLink() {
@@ -104,6 +126,7 @@ document.addEventListener('keydown', e => {
 
 // ── Auth gate wiring ──────────────────────────────────────────────────────────
 
+document.getElementById('auth-google-btn')?.addEventListener('click', handleGoogleSignIn);
 document.getElementById('auth-send-btn')?.addEventListener('click', handleSendLink);
 document.getElementById('auth-email')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSendLink();

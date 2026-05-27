@@ -121,5 +121,18 @@
 - #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned — unreachable from builder but still in codebase.
 - api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code — phase3 unreachable).
 
+- ✅ 2026-05-26: Google OAuth added alongside magic link. `auth.js` exports `signInWithGoogle()` — creates `GoogleAuthProvider`, calls `signInWithPopup`, returns uid. `index.html` auth gate: "Sign in with Google" is now primary CTA (white button, full width, above email), magic link demoted to secondary (`.btn.btn-full` at 75% opacity, labeled "Send Magic Link", below "or sign in with email link" separator). `main.js`: imports `signInWithGoogle`, adds `handleGoogleSignIn()` (popup → `loadStateFromDb` → `wireFirebaseSaves` → dismiss gate → `init()`), wires `#auth-google-btn` click. Error silently swallowed for popup-closed-by-user; all other errors surface via `setAuthError()`.
+
+## Known Issues
+- Firebase env vars must be set in Vercel dashboard: `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_DATABASE_URL`.
+- Firebase Console must enable Google sign-in provider in Authentication → Sign-in method.
+- Firebase Console must whitelist `https://one-shot-taupe.vercel.app` in Authentication → Settings → Authorized domains.
+- Firebase Security Rules must restrict `users/{uid}` reads/writes to the authenticated user.
+- PaBtSo chapter path: console.log at adventure load will show the correct chapter index.
+- Send It cantrips: populated from SPELLS[cls] fallback (state.js), not from Groq response.
+- Fixed footer height padding (200px) is generous — may leave empty space on step 1.
+- #phase2 (module select) and the old enterDungeon()→#phase3 AI DM flow are orphaned.
+- api/dm.js legacy { messages, systemPrompt } body shape still in play.js callDM() (dead code).
+
 ## Cold Start Prompt
-Next unresolved: Set Firebase env vars in Vercel (FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_DATABASE_URL). Create one-shot Firebase project, enable Email Link sign-in, whitelist app domain, set Security Rules. Smoke-test auth gate → magic link → sign-in → game loads with correct saved state on a second device.
+Next unresolved: Enable Google sign-in in Firebase Console (Authentication → Sign-in method → Google). Verify popup flow works on `https://one-shot-taupe.vercel.app`. Magic link flow should still work unchanged.

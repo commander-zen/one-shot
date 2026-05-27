@@ -2,7 +2,7 @@ import { G } from '../shared/state.js';
 import { goStep } from './builder.js';
 import { toast, openInfoOverlay } from '../shared/overlay.js';
 import { getActiveClasses } from '../data/schema.js';
-import { getRating, applyTier, CLASS_OVERALL, tierLegendHTML } from '../data/ratings.js';
+import { getRating, applyTier } from '../data/ratings.js';
 import { buildBackground } from './step-background.js';
 import { buildSpellPicker } from './step-spells.js';
 import { buildReview } from './step-review.js';
@@ -38,8 +38,6 @@ const CLASS_WHY = {
   Warlock:    "Ranked mid-tier because Eldritch Blast is reliably strong, but limited spell slots require careful management between rests",
   Wizard:     "Ranked highly because the broadest spell list in the game gives you a prepared answer for nearly every situation your party faces",
 };
-
-const RATING_ORDER = {blue:0,green:1,orange:2,red:3};
 
 const SKILL_DESC = {
   Acrobatics:       "Flip, dodge, and keep your balance",
@@ -93,29 +91,14 @@ export function buildClassGrid(){
   const g=document.getElementById('class-grid');
   g.innerHTML='';
 
-  // Tier legend — insert/update above the grid
-  let legend=document.getElementById('class-tier-legend');
-  if(!legend){
-    legend=document.createElement('div');
-    legend.id='class-tier-legend';
-    legend.innerHTML=tierLegendHTML();
-    g.insertAdjacentElement('beforebegin',legend);
-  }
-
   const classes=getActiveClasses();
   let entries=Object.entries(classes);
-  // Sort by class overall RPGBOT tier
-  entries.sort(([a],[b])=>{
-    const ra=RATING_ORDER[CLASS_OVERALL[a]]??4;
-    const rb=RATING_ORDER[CLASS_OVERALL[b]]??4;
-    return ra!==rb?ra-rb:a.localeCompare(b);
-  });
+  entries.sort(([a],[b])=>a.localeCompare(b));
   entries.forEach(([name,cls])=>{
     const mechText=`Hit Die: d${cls.hitDie} · Armor: ${cls.ac} · Saves: ${cls.saves.join(', ')} · Choose ${cls.sc} from: ${cls.skills.join(', ')}`;
     const c=document.createElement('div');
     c.className='opt-card';
     c.innerHTML=`<h4>${name}</h4><p class="card-tagline">${CLASS_VIBES[name]||''}</p>`;
-    applyTier(c, CLASS_OVERALL[name] || null);
     const infoBtn=document.createElement('span');
     infoBtn.className='card-info-btn';
     infoBtn.textContent='ⓘ';

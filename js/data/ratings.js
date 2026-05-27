@@ -93,23 +93,6 @@ export const RATINGS = {
   }
 };
 
-// Overall RPGBOT tier per class (for class card borders)
-export const CLASS_OVERALL = {
-  Barbarian: 'blue',
-  Fighter:   'blue',
-  Paladin:   'green',
-  Ranger:    'green',
-  Cleric:    'green',
-  Rogue:     'green',
-  Bard:      'green',
-  Druid:     'green',
-  Warlock:   'orange',
-  Sorcerer:  'orange',
-  Wizard:    'orange',
-  Monk:      'orange',
-  Artificer: 'red',
-};
-
 const TIER_COLORS = { blue: '#4a9eff', green: '#4caf50', orange: '#ff9800', red: '#ef5350' };
 const TIER_LETTER = { blue: 'S', green: 'A', orange: 'B', red: 'C' };
 

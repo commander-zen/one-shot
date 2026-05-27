@@ -53,6 +53,8 @@
 .skill-chip.sel:hover { background:var(--gold2); border-color:var(--gold2); }
 .skill-chip.locked { border-color:var(--gold); background:var(--parch-bg); color:var(--gold); opacity:.6; cursor:default; }
 .skill-chip .chip-desc { font-size:13px; color:#b8956a; display:block; margin-top:2px; font-family:'Noto Serif',serif; font-style:normal; }
+.skill-chip[data-tier="B"] { color:#fff; }
+.skill-chip[data-tier="B"] .chip-desc { color:#ddd; }
 
 /* hint / helper text */
 .skill-hint {

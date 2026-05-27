@@ -5,6 +5,15 @@ import { getActiveClasses } from '../data/schema.js';
 import { saveCharacter, setCampaignActive, getBackground, getRespecState, clearRespecState, saveCampaignState } from '../shared/storage.js';
 import { startCampaign } from '../play/play.js';
 
+function escapeHtml(s){
+  return String(s ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
 export function buildReview(){
   const c=G.char;
   const s=c.final;
@@ -15,16 +24,16 @@ export function buildReview(){
   // Send It vibe hero block
   if(c.fromSendIt && c.vibeTagline){
     h+=`<div class="sheet-sec" style="border:1px solid var(--gold);border-radius:6px;padding:14px 16px;background:var(--parch-bg);margin-bottom:20px">
-      <div style="font-family:'Noto Serif',serif;font-size:17px;color:var(--gold2);margin-bottom:8px">"${c.vibeTagline}"</div>
-      ${c.whyThisWorks?`<div style="font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6">${c.whyThisWorks}</div>`:''}
+      <div style="font-family:'Noto Serif',serif;font-size:17px;color:var(--gold2);margin-bottom:8px">"${escapeHtml(c.vibeTagline)}"</div>
+      ${c.whyThisWorks?`<div style="font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6">${escapeHtml(c.whyThisWorks)}</div>`:''}
     </div>`;
   }
 
   h+=`<div class="sheet-sec">
     <h4>Identity</h4>
-    <div style="font-size:1.15rem;color:var(--gold2);font-family:'Cinzel',serif;margin-bottom:3px">${c.name}</div>
-    <div style="color:#c8a97a;font-size:15px">${c.race} ${c.cls} · Level 1</div>
-    ${c.backstory?`<div style="margin-top:8px;font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6">${c.backstory}</div>`:''}
+    <div style="font-size:1.15rem;color:var(--gold2);font-family:'Cinzel',serif;margin-bottom:3px">${escapeHtml(c.name)}</div>
+    <div style="color:#c8a97a;font-size:15px">${escapeHtml(c.race)} ${escapeHtml(c.cls)} · Level 1</div>
+    ${c.backstory?`<div style="margin-top:8px;font-family:'Noto Serif',serif;font-size:15px;color:#c8a97a;line-height:1.6;white-space:pre-line">${escapeHtml(c.backstory)}</div>`:''}
   </div>`;
 
   h+=`<div class="sheet-sec"><h4>Combat Stats</h4><div class="stat-row">
@@ -59,20 +68,20 @@ export function buildReview(){
   }
 
   h+=`<div class="sheet-sec"><h4>Starting Equipment</h4>
-    <div style="font-size:15px;color:#c8a97a">${c.equip}</div></div>`;
+    <div style="font-size:15px;color:#c8a97a">${escapeHtml(c.equip)}</div></div>`;
 
   if(c.sp && (c.cantrips?.length || c.spells?.length)){
     h+=`<div class="sheet-sec"><h4>Spells</h4>`;
     if(c.cantrips?.length){
       h+=`<div style="margin-bottom:10px">
         <div style="color:var(--dim);font-size:.8rem;font-family:'Noto Serif',serif;margin-bottom:3px">Cantrips</div>
-        <div style="font-size:.84rem;color:#c8a97a">${c.cantrips.join(', ')}</div>
+        <div style="font-size:.84rem;color:#c8a97a">${escapeHtml(c.cantrips.join(', '))}</div>
       </div>`;
     }
     if(c.spells?.length){
       h+=`<div>
         <div style="color:var(--dim);font-size:.8rem;font-family:'Noto Serif',serif;margin-bottom:3px">1st Level Spells (${c.maxSlots} slot${c.maxSlots>1?'s':''})</div>
-        <div style="font-size:.84rem;color:#c8a97a">${c.spells.join(', ')}</div>
+        <div style="font-size:.84rem;color:#c8a97a">${escapeHtml(c.spells.join(', '))}</div>
       </div>`;
     }
     h+=`</div>`;

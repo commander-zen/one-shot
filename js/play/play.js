@@ -268,15 +268,22 @@ export function renderDMResponse(response) {
 
     const narEl = document.createElement('blockquote');
     narEl.className = 'scene-narration';
-    narEl.innerHTML = narration.replace(/\n/g, '<br>');
+    // IMPORTANT: Never use innerHTML for AI/user content (XSS risk).
+    narEl.textContent = narration;
     entry.appendChild(narEl);
 
     if (mechanicalEvents.length) {
       const chips = document.createElement('div');
       chips.className = 'mech-chips';
-      chips.innerHTML = mechanicalEvents.map(ev =>
-        `<span class="mechanical-chip chip-${ev.type||'status'}">${ev.description||''}${ev.value!=null?` (${ev.value})`:''}</span>`
-      ).join('');
+      mechanicalEvents.forEach(ev => {
+        const type = (ev?.type || 'status');
+        const desc = (ev?.description || '');
+        const val = ev?.value;
+        const chip = document.createElement('span');
+        chip.className = `mechanical-chip chip-${type}`;
+        chip.textContent = `${desc}${val != null ? ` (${val})` : ''}`;
+        chips.appendChild(chip);
+      });
       entry.appendChild(chips);
     }
 

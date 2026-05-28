@@ -7,7 +7,16 @@
       "PowerShell(Get-Process -Name \"node\")",
       "Bash(git merge *)",
       "Bash(git checkout *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" log --oneline -5)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" diff 7768f2b bf29c70 -- js/builder/builder.js js/main.js js/shared/overlay.js css/components.css css/layout.css)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" add js/builder/step-languages.js)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"fix: remove dead pgBadge import and call from step-languages.js\")",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" push origin main)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" add js/builder/step-class.js SESSION_STATE.md)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"feat: auto-select recommended skills + skill descriptions in class step\")",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" add js/builder/step-class.js)",
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"fix: normalize SKILL_DESC and SKILL_PRIORITY lookups to case-insensitive\")"
     ]
   }
 }

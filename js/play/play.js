@@ -158,7 +158,7 @@ export function renderScene(area) {
   }
   if (!readAloud) readAloud = `You arrive at ${area.name}.`;
   if (!campaignState.visitedAreas?.length) {
-    readAloud += ' Williwaw Icefang Amarok stands at your side — a towering Goliath druid, blue-grey skin marked with frost-tribe tattoos, already watching the tree line. Behind him, Seamus Muckbuckle checks his handaxes with practiced efficiency, eyes flat and unreadable. And Kraghor — a Minotaur large enough to make the wagon creak — grins at the thought of what lies ahead.';
+    readAloud += ' Williwaw Icefang Amarok stands at your side — a towering Goliath druid, blue-grey skin marked with frost-tribe tattoos, already watching the tree line. Behind her, Seamus Muckbuckle checks his handaxes with practiced efficiency, eyes flat and unreadable. And Kraghor — a Minotaur large enough to make the wagon creak — grins at the thought of what lies ahead.';
   }
 
   const play = document.getElementById('play');

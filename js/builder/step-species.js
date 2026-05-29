@@ -6,29 +6,29 @@ import { getRating, applyTier, tierLegendHTML } from '../data/ratings.js';
 import { buildStatAssign } from './step-scores.js';
 
 const SPECIES_VIBES = {
-  Aasimar:    "Celestial radiance heals nearby allies and eventually lets you fly",
-  Dragonborn: "Draconic ancestry gives you a breath weapon and resistance to that damage type",
-  Dwarf:      "Resistant to poison, built tough — your HP stays higher than most",
-  Elf:        "Keen senses, can't be put to sleep by magic, and never need to fully rest",
-  Gnome:      "Resistant to mental magic — illusions and charms barely touch you",
-  Goliath:    "Giant ancestry lets you reduce a big hit once per combat — staying in the fight when others would go down",
-  Halfling:   "Once per turn you can reroll a 1 — luck keeps you alive when others would fall",
-  Human:      "Naturally gifted — you get an extra feat at level 1 that other species don't",
-  Orc:        "When you'd drop to zero HP, you stay at 1 instead — you just don't go down",
-  Tiefling:   "Hellish resistance to fire and a set of innate spells that cost no spell slots",
+  Aasimar: "Touched by celestial fire from birth",
+  Dragonborn: "Ancient draconic blood runs hot",
+  Dwarf: "Stubborn, sturdy, and built to last",
+  Elf: "Older than memory, sharper than steel",
+  Gnome: "Curiosity with a dangerous imagination",
+  Goliath: "Mountain-born and made for extremes",
+  Halfling: "Luck bends for them. Always.",
+  "Half-Orc": "Fury and resilience in equal measure",
+  Human: "Adaptable, ambitious, and everywhere",
+  Tiefling: "Infernal heritage, entirely their own story"
 };
 
 const SPECIES_WHY = {
-  Aasimar:    "Healing Hands provides free healing, Celestial Revelation adds a damage or healing aura, and eventual flight — strong at every tier",
-  Dragonborn: "Breath weapon gives a reliable area attack option that scales with level, and the paired damage resistance is useful for frontline classes",
-  Dwarf:      "Stonecunning provides Tremorsense and Dwarven Resilience adds poison resistance and advantage on poison saves — consistently useful for martials",
-  Elf:        "Darkvision, Fey Ancestry (can't be put to sleep by magic), and Keen Senses combine into a consistently useful package for any class",
-  Gnome:      "Gnomish Cunning gives advantage on all INT/WIS/CHA saves against magic, making you dramatically harder to control with spells",
-  Goliath:    "Stone's Endurance lets you reduce significant damage once per short rest, keeping you in fights longer than most other species",
-  Halfling:   "Lucky — rerolling 1s on attack rolls, saves, and ability checks — provides a subtle but consistent statistical advantage every session",
-  Human:      "Ranked highly across most classes because an extra feat at level 1 provides a significant power boost unavailable to any other species",
-  Orc:        "Relentless Endurance prevents you from dropping to 0 HP once per long rest — particularly strong for frontline characters",
-  Tiefling:   "Hellish Resistance to fire damage and free spells (Hellish Rebuke, Darkness) that never consume your spell slots",
+  Aasimar: "A-tier. Healing Hands, Darkvision, and Radiant Resistance are all useful. Celestial Revelation gives a powerful transformation with flight. Strong for Paladins and Clerics.",
+  Dragonborn: "B-tier. Breath Weapon now scales with proficiency bonus. Draconic ancestry gives damage resistance. Solid pick but outpaced by Aasimar and Tiefling for spellcasters.",
+  Dwarf: "A-tier. Poison resistance, Darkvision, and free tool proficiency. Dwarven Resilience gives advantage on poison saves. Excellent for martial classes.",
+  Elf: "A-tier. Fey Ancestry, Trance, and Darkvision are all passive value. High Elf gets a free cantrip. Wood Elf gets speed and stealth. Consistently strong.",
+  Gnome: "B-tier. Gnomish Cunning gives advantage on INT/WIS/CHA saves against magic — surprisingly powerful. Forest Gnome gets Minor Illusion free.",
+  Goliath: "A-tier. Giant Ancestry powers are strong utility options. Stone's Endurance gives a free damage reduction reaction. Excellent for Barbarians and Fighters.",
+  Halfling: "A-tier. Lucky is one of the best racial features in the game — reroll any 1 on attack, ability check, or save. Brave gives advantage against fear.",
+  "Half-Orc": "A-tier. Relentless Endurance prevents one knockout per long rest. Savage Attacks adds an extra damage die on crits. Strong for any martial class.",
+  Human: "S-tier. Heroic Inspiration once per long rest and proficiency in any skill of choice. Best pick for any class that benefits from flexible stat distribution.",
+  Tiefling: "A-tier. Infernal Legacy gives Hellish Rebuke and Darkness free. Darkvision and fire resistance are always useful. Especially strong for Warlocks and Rogues."
 };
 
 const RATING_ORDER = {blue:0,green:1,orange:2,red:3};

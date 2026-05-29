@@ -8,35 +8,35 @@ import { buildSpellPicker } from './step-spells.js';
 import { buildReview } from './step-review.js';
 
 const CLASS_VIBES = {
-  Artificer:  "You fix, build, and invent — and your gadgets hit harder than most swords",
-  Barbarian:  "Rage makes you nearly unstoppable — the toughest, hardest-hitting fighter alive",
-  Bard:       "Your words open doors, win allies, and get you out of fights before they start",
-  Cleric:     "Divine power heals your friends and destroys your enemies — the backbone of any party",
-  Druid:      "You speak the language of nature — and nature listens when things get dangerous",
-  Fighter:    "More attacks, more options, more damage — the most reliable weapon in the group",
-  Monk:       "Faster than anyone, your fists hit like weapons and you never need one",
-  Paladin:    "A heavily armored warrior who can heal allies and smite enemies with holy power",
-  Ranger:     "You track, hunt, and survive — deadliest in terrain you know",
-  Rogue:      "One big hit at exactly the right moment — sneaky, fast, and precise",
-  Sorcerer:   "Raw magical power in your blood — fewer spells, but they hit harder",
-  Warlock:    "Dark patron magic that recharges every rest — fewer slots, always ready",
-  Wizard:     "The widest spell list in the game — a solution for every situation",
+  Artificer: "Gadgets, gizmos, and magical engineering",
+  Barbarian: "Rage first, questions never",
+  Bard: "Charm your way through everything",
+  Cleric: "Divine power with an agenda",
+  Druid: "Nature's wrath in living form",
+  Fighter: "Reliable, relentless, always effective",
+  Monk: "Discipline turned into devastation",
+  Paladin: "Holy warrior with unbreakable conviction",
+  Ranger: "Hunter who thrives where others fear",
+  Rogue: "Strike once, strike hard, vanish",
+  Sorcerer: "Raw magic in human skin",
+  Warlock: "Power borrowed from something ancient",
+  Wizard: "Every answer is in a book"
 };
 
 const CLASS_WHY = {
-  Artificer:  "Ranked mid-tier because it takes more system knowledge to use well, but a well-built Artificer is uniquely durable and versatile",
-  Barbarian:  "Ranked highly because Rage gives consistent damage reduction and bonus damage — nearly unkillable at low levels for new players",
-  Bard:       "Ranked highly because Bardic Inspiration and full skill proficiencies make you effective in combat, social, and exploration situations",
-  Cleric:     "Ranked highly because healing, offensive spells, and solid armor make Clerics valuable and effective in almost any party",
-  Druid:      "Ranked highly because Wild Shape and powerful concentration spells give you more flexibility than nearly any other class",
-  Fighter:    "Ranked highly because Action Surge doubles your action economy and Extra Attack provides the most reliable consistent damage",
-  Monk:       "Ranked mid-tier because high-level Monks are powerful but require careful ki management and scale less well without magical items",
-  Paladin:    "Ranked highly because Divine Smite adds massive burst damage, and heavy armor plus healing makes this class strong for new players",
-  Ranger:     "Ranked mid-tier because many features are situational — very strong in the right environment but inconsistent across all campaigns",
-  Rogue:      "Ranked highly because Sneak Attack provides reliable bonus damage every round with very few resources consumed",
-  Sorcerer:   "Ranked mid-tier because Metamagic makes individual spells more powerful, but a smaller spell list limits flexibility versus Wizards",
-  Warlock:    "Ranked mid-tier because Eldritch Blast is reliably strong, but limited spell slots require careful management between rests",
-  Wizard:     "Ranked highly because the broadest spell list in the game gives you a prepared answer for nearly every situation your party faces",
+  Artificer: "S-tier for utility. Infusions give your party passive upgrades no other class can match. Battle Smith and Armorer both bring built-in combat companions or heavy armor proficiency.",
+  Barbarian: "A-tier bruiser. Rage damage resistance and Reckless Attack make you nearly unkillable early. Path of the Beast adds natural weapons that scale well.",
+  Bard: "S-tier support. Full spellcaster with Expertise, Bardic Inspiration, and Magical Secrets. College of Eloquence removes failure conditions entirely.",
+  Cleric: "S-tier. Heavy armor, healing, battlefield control, and nukes depending on subclass. Life and War are both strong picks.",
+  Druid: "A-tier. Wild Shape is a free HP pool early. Circle of Spores adds poison damage and reanimation. Moon Druid is one of the strongest early-game options.",
+  Fighter: "A-tier. Action Surge alone makes this class. Extra Attack stacks fast. Champion and Battle Master both perform consistently.",
+  Monk: "B-tier. Strong mobility and Stunning Strike are real tools but Ki economy is tight. Warrior of Shadow and Warrior of Mercy are the standout subclasses.",
+  Paladin: "S-tier. Auras, Divine Smite, and Charisma synergy make this one of the strongest melee classes. Oath of Conquest adds fear control on top of elite damage.",
+  Ranger: "B-tier. Improved in 2024. Hunter and Gloom Stalker are solid picks. Outpaced by Paladin and Fighter in pure damage but brings strong utility.",
+  Rogue: "A-tier. Sneak Attack scales fast, Cunning Action is always relevant, Expertise stacks skill checks to near-automatic. Reliable Talent makes failure nearly impossible.",
+  Sorcerer: "A-tier. Metamagic is the best spell modification system in the game. Subtle Spell and Quickened Spell are both broken in the right hands.",
+  Warlock: "A-tier. Short-rest spell recovery and Eldritch Blast as a permanent cantrip make this reliable at any level. Invocations let you customize your kit deeply.",
+  Wizard: "S-tier. Largest spell list in the game, Arcane Recovery, and the ability to learn any spell from a scroll. Evocation and Abjuration are both strong schools."
 };
 
 const SKILL_DESC = {

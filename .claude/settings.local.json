@@ -16,7 +16,14 @@
       "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" add js/builder/step-class.js SESSION_STATE.md)",
       "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"feat: auto-select recommended skills + skill descriptions in class step\")",
       "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" add js/builder/step-class.js)",
-      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"fix: normalize SKILL_DESC and SKILL_PRIORITY lookups to case-insensitive\")"
+      "Bash(git -C \"c:\\\\Users\\\\beine\\\\OneDrive\\\\Desktop\\\\old docs\\\\one-shot\" commit -m \"fix: normalize SKILL_DESC and SKILL_PRIORITY lookups to case-insensitive\")",
+      "Bash(pip install *)",
+      "Bash(pip index *)",
+      "Bash(python -m pip install --upgrade pip)",
+      "Bash(pip config *)",
+      "Bash(pipx install *)",
+      "Bash(uv python *)",
+      "Bash(uv tool *)"
     ]
   }
 }

@@ -4,16 +4,29 @@ import { saveLanguages } from '../shared/storage.js';
 import { buildSpellPicker } from './step-spells.js';
 import { buildReview } from './step-review.js';
 
-const DEFAULT_EXTRA = ['Goblin', 'Dwarvish'];
-const SUBSTITUTIONS = { Goblin: 'Orc', Dwarvish: 'Elvish' };
+const SPECIES_LANGUAGES = {
+  'Human':      ['Common', 'Goblin'],
+  'Elf':        ['Common', 'Elvish'],
+  'Dwarf':      ['Common', 'Dwarvish'],
+  'Halfling':   ['Common', 'Halfling'],
+  'Orc':        ['Common', 'Orc'],
+  'Tiefling':   ['Common', 'Infernal'],
+  'Dragonborn': ['Common', 'Draconic'],
+  'Gnome':      ['Common', 'Gnomish'],
+  'Aasimar':    ['Common', 'Celestial'],
+  'Goliath':    ['Common', 'Giant'],
+};
+
+const ALL_STANDARD_LANGUAGES = ['Dwarvish','Elvish','Giant','Gnomish','Goblin','Halfling','Orc','Abyssal','Celestial','Draconic','Deep Speech','Infernal','Primordial','Sylvan','Undercommon'];
 
 function pickLanguages(){
-  const speciesLangs = [];
-  const extras = [];
-  for(const lang of DEFAULT_EXTRA){
-    extras.push(speciesLangs.includes(lang) ? SUBSTITUTIONS[lang] : lang);
-  }
-  return ['Common', ...extras];
+  return SPECIES_LANGUAGES[G.char.race] ?? ['Common', 'Goblin'];
+}
+
+function updateLangMsg(){
+  const langs = G.char.languages || [];
+  const msgEl = document.getElementById('lang-auto-msg');
+  if(msgEl) msgEl.textContent = `You speak ${langs.join(', ')} — useful for the road ahead.`;
 }
 
 export function buildLanguages(){
@@ -39,6 +52,32 @@ export function buildLanguages(){
   }
   msgEl.textContent = `You speak ${langs.join(', ')} — useful for the road ahead.`;
 
+  // Swap section
+  let swapEl = document.getElementById('lang-swap');
+  if(!swapEl){
+    swapEl = document.createElement('div');
+    swapEl.id = 'lang-swap';
+    if(list) list.insertAdjacentElement('beforebegin', swapEl);
+    else msgEl.insertAdjacentElement('afterend', swapEl);
+  }
+
+  const currentExtra = langs.find(l => l !== 'Common') || null;
+  swapEl.innerHTML = `
+    <p style="font-family:'Noto Serif',serif;font-size:14px;color:#b8956a;margin:14px 0 10px;line-height:1.5">Want to swap your second language?</p>
+    <div class="skill-picks lang-swap-grid" id="lang-chip-grid"></div>
+  `;
+
+  const grid = swapEl.querySelector('#lang-chip-grid');
+  ALL_STANDARD_LANGUAGES.forEach(lang => {
+    const chip = document.createElement('div');
+    chip.className = 'skill-chip' + (lang === currentExtra ? ' sel' : '');
+    chip.style.minHeight = '44px';
+    chip.dataset.lang = lang;
+    chip.textContent = lang;
+    chip.addEventListener('click', () => toggleLanguage(lang));
+    grid.appendChild(chip);
+  });
+
   const nextBtn = document.getElementById('lang-next');
   if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
 }
@@ -59,4 +98,14 @@ export function step6Next(){
   }
 }
 
-export function toggleLanguage(){}
+export function toggleLanguage(lang){
+  const langs = G.char.languages || ['Common'];
+  const newLangs = ['Common', lang];
+  G.char.languages = newLangs;
+  saveLanguages(newLangs);
+  updateLangMsg();
+
+  document.querySelectorAll('#lang-chip-grid .skill-chip').forEach(chip => {
+    chip.classList.toggle('sel', chip.dataset.lang === lang);
+  });
+}

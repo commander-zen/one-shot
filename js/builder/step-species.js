@@ -13,7 +13,7 @@ const SPECIES_VIBES = {
   Gnome: "Curiosity with a dangerous imagination",
   Goliath: "Mountain-born and made for extremes",
   Halfling: "Luck bends for them. Always.",
-  "Half-Orc": "Fury and resilience in equal measure",
+  Orc: "Tough as nails and impossible to put down",
   Human: "Adaptable, ambitious, and everywhere",
   Tiefling: "Infernal heritage, entirely their own story"
 };
@@ -26,7 +26,7 @@ const SPECIES_WHY = {
   Gnome: "B-tier. Gnomish Cunning gives advantage on INT/WIS/CHA saves against magic — surprisingly powerful. Forest Gnome gets Minor Illusion free.",
   Goliath: "A-tier. Giant Ancestry powers are strong utility options. Stone's Endurance gives a free damage reduction reaction. Excellent for Barbarians and Fighters.",
   Halfling: "A-tier. Lucky is one of the best racial features in the game — reroll any 1 on attack, ability check, or save. Brave gives advantage against fear.",
-  "Half-Orc": "A-tier. Relentless Endurance prevents one knockout per long rest. Savage Attacks adds an extra damage die on crits. Strong for any martial class.",
+  Orc: "A-tier for martials. Relentless Endurance lets you survive a killing blow once per long rest. Adrenaline Rush gives you a free Dash plus temp HP — great for melee fighters who want to stay in the fight.",
   Human: "S-tier. Heroic Inspiration once per long rest and proficiency in any skill of choice. Best pick for any class that benefits from flexible stat distribution.",
   Tiefling: "A-tier. Infernal Legacy gives Hellish Rebuke and Darkness free. Darkvision and fire resistance are always useful. Especially strong for Warlocks and Rogues."
 };

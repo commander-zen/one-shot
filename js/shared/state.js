@@ -6,7 +6,7 @@ export const RACES = {
   Elf:        {bonuses:{DEX:2,INT:1}, speed:30, desc:'+2 DEX, +1 INT · Darkvision'},
   Dwarf:      {bonuses:{CON:2,WIS:1}, speed:25, desc:'+2 CON, +1 WIS · Darkvision'},
   Halfling:   {bonuses:{DEX:2,CHA:1}, speed:25, desc:'+2 DEX, +1 CHA · Lucky'},
-  'Half-Orc': {bonuses:{STR:2,CON:1}, speed:30, desc:'+2 STR, +1 CON · Relentless Endurance'},
+  Orc:        {bonuses:{STR:2,CON:1}, speed:30, desc:'+2 STR, +1 CON · Relentless Endurance'},
   Tiefling:   {bonuses:{CHA:2,INT:1}, speed:30, desc:'+2 CHA, +1 INT · Hellish Resistance'},
   Dragonborn: {bonuses:{STR:2,CHA:1}, speed:30, desc:'+2 STR, +1 CHA · Breath Weapon'},
   Gnome:      {bonuses:{INT:2,DEX:1}, speed:25, desc:'+2 INT, +1 DEX · Gnome Cunning'},
